@@ -1,0 +1,32 @@
+# frozen_string_literal: true
+
+version = File.read(File.expand_path('../SORCERY_VERSION', __dir__)).strip
+
+Gem::Specification.new do |s|
+  s.version     = version
+  s.platform    = Gem::Platform::RUBY
+  s.name        = 'sorcery-oauth'
+  s.summary     = 'OAuth support for Sorcery.'
+  s.description = 'Adds plugins to Sorcery for supporting OAuth login.'
+
+  # TODO: Does including minimum rubygems version make sense?
+  s.required_ruby_version     = '>= 2.5.0'
+  s.required_rubygems_version = '>= 1.8.11'
+
+  s.license = 'MIT'
+
+  s.author   = 'Josh Buker'
+  s.email    = 'crypto@joshbuker.com'
+  s.homepage = 'https://sorcerygem.org'
+
+  s.files = ['lib/sorcery-oauth.rb']
+
+  s.metadata = {
+    'bug_tracker_uri'   => 'https://github.com/sorcery/sorcery/issues',
+    'changelog_uri'     => "https://github.com/sorcery/sorcery/releases/tag/v#{version}",
+    'documentation_uri' => 'https://github.com/sorcery/sorcery/wiki',
+    'source_code_uri'   => "https://github.com/sorcery/sorcery/tree/v#{version}"
+  }
+
+  s.add_dependency 'sorcery-core', "#{version}"
+end
