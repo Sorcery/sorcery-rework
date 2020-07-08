@@ -1,5 +1,9 @@
 # Sorcery
 
+**This code is not ready for production usage. Please use the existing Sorcery
+Gem for the time being. Version 0.0.0 contains nothing more than a hello
+world.**
+
 Working repo for Sorcery v1. Following Rails project layout as a guide for
 multiple gems released in lock step.
 
