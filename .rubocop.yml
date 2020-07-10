@@ -60,6 +60,14 @@ Naming/FileName:
     - 'sorcery-oauth/lib/sorcery-oauth.rb'
 
 ###########
+## RSpec ##
+###########
+
+RSpec/FilePath:
+  CustomTransform:
+    OAuth: oauth
+
+###########
 ## Style ##
 ###########
 

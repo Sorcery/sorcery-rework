@@ -7,6 +7,6 @@ require 'core_helper'
 
 RSpec.describe Sorcery::Core do
   it 'says hello world' do
-    expect(Sorcery::Core.hello_world).to eq 'Hello from sorcery-core v0.0.0'
+    expect(described_class.hello_world).to eq 'Hello from sorcery-core v0.0.0'
   end
 end
