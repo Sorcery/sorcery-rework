@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Sorcery
+module Sorcery # :nodoc:
   def self.gem_version
     Gem::Version.new VERSION::STRING
   end

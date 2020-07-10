@@ -1,0 +1,74 @@
+# Use auto generated file to ignore existing warnings.
+inherit_from: '.rubocop_todo.yml'
+
+############################
+## General Rubocop Config ##
+############################
+
+require:
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.5.0
+
+# Is Rails needed? Unclear if this is intended just for applications.
+Rails:
+  Enabled: true
+
+###########################
+## Custom Rubocop Config ##
+###########################
+
+############
+## Layout ##
+############
+
+Layout/LineLength:
+  IgnoredPatterns: ['it { is_expected.']
+  Max: 80
+# Variable assignment can be indented weirdly, so align to the ending statement
+# instead
+Layout/CaseIndentation:
+  EnforcedStyle: end
+# Lines can get stupidly long if we indent it to the other params
+Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation
+# Force prettier hash alignment
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+# It can be unclear if a line is truly ended unless the dot is on the method
+# receiver
+Layout/DotPosition:
+  EnforcedStyle: trailing
+# Allow extra spaces when aligning to other operators...
+# (doesn't seem to work all the time though)
+Layout/SpaceAroundOperators:
+  AllowForAlignment: true
+
+############
+## Naming ##
+############
+
+# Following bundler naming conventions
+Naming/FileName:
+  Exclude:
+    - 'sorcery-core/lib/sorcery-core.rb'
+    - 'sorcery-mfa/lib/sorcery-mfa.rb'
+    - 'sorcery-oauth/lib/sorcery-oauth.rb'
+
+###########
+## Style ##
+###########
+
+# ¯\_(ツ)_/¯
+Style/AsciiComments:
+  AllowedChars: ['ツ', '¯']
+# https://github.com/bbatsov/ruby-style-guide/issues/556
+Style/ModuleFunction:
+  EnforcedStyle: extend_self
+# The readability of [:some, :various, :symbols] > %i[some various symbols]
+Style/SymbolArray:
+  EnforcedStyle: brackets

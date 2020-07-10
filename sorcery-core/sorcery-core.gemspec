@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 version = File.read(File.expand_path('../SORCERY_VERSION', __dir__)).strip
+repo_url = 'https://github.com/sorcery/sorcery'
 
 Gem::Specification.new do |s|
   s.version     = version
   s.platform    = Gem::Platform::RUBY
   s.name        = 'sorcery-core'
   s.summary     = 'Magically simple authentication.'
-  s.description = 'Provides common authentication needs that can be easily used within your own MVC structure.'
+  s.description =
+    'Provides common authentication needs that can be easily used within ' \
+    'your own MVC structure.'
 
   # TODO: Does including minimum rubygems version make sense?
   s.required_ruby_version     = '>= 2.5.0'
@@ -22,10 +25,10 @@ Gem::Specification.new do |s|
   s.files = ['lib/sorcery-core.rb', 'lib/sorcery/version.rb']
 
   s.metadata = {
-    'bug_tracker_uri'   => 'https://github.com/sorcery/sorcery/issues',
-    'changelog_uri'     => "https://github.com/sorcery/sorcery/releases/tag/v#{version}",
-    'documentation_uri' => 'https://github.com/sorcery/sorcery/wiki',
-    'source_code_uri'   => "https://github.com/sorcery/sorcery/tree/v#{version}"
+    'bug_tracker_uri'   => "#{repo_url}/issues",
+    'changelog_uri'     => "#{repo_url}/releases/tag/v#{version}",
+    'documentation_uri' => "#{repo_url}/wiki",
+    'source_code_uri'   => "#{repo_url}/tree/v#{version}"
   }
 
   s.add_dependency 'bcrypt', '~> 3.0'

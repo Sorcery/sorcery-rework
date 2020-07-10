@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 version = File.read(File.expand_path('../SORCERY_VERSION', __dir__)).strip
+repo_url = 'https://github.com/sorcery/sorcery'
 
 Gem::Specification.new do |s|
   s.version     = version
@@ -22,11 +23,11 @@ Gem::Specification.new do |s|
   s.files = ['lib/sorcery-mfa.rb']
 
   s.metadata = {
-    'bug_tracker_uri'   => 'https://github.com/sorcery/sorcery/issues',
-    'changelog_uri'     => "https://github.com/sorcery/sorcery/releases/tag/v#{version}",
-    'documentation_uri' => 'https://github.com/sorcery/sorcery/wiki',
-    'source_code_uri'   => "https://github.com/sorcery/sorcery/tree/v#{version}"
+    'bug_tracker_uri'   => "#{repo_url}/issues",
+    'changelog_uri'     => "#{repo_url}/releases/tag/v#{version}",
+    'documentation_uri' => "#{repo_url}/wiki",
+    'source_code_uri'   => "#{repo_url}/tree/v#{version}"
   }
 
-  s.add_dependency 'sorcery-core', "#{version}"
+  s.add_dependency 'sorcery-core', version
 end
