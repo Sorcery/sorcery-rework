@@ -14,3 +14,8 @@ group :rubocop do
   gem 'rubocop-rails'
   gem 'rubocop-rspec'
 end
+
+group :test do
+  gem 'rspec'
+  gem 'rspec-rails'
+end

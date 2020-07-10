@@ -6,7 +6,7 @@ require 'sorcery-core'
 module Sorcery
   module OAuth # :nodoc:
     def self.hello_world
-      "Hello from sorcery-mfa v#{Sorcery::VERSION::STRING}"
+      "Hello from sorcery-oauth v#{Sorcery::VERSION::STRING}"
     end
   end
 end
