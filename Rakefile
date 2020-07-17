@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # TODO: Add support for additional tests if necessary or remove comment.
 
 # FIXME: This breaks due to a root-level gemspec not being found
