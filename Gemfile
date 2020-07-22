@@ -16,6 +16,7 @@ group :rubocop do
 end
 
 group :test do
+  gem 'byebug'
   gem 'rspec'
   gem 'rspec-rails'
 end

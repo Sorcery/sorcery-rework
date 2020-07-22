@@ -13,3 +13,4 @@ ENV['RAILS_ENV'] ||= 'test'
 
 # require 'rails/all'
 # require 'rspec/rails'
+require 'byebug'
