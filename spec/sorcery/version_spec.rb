@@ -8,14 +8,14 @@ RSpec.describe Sorcery::VERSION do
   end
 
   describe 'Sorcery.gem_version' do
-    subject { Sorcery.gem_version }
+    subject(:gem_version) { Sorcery.gem_version }
 
     it 'returns a Gem::Version object' do
-      expect(subject).to be_a Gem::Version
+      expect(gem_version).to be_a Gem::Version
     end
 
     it 'matches Sorcery::VERSION' do
-      expect(subject).to eq Gem::Version.new(described_class::STRING)
+      expect(gem_version).to eq Gem::Version.new(described_class::STRING)
     end
   end
 end

@@ -10,7 +10,7 @@ module Sorcery # :nodoc:
   autoload :Engine, 'sorcery/engine'
   autoload :VERSION, 'sorcery/version'
 
-  module Plugins
+  module Plugins # :nodoc:
     autoload :Core, 'sorcery/plugins/core'
   end
 end
