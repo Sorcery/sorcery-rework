@@ -7,7 +7,10 @@
 # TODO: Documentation
 module Sorcery # :nodoc:
   autoload :Config, 'sorcery/config'
-  autoload :Core, 'sorcery/core'
   autoload :Engine, 'sorcery/engine'
   autoload :VERSION, 'sorcery/version'
+
+  module Plugins
+    autoload :Core, 'sorcery/plugins/core'
+  end
 end
