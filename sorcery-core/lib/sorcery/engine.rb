@@ -47,14 +47,16 @@ module Sorcery
       ActiveSupport.on_load(:active_record) do
         extend ::Sorcery::Model
 
-        define_method(:sorcery_adapter) do
-          @sorcery_adapter ||=
-            ::Sorcery::Adapters::ActiveRecordAdapter.new(self)
-        end
+        # TODO: Implement the adapter abstraction layer, consider renaming to
+        #       something a little more self-explanatory.
+        # define_method(:sorcery_adapter) do
+        #   @sorcery_adapter ||=
+        #     ::Sorcery::Adapters::ActiveRecordAdapter.new(self)
+        # end
 
-        define_singleton_method(:sorcery_adapter) do
-          ::Sorcery::Adapters::ActiveRecordAdapter.from(self)
-        end
+        # define_singleton_method(:sorcery_adapter) do
+        #   ::Sorcery::Adapters::ActiveRecordAdapter.from(self)
+        # end
       end
     end
   end
