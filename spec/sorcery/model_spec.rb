@@ -5,12 +5,15 @@ require 'sorcery-core'
 
 RSpec.describe Sorcery::Model do
   subject(:user_class) { Class.new { extend Sorcery::Model } }
-  subject(:user_instance) { user_class.new }
+
+  let(:user_instance) { user_class.new }
 
   it 'responds to authenticates_with_sorcery!' do
     expect(user_class).to respond_to :authenticates_with_sorcery!
   end
 
+  # TODO: Change rubocop to allow max 2 expectations? (before/after checking)
+  # rubocop:disable RSpec/MultipleExpectations
   describe 'user_class.authenticates_with_sorcery!' do
     it 'extends ClassMethods to calling class' do
       expect(user_class).not_to respond_to :authenticate
@@ -29,4 +32,5 @@ RSpec.describe Sorcery::Model do
       expect(user_instance).to respond_to :sorcery_config
     end
   end
+  # rubocop:enable RSpec/MultipleExpectations
 end
