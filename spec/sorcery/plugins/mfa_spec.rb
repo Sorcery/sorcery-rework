@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'mfa_helper'
+require 'spec_helper'
+require 'sorcery-mfa'
 
 RSpec.describe Sorcery::Plugins::MFA do
   it 'says hello world' do

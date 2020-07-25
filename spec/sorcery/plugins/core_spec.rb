@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-# FIXME: This feels hyperjank. Consider better ways to break down specs into
-#        logical chunks.
-
-require 'core_helper'
+require 'spec_helper'
+require 'sorcery-core'
 
 RSpec.describe Sorcery::Plugins::Core do
   it 'says hello world' do

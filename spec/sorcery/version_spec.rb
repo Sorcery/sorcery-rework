@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'core_helper'
+require 'spec_helper'
+require 'sorcery-core'
 
 RSpec.describe Sorcery::VERSION do
   it 'provides a string of current version' do

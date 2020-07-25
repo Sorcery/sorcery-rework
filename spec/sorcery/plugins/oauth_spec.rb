@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'oauth_helper'
+require 'spec_helper'
+require 'sorcery-oauth'
 
 RSpec.describe Sorcery::Plugins::OAuth do
   it 'says hello world' do
