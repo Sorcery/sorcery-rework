@@ -8,9 +8,6 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 ENV['RAILS_ENV'] ||= 'test'
 
-# TODO: Rails is currently unnecessary, and breaks due to missing a database
-#       connection.
+# TODO: Add coverage testing e.g. simplecov
 
-# require 'rails/all'
-# require 'rspec/rails'
 require 'byebug'

@@ -2,13 +2,21 @@
 
 # TODO: Documentation
 module Sorcery # :nodoc:
+  ####################################
+  ## Add Autoload Paths for Sorcery ##
+  ####################################
   autoload :Config, 'sorcery/config'
   autoload :Controller, 'sorcery/controller'
-  autoload :Engine, 'sorcery/engine'
   autoload :Model, 'sorcery/model'
+  # autoload :Railtie, 'sorcery/railtie' # TODO: Remove, unnecessary?
   autoload :VERSION, 'sorcery/version'
 
   module Plugins # :nodoc:
     autoload :Core, 'sorcery/plugins/core'
   end
+
+  ###############################
+  ## Extend Rails with Sorcery ##
+  ###############################
+  require 'sorcery/railtie'
 end

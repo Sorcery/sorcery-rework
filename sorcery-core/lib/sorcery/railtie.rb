@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require 'rails'
+
 module Sorcery
-  # Sorcery::Engine extends Rails to support our configuration class as a Rails
-  # config option. For instance:
+  # Sorcery::Railtie extends Rails to automatically support Sorcery.
   #
   # In: `./config/initializers/sorcery.rb`
   #
@@ -17,15 +18,16 @@ module Sorcery
   #   [etc...]
   # end
   # ```
-  class Engine < Rails::Engine
+  class Railtie < ::Rails::Railtie
     # TODO: Do we need to force the namespace with `::Sorcery`?
     config.sorcery = ::Sorcery::Config
 
-    initializer 'extend Rails with Sorcery' do
+    initializer ':extend_rails_with_sorcery' do
       ###########################
       ## ActionController::API ##
       ###########################
       ActiveSupport.on_load(:action_controller_api) do
+        # ActionController::API.send :include, ::Sorcery::Controller
         include ::Sorcery::Controller
       end
 
@@ -33,6 +35,7 @@ module Sorcery
       ## ActionController::Base ##
       ############################
       ActiveSupport.on_load(:action_controller_base) do
+        # ActionController::Base.send :include, ::Sorcery::Controller
         include ::Sorcery::Controller
         # NOTE: `helper_method` is what causes these methods to become available
         #       in views, See:
@@ -45,6 +48,7 @@ module Sorcery
       ## ActiveRecord::Base ##
       ########################
       ActiveSupport.on_load(:active_record) do
+        # ActiveRecord::Base.send :extend, ::Sorcery::Model
         extend ::Sorcery::Model
 
         # TODO: Implement the adapter abstraction layer, consider renaming to
