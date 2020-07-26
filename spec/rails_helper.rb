@@ -6,7 +6,6 @@ require 'spec_helper'
 ## Load Rails ##
 ################
 require 'rails/all'
-require 'rspec/rails'
 
 ############################
 ## Load Dummy Application ##
@@ -20,6 +19,13 @@ require 'rspec/rails'
 # Application that includes Sorcery.
 #
 require 'dummy_app/config/environment'
+
+######################
+## Load RSpec/Rails ##
+######################
+# NOTE: It's critical to include rspec/rails _after_ DummyApp! Otherwise we get
+#       deprecation warnings from zeitwerk.
+require 'rspec/rails'
 
 #####################
 ## Configure RSpec ##

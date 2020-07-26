@@ -27,7 +27,6 @@ module Sorcery
       ## ActionController::API ##
       ###########################
       ActiveSupport.on_load(:action_controller_api) do
-        # ActionController::API.send :include, ::Sorcery::Controller
         include ::Sorcery::Controller
       end
 
@@ -35,7 +34,6 @@ module Sorcery
       ## ActionController::Base ##
       ############################
       ActiveSupport.on_load(:action_controller_base) do
-        # ActionController::Base.send :include, ::Sorcery::Controller
         include ::Sorcery::Controller
         # NOTE: `helper_method` is what causes these methods to become available
         #       in views, See:
@@ -48,7 +46,6 @@ module Sorcery
       ## ActiveRecord::Base ##
       ########################
       ActiveSupport.on_load(:active_record) do
-        # ActiveRecord::Base.send :extend, ::Sorcery::Model
         extend ::Sorcery::Model
 
         # TODO: Implement the adapter abstraction layer, consider renaming to
