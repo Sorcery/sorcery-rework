@@ -8,7 +8,6 @@ module Sorcery # :nodoc:
   autoload :Config, 'sorcery/config'
   autoload :Controller, 'sorcery/controller'
   autoload :Model, 'sorcery/model'
-  # autoload :Railtie, 'sorcery/railtie' # TODO: Remove, unnecessary?
   autoload :VERSION, 'sorcery/version'
 
   module Plugins # :nodoc:

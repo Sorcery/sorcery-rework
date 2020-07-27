@@ -2,13 +2,8 @@
 
 require 'sorcery-core'
 
-# TODO: Documentation
 module Sorcery
-  module Plugins
-    module OAuth # :nodoc:
-      def self.hello_world
-        "Hello from sorcery-oauth v#{Sorcery::VERSION::STRING}"
-      end
-    end
+  module Plugins # :nodoc:
+    autoload :OAuth, 'sorcery/plugins/oauth'
   end
 end
