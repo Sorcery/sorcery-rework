@@ -80,3 +80,15 @@ Style/ModuleFunction:
 # The readability of [:some, :various, :symbols] > %i[some various symbols]
 Style/SymbolArray:
   EnforcedStyle: brackets
+# Very tempted to remove this cop entirely.
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'spec/dummy_app/db/**/*'
+
+#############
+## Metrics ##
+#############
+
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/dummy_app/db/migrate/**/*'
