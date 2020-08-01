@@ -7,6 +7,13 @@ require 'spec_helper'
 ################
 require 'rails/all'
 
+##################
+## Load Sorcery ##
+##################
+require 'sorcery-core'
+require 'sorcery-mfa'
+require 'sorcery-oauth'
+
 ############################
 ## Load Dummy Application ##
 ############################
@@ -20,12 +27,23 @@ require 'rails/all'
 #
 require 'dummy_app/config/environment'
 
-######################
-## Load RSpec/Rails ##
-######################
+##########################
+## Load RSpec Libraries ##
+##########################
 # NOTE: It's critical to include rspec/rails _after_ DummyApp! Otherwise we get
 #       deprecation warnings from zeitwerk.
 require 'rspec/rails'
+require 'factory_bot_rails'
+require 'faker'
+require 'shoulda-matchers'
+
+###############################
+## Load RSpec support folder ##
+###############################
+
+# Normally you would call Rails.root for this, but Rails.root refers to
+# dummy_app rather than our actual root.
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }
 
 #####################
 ## Configure RSpec ##
@@ -34,4 +52,20 @@ RSpec.configure do |config|
   config.mock_with :rspec
 
   config.use_transactional_fixtures = false
+  config.infer_spec_type_from_file_location!
+
+  # Allow shortened FactoryBot syntax.
+  # i.e. (create instead of FactoryBot.create)
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) { MigrationHelper.setup_orm }
+  config.after(:suite) { MigrationHelper.teardown_orm }
+  config.before { ActionMailer::Base.deliveries.clear }
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end

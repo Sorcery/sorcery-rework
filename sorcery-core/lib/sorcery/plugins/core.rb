@@ -3,6 +3,7 @@
 module Sorcery
   module Plugins
     module Core # :nodoc:
+      autoload :Controller, 'sorcery/plugins/core/controller'
       autoload :Model, 'sorcery/plugins/core/model'
 
       def self.hello_world

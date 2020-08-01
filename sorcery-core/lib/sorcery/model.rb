@@ -3,7 +3,11 @@
 module Sorcery
   module Model # :nodoc:
     def authenticates_with_sorcery!
+      # FIXME: This must be a config instance to allow per class modifications
       @sorcery_config = ::Sorcery::Config
+
+      # Allow overwriting config for each class
+      yield(@sorcery_config) if block_given?
 
       extend ClassMethods
       include InstanceMethods

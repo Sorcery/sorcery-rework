@@ -6,7 +6,6 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem 'rails'
 gem 'sqlite3'
-# gem 'sprockets'
 
 group :rubocop do
   gem 'rubocop', '~> 0.87.0'
@@ -17,6 +16,9 @@ end
 
 group :test do
   gem 'byebug'
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'rspec'
   gem 'rspec-rails'
+  gem 'shoulda-matchers'
 end

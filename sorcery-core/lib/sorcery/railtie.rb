@@ -27,19 +27,19 @@ module Sorcery
       ## ActionController::API ##
       ###########################
       ActiveSupport.on_load(:action_controller_api) do
-        include ::Sorcery::Controller
+        extend ::Sorcery::Controller
       end
 
       ############################
       ## ActionController::Base ##
       ############################
       ActiveSupport.on_load(:action_controller_base) do
-        include ::Sorcery::Controller
+        extend ::Sorcery::Controller
         # NOTE: `helper_method` is what causes these methods to become available
         #       in views, See:
         #       `ActionController::Helpers::ClassMethods.helper_method`
-        helper_method :current_user
-        helper_method :logged_in?
+        # helper_method :current_user
+        # helper_method :logged_in?
       end
 
       ########################

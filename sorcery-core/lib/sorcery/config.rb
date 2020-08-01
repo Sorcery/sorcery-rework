@@ -37,6 +37,7 @@ module Sorcery
 
       def configure!
         @configure_block&.call(self)
+        nil
       end
     end
 
