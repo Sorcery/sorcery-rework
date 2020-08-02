@@ -28,7 +28,7 @@ Where:
 
 * MAJOR - Includes backwards **incompatible** changes.
 * MINOR - Introduces new functionality but is fully backwards compatible.
-* PATCH - Fixes errors existing functionality (must be backwards compatible).
+* PATCH - Fixes errors in existing functionality (must be backwards compatible).
 
 The changelog and git tags should use `vMAJOR.MINOR.PATCH` to indicate that the
 number represents a version of Sorcery. For example, `1.0.0` would become
