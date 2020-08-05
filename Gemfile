@@ -21,4 +21,5 @@ group :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
+  gem 'simplecov', require: false
 end

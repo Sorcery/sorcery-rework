@@ -2,9 +2,7 @@
 
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  authenticates_with_sorcery! do |config|
-    config.plugins = [:core, :mfa, :oauth]
-  end
+  authenticates_with_sorcery!
 
   before_action :require_login
 
