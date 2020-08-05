@@ -85,6 +85,7 @@ module Sorcery
 
       def current_user
         return @current_user if defined?(@current_user)
+
         @current_user = login_from_session || login_from_other_sources || nil
       end
 
@@ -100,6 +101,7 @@ module Sorcery
 
       def login_from_session
         return unless session[sorcery_config.session_key].present?
+
         @current_user = user_class.find_by_id(
           session[sorcery_config.session_key]
         )
@@ -119,9 +121,9 @@ module Sorcery
         @user_class ||= sorcery_config.user_class.to_s.constantize
       rescue NameError
         raise ArgumentError,
-          'You have incorrectly defined user_class or have forgotten to '\
-          'define it in your Sorcery initializer file '\
-          '(config.user_class = \'User\').'
+              'You have incorrectly defined user_class or have forgotten to '\
+              'define it in your Sorcery initializer file '\
+              '(config.user_class = \'User\').'
       end
     end
   end
