@@ -1,5 +1,7 @@
 # Sorcery
 
+![Ruby](https://github.com/Sorcery/sorcery-rework/workflows/Ruby/badge.svg)
+
 ### **This code is not ready for production usage!!**
 
 Please use the existing Sorcery Gem for the time being, v0.0.0 contains nothing
