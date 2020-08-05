@@ -13,7 +13,6 @@ RSpec.describe Sorcery::Model do
   end
 
   # TODO: Change rubocop to allow max 2 expectations? (before/after checking)
-  # rubocop:disable RSpec/MultipleExpectations
   describe 'user_class.authenticates_with_sorcery!' do
     it 'extends ClassMethods to calling class' do
       expect(user_class).not_to respond_to :authenticate
@@ -32,5 +31,4 @@ RSpec.describe Sorcery::Model do
       expect(user_instance).to respond_to :sorcery_config
     end
   end
-  # rubocop:enable RSpec/MultipleExpectations
 end

@@ -3,21 +3,16 @@
 require 'rails'
 
 module Sorcery
-  # Sorcery::Railtie extends Rails to automatically support Sorcery.
+  ##
+  # Sorcery::Railtie extends Rails to automatically support Sorcery. To do this,
+  # it does two things:
   #
-  # In: `./config/initializers/sorcery.rb`
+  # * Extend <tt>Rails.application.config</tt> with Sorcery::Config
+  # * Add on_load hooks for ActionController and ActiveRecord to automatically
+  #   extend them with <tt>authenticates_with_sorcery!</tt>. See:
+  #   * Sorcery::Controller#authenticates_with_sorcery!
+  #   * Sorcery::Model#authenticates_with_sorcery!
   #
-  # ```
-  # Rails.application.config.sorcery.configure do |config|
-  #   config.some_variable = true
-  #
-  #   config.load_plugin(
-  #     [...]
-  #   )
-  #
-  #   [etc...]
-  # end
-  # ```
   class Railtie < ::Rails::Railtie
     # TODO: Do we need to force the namespace with `::Sorcery`?
     config.sorcery = ::Sorcery::Config

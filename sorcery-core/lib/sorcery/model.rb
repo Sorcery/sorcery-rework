@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 module Sorcery
-  module Model # :nodoc:
+  ##
+  # Extends ActiveRecord with Sorcery's methods.
+  #
+  module Model
     def authenticates_with_sorcery!
       # FIXME: This must be a config instance to allow per class modifications
-      @sorcery_config = ::Sorcery::Config
+      @sorcery_config = ::Sorcery::Config.instance.dup
+      @sorcery_config.configure!
 
       # Allow overwriting config for each class
       yield(@sorcery_config) if block_given?

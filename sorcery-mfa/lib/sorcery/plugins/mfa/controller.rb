@@ -2,11 +2,8 @@
 
 module Sorcery
   module Plugins
-    module Core
-      ##
-      # Model plugin extensions.
-      #
-      module Model
+    module MFA
+      module Controller # :nodoc:
       end
     end
   end

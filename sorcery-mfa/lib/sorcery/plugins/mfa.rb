@@ -3,6 +3,7 @@
 module Sorcery
   module Plugins
     module MFA # :nodoc:
+      autoload :Controller, 'sorcery/plugins/mfa/controller'
       autoload :Model, 'sorcery/plugins/mfa/model'
 
       def self.hello_world

@@ -3,7 +3,10 @@
 module Sorcery
   module Plugins
     module Core
-      module Controller # :nodoc:
+      ##
+      # Controller plugin extensions.
+      #
+      module Controller
       end
     end
   end

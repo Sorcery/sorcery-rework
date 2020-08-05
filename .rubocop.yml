@@ -66,6 +66,9 @@ Naming/FileName:
 RSpec/FilePath:
   CustomTransform:
     OAuth: oauth
+# Allow 2 expectations for before/after checking
+RSpec/MultipleExpectations:
+  Max: 2
 
 ###########
 ## Style ##
@@ -80,7 +83,7 @@ Style/ModuleFunction:
 # The readability of [:some, :various, :symbols] > %i[some various symbols]
 Style/SymbolArray:
   EnforcedStyle: brackets
-# Very tempted to remove this cop entirely.
+# Very tempted to disable this cop entirely.
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/dummy_app/db/**/*'

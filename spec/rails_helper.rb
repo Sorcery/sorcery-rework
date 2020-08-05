@@ -54,6 +54,15 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
 
+  # Find slow specs by running `profiling=true rspec`
+  config.profile_examples = 5 if ENV['profiling'] == 'true'
+
+  # Find load order dependencies
+  config.order = :random
+  # Allow replicating load order dependency
+  # by passing in same seed using --seed
+  Kernel.srand config.seed
+
   # Allow shortened FactoryBot syntax.
   # i.e. (create instead of FactoryBot.create)
   config.include FactoryBot::Syntax::Methods

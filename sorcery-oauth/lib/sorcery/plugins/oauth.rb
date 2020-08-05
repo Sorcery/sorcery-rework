@@ -3,6 +3,7 @@
 module Sorcery
   module Plugins
     module OAuth # :nodoc:
+      autoload :Controller, 'sorcery/plugins/oauth/controller'
       autoload :Model, 'sorcery/plugins/oauth/model'
 
       def self.hello_world
