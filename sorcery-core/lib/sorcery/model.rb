@@ -6,7 +6,6 @@ module Sorcery
   #
   module Model
     def authenticates_with_sorcery!
-      # FIXME: This must be a config instance to allow per class modifications
       @sorcery_config = ::Sorcery::Config.instance.dup
       @sorcery_config.configure!
 

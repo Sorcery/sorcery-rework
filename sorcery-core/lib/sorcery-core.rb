@@ -18,8 +18,25 @@ module Sorcery
   ####################################
   autoload :Config, 'sorcery/config'
   autoload :Controller, 'sorcery/controller'
+  autoload :Error, 'sorcery/error' # TODO: Should this be a require?
   autoload :Model, 'sorcery/model'
   autoload :VERSION, 'sorcery/version'
+
+  ##
+  # Password crypto providers
+  #
+  module CryptoProviders
+    autoload :Argon2, 'sorcery/crypto_providers/argon2'
+    autoload :BCrypt, 'sorcery/crypto_providers/bcrypt'
+  end
+
+  ##
+  # ORM adapter abstraction layer.
+  #
+  module OrmAdapters
+    autoload :ActiveRecord, 'sorcery/orm_adapters/active_record'
+    autoload :Base, 'sorcery/orm_adapters/base'
+  end
 
   ##
   # Plugins are self-contained units of code that extend Sorcery to provide
@@ -28,7 +45,11 @@ module Sorcery
   # examples on how to approach this.
   #
   module Plugins
-    autoload :Core, 'sorcery/plugins/core'
+    autoload :ActivityLogging, 'sorcery/plugins/activity_logging'
+    autoload :BruteForceProtection, 'sorcery/plugins/brute_force_protection'
+    autoload :RememberMe, 'sorcery/plugins/brute_force_protection'
+    autoload :ResetPassword, 'sorcery/plugins/brute_force_protection'
+    autoload :UserActivation, 'sorcery/plugins/brute_force_protection'
   end
 
   ###############################

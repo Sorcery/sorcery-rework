@@ -33,8 +33,8 @@ module Sorcery
         # NOTE: `helper_method` is what causes these methods to become available
         #       in views, See:
         #       `ActionController::Helpers::ClassMethods.helper_method`
-        # helper_method :current_user
-        # helper_method :logged_in?
+        helper_method :current_user
+        helper_method :logged_in?
       end
 
       ########################
@@ -43,16 +43,14 @@ module Sorcery
       ActiveSupport.on_load(:active_record) do
         extend ::Sorcery::Model
 
-        # TODO: Implement the adapter abstraction layer, consider renaming to
-        #       something a little more self-explanatory.
-        # define_method(:sorcery_adapter) do
-        #   @sorcery_adapter ||=
-        #     ::Sorcery::Adapters::ActiveRecordAdapter.new(self)
-        # end
+        define_method(:sorcery_orm_adapter) do
+          @sorcery_orm_adapter ||=
+            ::Sorcery::OrmAdapters::ActiveRecord.new(self)
+        end
 
-        # define_singleton_method(:sorcery_adapter) do
-        #   ::Sorcery::Adapters::ActiveRecordAdapter.from(self)
-        # end
+        define_singleton_method(:sorcery_orm_adapter) do
+          ::Sorcery::OrmAdapters::ActiveRecord.from(self)
+        end
       end
     end
   end

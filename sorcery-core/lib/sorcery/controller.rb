@@ -6,7 +6,6 @@ module Sorcery
   #
   module Controller
     def authenticates_with_sorcery!
-      # FIXME: This must be a config instance to allow per class modifications
       @sorcery_config = ::Sorcery::Config.instance.dup
       @sorcery_config.configure!
 
@@ -45,7 +44,10 @@ module Sorcery
       end
     end
 
-    module ClassMethods # :nodoc:
+    ##
+    # TODO
+    #
+    module ClassMethods
       def sorcery_config
         @sorcery_config
       end
@@ -71,12 +73,33 @@ module Sorcery
       # rubocop:enable Metrics/MethodLength
     end
 
-    module InstanceMethods # :nodoc:
+    ##
+    # TODO
+    #
+    module InstanceMethods
+      ##
+      # To be used as before_action.
+      # Will trigger auto-login attempts via the call to logged_in?
+      # If all attempts to auto-login fail, the failure callback will be called.
+      #--
+      # rubocop:disable Metrics/AbcSize
+      #++
+      #
       def require_login
         return if logged_in?
 
+        save_return_to_url = (
+          sorcery_config.save_return_to_url &&
+          request.get? &&
+          !request.xhr? &&
+          !request.format.json?
+        )
+
+        session[:return_to_url] = request.url if save_return_to_url
+
         send(sorcery_config.not_authenticated_action)
       end
+      # rubocop:enable Metrics/AbcSize
 
       # TODO: Would `current_user.present?` be preferable here?
       def logged_in?
@@ -102,7 +125,7 @@ module Sorcery
       def login_from_session
         return unless session[sorcery_config.session_key].present?
 
-        @current_user = user_class.find_by_id(
+        @current_user = user_class.sorcery_orm_adapter.find_by_id(
           session[sorcery_config.session_key]
         )
       end

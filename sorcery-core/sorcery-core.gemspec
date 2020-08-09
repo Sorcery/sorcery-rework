@@ -31,5 +31,7 @@ Gem::Specification.new do |s|
     'source_code_uri'   => "#{repo_url}/tree/v#{version}"
   }
 
-  s.add_dependency 'bcrypt', '~> 3.0'
+  # Crypto providers are optional, make sure to add them to your bundle if used.
+  s.add_optional_dependency 'argon2', '~> 2.0'
+  s.add_optional_dependency 'bcrypt', '~> 3.0'
 end

@@ -21,11 +21,13 @@ module Sorcery
   class Config
     # Defaults for Sorcery Core (plugins will add their own default values)
     DEFAULTS = {
+      # TODO: Prevent editing plugins list directly (force calling load_plugin)
       plugins:                  [],
       not_authenticated_action: :not_authenticated,
       user_class:               :nil,
       login_session_key:        :user_id,
-      login_sources:            Set.new
+      login_sources:            Set.new,
+      save_return_to_url:       true
     }.freeze
 
     private_constant :DEFAULTS
