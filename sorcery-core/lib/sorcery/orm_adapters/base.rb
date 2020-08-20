@@ -31,6 +31,16 @@ module Sorcery
       def update_attribute(name, value)
         update_attributes(name => value)
       end
+
+      ##
+      # This will be handled by the specific ORM implementations.
+      #
+      def define_field(name, type, options = {}); end
+
+      ##
+      # This will be handled by the specific ORM implementations.
+      #
+      def define_callback(time, event, method_name, options = {}); end
     end
   end
 end

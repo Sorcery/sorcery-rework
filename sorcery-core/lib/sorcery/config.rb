@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
+##
+#
 module Sorcery
+  # Helper method to shorten `Rails.application.config.sorcery.configure` to
+  # just `Sorcery.configure`
+  def self.configure(&block)
+    Config.configure(&block)
+  end
+
   ##
   # Example usage in a Rails application:
   #
@@ -22,12 +30,46 @@ module Sorcery
     # Defaults for Sorcery Core (plugins will add their own default values)
     DEFAULTS = {
       # TODO: Prevent editing plugins list directly (force calling load_plugin)
-      plugins:                  [],
-      not_authenticated_action: :not_authenticated,
-      user_class:               :nil,
-      login_session_key:        :user_id,
-      login_sources:            Set.new,
-      save_return_to_url:       true
+      plugins:                                 [],
+      ################
+      ## Attributes ##
+      ################
+      crypted_password_attribute_name:         :crypted_password,
+      email_attribute_name:                    :email,
+      password_attribute_name:                 :password,
+      username_attribute_names:                [:email],
+      ###############
+      ## Passwords ##
+      ###############
+      encryption_algorithm:                    :bcrypt,
+      # TODO: Remove encryption_key if encrypt method is removed.
+      encryption_key:                          nil,
+      encryption_provider:                     'CryptoProviders::BCrypt',
+      custom_encryption_provider:              nil,
+      pepper:                                  '',
+      salt_join_token:                         '',
+      salt_attribute_name:                     :salt,
+      stretches:                               nil,
+      ###########
+      ## Model ##
+      ###########
+      model_subclasses_inherit_config:         false,
+      ################
+      ## Controller ##
+      ################
+      downcase_username_before_authenticating: false,
+      not_authenticated_action:                :not_authenticated,
+      ###########
+      ## Other ##
+      ###########
+      after_config:                            [],
+      before_authenticate:                     [],
+      email_delivery_method:                   :deliver_now,
+      login_session_key:                       :user_id,
+      login_sources:                           Set.new,
+      save_return_to_url:                      true,
+      token_randomness:                        15,
+      user_class:                              :nil
     }.freeze
 
     private_constant :DEFAULTS
