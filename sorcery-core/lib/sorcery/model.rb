@@ -7,6 +7,24 @@ module Sorcery
   # Extends ActiveRecord with Sorcery's methods.
   #
   module Model
+    ##
+    # Extends the calling class with Sorcery's model methods, as well as
+    # providing an interface to customize the configuration on a per class basis
+    # using a block.
+    #
+    # For example:
+    #
+    #   class User < ApplicationRecord
+    #     authenticates_with_sorcery! do |config|
+    #       config.encryption_algorithm = :argon2
+    #     end
+    #   end
+    #--
+    # TODO: Extract / simplify method if possible.
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    #++
+    #
     def authenticates_with_sorcery!
       @sorcery_config = ::Sorcery::Config.instance.dup
       @sorcery_config.configure!
@@ -26,6 +44,8 @@ module Sorcery
       end
       @sorcery_config.after_config.each { |c| send(c) }
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     private
 
@@ -61,20 +81,53 @@ module Sorcery
     ##
     # Necessary for ORMs like MongoID
     #
+    #--
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    #++
+    #
     def define_base_fields!
       class_eval do
         sorcery_config.username_attribute_names.each do |username|
-          sorcery_orm_adapter.define_field username, String, length: 255
+          sorcery_orm_adapter.define_field(
+            username,
+            String,
+            length: 255
+          )
         end
+        # FIXME: LineLength here is a little tricky to solve.
+        # rubocop:disable Layout/LineLength
         unless sorcery_config.username_attribute_names.include?(sorcery_config.email_attribute_name)
-          sorcery_orm_adapter.define_field sorcery_config.email_attribute_name, String, length: 255
+          sorcery_orm_adapter.define_field(
+            sorcery_config.email_attribute_name,
+            String,
+            length: 255
+          )
         end
-        sorcery_orm_adapter.define_field sorcery_config.crypted_password_attribute_name, String, length: 255
-        sorcery_orm_adapter.define_field sorcery_config.salt_attribute_name, String, length: 255
+        # rubocop:enable Layout/LineLength
+        sorcery_orm_adapter.define_field(
+          sorcery_config.crypted_password_attribute_name,
+          String,
+          length: 255
+        )
+        sorcery_orm_adapter.define_field(
+          sorcery_config.salt_attribute_name,
+          String,
+          length: 255
+        )
       end
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
-    # add virtual password accessor and ORM callbacks.
+    ##
+    # Add virtual password accessors and ORM callbacks.
+    #
+    #--
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
+    #++
+    #
     def init_orm_hooks!
       sorcery_orm_adapter.define_callback(
         :before, :validation, :encrypt_password,
@@ -90,13 +143,19 @@ module Sorcery
         }
       )
 
-      if sorcery_config.password_attribute_name.present?
-        attr_accessor sorcery_config.password_attribute_name
-      end
+      return unless sorcery_config.password_attribute_name.present?
+
+      attr_accessor sorcery_config.password_attribute_name
     end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     ##
     # TODO
+    #
+    #--
+    # rubocop:disable Metrics/ModuleLength
+    #++
     #
     module ClassMethods
       def sorcery_config
@@ -111,14 +170,25 @@ module Sorcery
       #
       # Returns the user if successful, nil otherwise.
       #
+      #--
+      # FIXME: This method is so complex that four different cops bark about it.
+      #        Extract as much as possible into smaller discrete chunks?
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/PerceivedComplexity
+      #++
+      #
       def authenticate(*credentials, &block)
         unless credentials.is_a?(Array)
           raise ArgumentError, 'Credentials must be an Array!'
         end
 
         if credentials.size < 2
+          # FIXME: I don't like the styling here, update rubocop config to fix.
           raise ArgumentError,
-                'Username and password are required to authenticate via Sorcery!'
+                'Username and password are required to authenticate via '\
+                'Sorcery!'
         end
 
         # TODO: Does this return false for a particular reason? If not, it
@@ -143,7 +213,12 @@ module Sorcery
 
         set_encryption_attributes
 
-        if user.respond_to?(:active_for_authentication?) && !user.active_for_authentication?
+        inactive_for_authentication = (
+          user.respond_to?(:active_for_authentication?) &&
+          !user.active_for_authentication?
+        )
+
+        if inactive_for_authentication
           return authentication_response(user: user, failure: :inactive, &block)
         end
 
@@ -156,20 +231,28 @@ module Sorcery
         end
 
         unless user.valid_password?(credentials[1])
-          return authentication_response(user: user, failure: :invalid_password, &block)
+          return authentication_response(
+            user:    user,
+            failure: :invalid_password,
+            &block
+          )
         end
 
         authentication_response(user: user, return_value: user, &block)
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
 
-      def load_from_token(token, token_attr_name, token_expiration_date_attr = nil, &block)
+      def load_from_token(token, token_attr_name, exp_attr_name = nil, &block)
         return token_response(failure: :invalid_token, &block) if token.blank?
 
         user = sorcery_orm_adapter.find_by_token(token_attr_name, token)
 
         return token_response(failure: :user_not_found, &block) unless user
 
-        unless check_expiration_date(user, token_expiration_date_attr)
+        unless check_expiration_date(user, exp_attr_name)
           return token_response(user: user, failure: :token_expired, &block)
         end
 
@@ -207,6 +290,12 @@ module Sorcery
         options[:return_value]
       end
 
+      # TODO: Reduce complexity
+      # TODO: Shouldn't the encryption_provider just read from the config
+      #       directly? Or alternatively, these values get set as a part of the
+      #       config process instead.
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Layout/LineLength
       def set_encryption_attributes
         if @sorcery_config.encryption_provider.respond_to?(:stretches) && @sorcery_config.stretches
           @sorcery_config.encryption_provider.stretches = @sorcery_config.stretches
@@ -214,11 +303,14 @@ module Sorcery
         if @sorcery_config.encryption_provider.respond_to?(:join_token) && @sorcery_config.salt_join_token
           @sorcery_config.encryption_provider.join_token = @sorcery_config.salt_join_token
         end
-        if @sorcery_config.encryption_provider.respond_to?(:pepper) && @sorcery_config.pepper
-          @sorcery_config.encryption_provider.pepper = @sorcery_config.pepper
-        end
-      end
+        return unless @sorcery_config.encryption_provider.respond_to?(:pepper) && @sorcery_config.pepper
 
+        @sorcery_config.encryption_provider.pepper = @sorcery_config.pepper
+      end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Layout/LineLength
+
+      # rubocop:disable Metrics/MethodLength
       def add_config_inheritance
         class_eval do
           def self.inherited(subclass)
@@ -232,6 +324,7 @@ module Sorcery
           end
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       def check_expiration_date(user, token_expiration_date_attr)
         return true unless token_expiration_date_attr
@@ -241,6 +334,7 @@ module Sorcery
         !expires_at || (Time.now.in_time_zone < expires_at)
       end
     end
+    # rubocop:enable Metrics/ModuleLength
 
     ##
     # TODO
@@ -286,6 +380,11 @@ module Sorcery
       # Calls the configured crypto provider to compare the supplied
       # password with the encrypted one.
       #
+      #--
+      # TODO: Reduce complexity
+      # rubocop:disable Metrics/AbcSize
+      #++
+      #
       def valid_password?(pass)
         # If the user class doesn't support passwords, then all passwords are
         # by extension invalid.
@@ -304,12 +403,18 @@ module Sorcery
 
         sorcery_config.encryption_provider.matches?(crypted, pass, salt)
       end
+      # rubocop:enable Metrics/AbcSize
 
       protected
 
       ##
       # Generates a new salt, then takes the password, salt, and crypto provider
       # to generate the crypted password.
+      #
+      #--
+      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
+      #++
       #
       def encrypt_password
         new_salt =
@@ -326,6 +431,8 @@ module Sorcery
           )
         )
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
 
       ##
       # Clears the virtual password and password_confirmation attributes after

@@ -270,17 +270,6 @@ module Sorcery
         nil
       end
 
-      # TODO: If this works, replace the above with it:
-      def login_from_other_sources
-        result = nil
-        result = sorcery_config.login_sources.find do |source|
-          result = send(source)
-        end
-        return result if result.present?
-
-        nil
-      end
-
       def user_class
         @user_class ||= sorcery_config.user_class.to_s.constantize
       rescue NameError
