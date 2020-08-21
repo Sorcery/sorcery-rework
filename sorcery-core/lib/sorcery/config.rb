@@ -74,7 +74,56 @@ module Sorcery
 
     private_constant :DEFAULTS
 
-    # TODO: No seriously, how do eigenclasses work? What is this witchcraft?
+    ##
+    # What is `class << self`, and why do we use it?
+    #
+    # For the most part, it's a shortcut to mark all methods inside the block as
+    # class methods. For example, these two code examples should be functionally
+    # equivalent:
+    #
+    #   class Config
+    #     def self.instance
+    #       @instance ||= new(DEFAULTS)
+    #     end
+    #   end
+    #
+    #   class Config
+    #     class << self
+    #       def instance
+    #         @instance ||= new(DEFAULTS)
+    #       end
+    #     end
+    #   end
+    #
+    # There are two primary benefits to using `class << self` in these
+    # situations:
+    #
+    # 1. It makes the code a little easier to read, due to not littering our def
+    #    calls with `self.` and grouping all class methods together in a block.
+    # 2. It also affects metaprogramming, making it slightly easier to tell
+    #    what's going on. For example, see the loop that delegates the Config
+    #    class methods to instance methods.
+    #
+    #   [:some, :symbols, :here].each do |method_name|
+    #     class_eval <<-RUBY, __FILE__, __LINE__ + 1
+    #       def #{method_name}(&block)
+    #         return instance.#{method_name}(&block) if block_given?
+    #         instance.#{method_name}
+    #       end
+    #     RUBY
+    #   end
+    #
+    # Whereas if we didn't use `class << self`:
+    #
+    #   [:some, :symbols, :here].each do |method_name|
+    #     class_eval <<-RUBY, __FILE__, __LINE__ + 1
+    #       def self.#{method_name}(&block)
+    #         return instance.#{method_name}(&block) if block_given?
+    #         instance.#{method_name}
+    #       end
+    #     RUBY
+    #   end
+    #
     class << self
       def instance
         @instance ||= new(DEFAULTS)
