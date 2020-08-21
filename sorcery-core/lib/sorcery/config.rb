@@ -124,6 +124,27 @@ module Sorcery
     #     RUBY
     #   end
     #
+    # There is a little bit of witchcraft associated with
+    # `class << instance_var`, in that it will create class methods that only
+    # are extended to that specific instance of the class.
+    #
+    # Example per: https://stackoverflow.com/a/38041660
+    #
+    #   class Config
+    #   end
+    #
+    #   config1 = Config.new
+    #   config2 = Config.new
+    #
+    #   class << config1
+    #     def say_hello
+    #       puts "Hello!"
+    #     end
+    #   end
+    #
+    #   config1.say_hello # Output: Hello!
+    #   config2.say_hello # Output: NoMethodError: undefined method 'say_hello'
+    #
     class << self
       def instance
         @instance ||= new(DEFAULTS)
