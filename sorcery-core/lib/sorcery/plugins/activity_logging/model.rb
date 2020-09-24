@@ -32,19 +32,19 @@ module Sorcery
           # rubocop:disable Metrics/AbcSize
           # rubocop:disable Metrics/MethodLength
           def define_activity_logging_fields
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.last_login_at_attribute_name,
               Time
             )
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.last_logout_at_attribute_name,
               Time
             )
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.last_activity_at_attribute_name,
               Time
             )
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.last_login_from_ip_address_name,
               String
             )
@@ -61,28 +61,28 @@ module Sorcery
           # TODO: Rename methods or fix design pattern
           # rubocop:disable Naming/AccessorMethodName
           def set_last_login_at(time)
-            sorcery_adapter.update_attribute(
+            sorcery_orm_adapter.update_attribute(
               sorcery_config.last_login_at_attribute_name,
               time
             )
           end
 
           def set_last_logout_at(time)
-            sorcery_adapter.update_attribute(
+            sorcery_orm_adapter.update_attribute(
               sorcery_config.last_logout_at_attribute_name,
               time
             )
           end
 
           def set_last_activity_at(time)
-            sorcery_adapter.update_attribute(
+            sorcery_orm_adapter.update_attribute(
               sorcery_config.last_activity_at_attribute_name,
               time
             )
           end
 
           def set_last_ip_address(ip_address)
-            sorcery_adapter.update_attribute(
+            sorcery_orm_adapter.update_attribute(
               sorcery_config.last_login_from_ip_address_name,
               ip_address
             )

@@ -16,6 +16,7 @@ module Sorcery
       include InstanceMethods
 
       include_plugins!
+      load_plugin_settings!
       add_config_inheritance!
     end
 
@@ -34,6 +35,30 @@ module Sorcery
       #       and apply them now that they've been added by the plugin
       #       `self.included` calls.
     end
+
+    # FIXME: Performance of this method is abyssmal, optimization needed.
+    # rubocop:disable Metrics/MethodLength
+    def load_plugin_settings!
+      @sorcery_config.plugins.each do |plugin|
+        # TODO: Find a better name than "klass"
+        @sorcery_config.plugin_settings[plugin].each do |klass, plugin_settings|
+          next unless klass == :controller
+
+          plugin_settings.each do |key, value|
+            # TODO: This method of assigning keys can probably be improved.
+            config_method = (key.to_s + '=').to_sym
+            if @sorcery_config.respond_to?(config_method)
+              @sorcery_config.__send__(config_method, value)
+            else
+              raise ArgumentError,
+                    "Invalid plugin setting provided! `#{key}` is not a valid "\
+                    "option for the Sorcery `#{plugin}` plugin."
+            end
+          end
+        end
+      end
+    end
+    # rubocop:enable Metrics/MethodLength
 
     # TODO: This is essentially 1:1 with the Model version of this method. DRY?
     def plugin_const_string(plugin_symbol)
@@ -235,11 +260,11 @@ module Sorcery
         super # call the default behaviour which resets the session
       end
 
-      protected
-
       def sorcery_config
         self.class.sorcery_config
       end
+
+      protected
 
       def login_from_session
         return nil unless session[sorcery_config.session_key].present?

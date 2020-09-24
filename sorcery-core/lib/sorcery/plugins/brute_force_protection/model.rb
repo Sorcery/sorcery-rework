@@ -51,16 +51,16 @@ module Sorcery
 
           # rubocop:disable Metrics/MethodLength
           def define_brute_force_protection_fields
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.failed_logins_count_attribute_name,
               Integer,
               default: 0
             )
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.lock_expires_at_attribute_name,
               Time
             )
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.unlock_token_attribute_name,
               String
             )
@@ -78,7 +78,8 @@ module Sorcery
             config = sorcery_config
             return unless login_unlocked?
 
-            sorcery_adapter.increment(config.failed_logins_count_attribute_name)
+            sorcery_orm_adapter.
+              increment(config.failed_logins_count_attribute_name)
 
             failed_count = send(config.failed_logins_count_attribute_name)
             failed_limit = config.consecutive_login_retries_amount_limit
@@ -97,7 +98,7 @@ module Sorcery
               config.failed_logins_count_attribute_name => 0,
               config.unlock_token_attribute_name        => nil
             }
-            sorcery_adapter.update_attributes(attributes)
+            sorcery_orm_adapter.update_attributes(attributes)
           end
 
           def login_locked?
@@ -118,7 +119,7 @@ module Sorcery
               config.lock_expires_at_attribute_name => Time.current + config.login_lock_time_period,
               config.unlock_token_attribute_name    => TemporaryToken.generate_random_token
             }
-            sorcery_adapter.update_attributes(attributes)
+            sorcery_orm_adapter.update_attributes(attributes)
 
             if config.unlock_token_mailer_disabled || config.unlock_token_mailer.nil?
               return

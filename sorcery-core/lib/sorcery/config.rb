@@ -26,11 +26,16 @@ module Sorcery
   #
   # Special thanks to @sinsoku for the basis of this new config methodology.
   #
+  #--
+  # rubocop:disable Metrics/ClassLength
+  #++
+  #
   class Config
     # Defaults for Sorcery Core (plugins will add their own default values)
     DEFAULTS = {
       # TODO: Prevent editing plugins list directly (force calling load_plugin)
       plugins:                                 [],
+      plugin_settings:                         {},
       ################
       ## Attributes ##
       ################
@@ -59,14 +64,19 @@ module Sorcery
       ################
       downcase_username_before_authenticating: false,
       not_authenticated_action:                :not_authenticated,
+      login_session_key:                       :user_id,
+      login_sources:                           Set.new,
+      before_logout:                           Set.new,
+      after_failed_login:                      Set.new,
+      after_login:                             Set.new,
+      after_logout:                            Set.new,
+      after_remember_me:                       Set.new,
       ###########
       ## Other ##
       ###########
       after_config:                            [],
       before_authenticate:                     [],
       email_delivery_method:                   :deliver_now,
-      login_session_key:                       :user_id,
-      login_sources:                           Set.new,
       save_return_to_url:                      true,
       token_randomness:                        15,
       user_class:                              :nil
@@ -184,6 +194,14 @@ module Sorcery
       end
       # rubocop:enable Metrics/MethodLength
 
+      def load_plugin(plugin, settings = {})
+        instance.load_plugin(plugin, settings)
+      end
+
+      def unload_plugin(plugin)
+        instance.unload_plugin(plugin)
+      end
+
       # Delegate class methods to instance methods
       [:reset!, :user_config, :configure, :configure!].each do |method_name|
         class_eval <<-RUBY, __FILE__, __LINE__ + 1
@@ -214,6 +232,14 @@ module Sorcery
       block_given? ? @user_config = block : @user_config
     end
 
+    # FIXME: This probably has unintended consequences, such as persisting
+    #        custom settings as global defaults for subsequent calls to config.
+    #        This should instead only add the defaults to the particular calling
+    #        instance.
+    def add_defaults(defaults)
+      self.class.add_defaults(defaults)
+    end
+
     # TODO: Unused, remove?
     # def update!
     #   @defaults.each do |k, v|
@@ -230,6 +256,26 @@ module Sorcery
     def configure!
       @configure_block&.call(self)
       nil
+    end
+
+    def load_plugin(plugin, settings = {})
+      unless plugin.is_a?(Symbol)
+        raise ArgumentError, 'Plugin must be a symbol!'
+      end
+      unless settings.is_a?(Hash)
+        raise ArgumentError, 'Settings must be a hash!'
+      end
+
+      plugins << plugin unless plugins.include?(plugin)
+      plugin_settings[plugin] = settings
+    end
+
+    def unload_plugin(plugin)
+      unless plugin.is_a?(Symbol)
+        raise ArgumentError, 'Plugin must be a symbol!'
+      end
+
+      plugins.reject! { |loaded_plugin| loaded_plugin == plugin }
     end
 
     def merge(other)
@@ -266,4 +312,5 @@ module Sorcery
 
     add_defaults(DEFAULTS)
   end
+  # rubocop:enable Metrics/ClassLength
 end
