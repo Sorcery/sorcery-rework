@@ -47,9 +47,9 @@ module Sorcery
   module Plugins
     autoload :ActivityLogging, 'sorcery/plugins/activity_logging'
     autoload :BruteForceProtection, 'sorcery/plugins/brute_force_protection'
-    autoload :RememberMe, 'sorcery/plugins/brute_force_protection'
-    autoload :ResetPassword, 'sorcery/plugins/brute_force_protection'
-    autoload :UserActivation, 'sorcery/plugins/brute_force_protection'
+    autoload :RememberMe, 'sorcery/plugins/remember_me'
+    autoload :ResetPassword, 'sorcery/plugins/reset_password'
+    autoload :UserActivation, 'sorcery/plugins/user_activation'
   end
 
   ###############################

@@ -3,8 +3,10 @@
 require 'spec_helper'
 require 'sorcery-core'
 
+# TODO: Fill out the rest of the specs...
+
 # rubocop:disable Metrics/BlockLength
-RSpec.describe Sorcery::Plugins::ActivityLogging do
+RSpec.describe Sorcery::Plugins::RememberMe do
   describe 'controllers' do
     # FIXME: This doesn't work without ActionController due to not responding to
     #        the `after_action` method.
@@ -20,13 +22,13 @@ RSpec.describe Sorcery::Plugins::ActivityLogging do
         # NOTE: Calling this on the class, not instance, is intentional.
         controller_class.authenticates_with_sorcery! do |config|
           config.load_plugin(
-            :activity_logging,
-            controller: { register_login_time: false }
+            :remember_me,
+            controller: { remember_me_httponly: false }
           )
         end
 
         expect(
-          controller_instance.sorcery_config.register_login_time
+          controller_instance.sorcery_config.remember_me_httponly
         ).to eq(false)
       end
       # rubocop:enable RSpec/ExampleLength
@@ -40,14 +42,14 @@ RSpec.describe Sorcery::Plugins::ActivityLogging do
 
     describe 'user_class.authenticates_with_sorcery!' do
       it 'includes InstanceMethods on calling class instances' do
-        expect(user_instance).not_to respond_to :recently_active?
+        expect(user_instance).not_to respond_to :remember_me!
 
         # NOTE: Calling this on the class, not instance, is intentional.
         user_class.authenticates_with_sorcery! do |config|
-          config.load_plugin(:activity_logging)
+          config.load_plugin(:remember_me)
         end
 
-        expect(user_instance).to respond_to :recently_active?
+        expect(user_instance).to respond_to :remember_me!
       end
 
       it 'accepts plugin settings' do
