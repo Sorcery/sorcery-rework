@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   }
 
   # Crypto providers are optional, make sure to add them to your bundle if used.
-  s.add_optional_dependency 'argon2', '~> 2.0'
-  s.add_optional_dependency 'bcrypt', '~> 3.0'
+  # This appears to be deprecated, check for recommended alternative
+  # s.add_optional_dependency 'argon2', '~> 2.0'
+  # s.add_optional_dependency 'bcrypt', '~> 3.0'
 end
