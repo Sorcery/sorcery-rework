@@ -57,5 +57,9 @@ NOTE: `X.Y.Z` and `vX.Y.Z` are given as examples, and should be replaced with
 1. Stage your changes and create a commit
    1. `git add -A`
    1. `git commit -m "Release vX.Y.Z"`
+1. TODO: Gem Release (WIP)
+   1. `cd <dir>` (e.g. `cd ./sorcery-core/`) - must be at same level as gemspec
+   1. `gem build`
+   1. `gem push <filename>`
 1. TODO: Version tagging
-1. TODO: Gem Release
+   1. Release new version via github interface
