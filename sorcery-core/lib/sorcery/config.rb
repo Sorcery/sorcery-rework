@@ -237,14 +237,14 @@ module Sorcery
     #        custom settings as global defaults for subsequent calls to config.
     #        This should instead only add the defaults to the particular calling
     #        instance.
-    def add_defaults(defaults)
+    def add_plugin_defaults(defaults)
       self.class.add_defaults(defaults)
-      load_new_defaults!(defaults)
+      load_plugin_defaults!(defaults)
     end
 
     # FIXME: The entire settings situation feels a bit jank, consider
     #        refactoring once a better understanding of the flow is attained.
-    def load_new_defaults!(defaults)
+    def load_plugin_defaults!(defaults)
       defaults.each do |k, v|
         next if instance_variable_defined?("@#{k}")
 

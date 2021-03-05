@@ -15,7 +15,7 @@ module Sorcery
           base.extend(ClassMethods)
           base.send(:include, InstanceMethods)
 
-          base.sorcery_config.add_defaults(
+          base.sorcery_config.add_plugin_defaults(
             failed_logins_count_attribute_name:     :failed_logins_count,
             lock_expires_at_attribute_name:         :lock_expires_at,
             consecutive_login_retries_amount_limit: 50,

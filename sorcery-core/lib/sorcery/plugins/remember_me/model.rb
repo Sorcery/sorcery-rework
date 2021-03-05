@@ -20,7 +20,7 @@ module Sorcery
           base.extend(ClassMethods)
           base.send(:include, InstanceMethods)
 
-          base.sorcery_config.add_defaults(
+          base.sorcery_config.add_plugin_defaults(
             remember_me_token_attribute_name:            :remember_me_token,
             remember_me_token_expires_at_attribute_name: :remember_me_token_expires_at,
             remember_me_token_persist_globally:          false,

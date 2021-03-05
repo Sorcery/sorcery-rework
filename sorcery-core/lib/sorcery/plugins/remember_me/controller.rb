@@ -12,7 +12,7 @@ module Sorcery
         def self.included(base)
           base.send(:include, InstanceMethods)
 
-          base.sorcery_config.add_defaults(
+          base.sorcery_config.add_plugin_defaults(
             cookie_domain:        nil,
             remember_me_httponly: true
           )

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class Admin < ApplicationRecord
-  authenticates_with_sorcery! do |config|
-    # byebug
-  end
+  authenticates_with_sorcery!
 
   validates :email, presence: true
 end
