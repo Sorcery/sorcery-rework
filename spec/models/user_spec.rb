@@ -12,4 +12,18 @@ RSpec.describe User do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:username) }
   end
+
+  describe 'class method' do
+    describe 'authenticate' do
+      subject(:user) { create :user, password: 'secret' }
+
+      it 'returns user if credentials are good' do
+        expect(described_class.authenticate(user.username, 'secret')).to eq user
+      end
+
+      it 'returns nil if credentials are bad' do
+        expect(described_class.authenticate(user.username, 'wrong!')).to eq nil
+      end
+    end
+  end
 end

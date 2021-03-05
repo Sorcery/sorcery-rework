@@ -2,7 +2,7 @@
 
 class User < ApplicationRecord
   authenticates_with_sorcery! do |config|
-    # byebug
+    config.username_attribute_names = [:username]
   end
 
   validates :username, presence: true

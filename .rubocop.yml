@@ -29,8 +29,10 @@ Layout/LineLength:
 # instead
 Layout/CaseIndentation:
   EnforcedStyle: end
-# Lines can get stupidly long if we indent it to the other params
+# Lines can get stupidly long if we indent it to the other params/args
 Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation
+Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
 # Force prettier hash alignment
 Layout/HashAlignment:

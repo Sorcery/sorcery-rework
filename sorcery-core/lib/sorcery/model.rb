@@ -83,8 +83,8 @@ module Sorcery
               @sorcery_config.__send__(config_method, value)
             else
               raise ArgumentError,
-                    "Invalid plugin setting provided! `#{key}` is not a valid "\
-                    "option for the Sorcery `#{plugin}` plugin."
+                "Invalid plugin setting provided! `#{key}` is not a valid "\
+                "option for the Sorcery `#{plugin}` plugin."
             end
           end
         end
@@ -212,15 +212,13 @@ module Sorcery
         if credentials.size < 2
           # FIXME: I don't like the styling here, update rubocop config to fix.
           raise ArgumentError,
-                'Username and password are required to authenticate via '\
-                'Sorcery!'
+            'Username and password are required to authenticate via '\
+            'Sorcery!'
         end
 
-        # TODO: Does this return false for a particular reason? If not, it
-        #       should be nil instead.
         if credentials[0].blank?
           return authentication_response(
-            return_value: false,
+            return_value: nil,
             failure:      :invalid_login,
             &block
           )
@@ -296,8 +294,28 @@ module Sorcery
 
         set_encryption_attributes
 
-        CryptoProviders::AES256.key = @sorcery_config.encryption_key
+        # FIXME: figure out the plan for AES256 (drop support? bad practice)
+        # CryptoProviders::AES256.key = @sorcery_config.encryption_key
         @sorcery_config.encryption_provider.encrypt(*tokens)
+      end
+
+      ##
+      # Random secure token, used for salt and temporary tokens.
+      #
+      #--
+      # Having this be loaded via `include` using `self.` is 1:1 with previous
+      # functionality, but doesn't make much sense. Investigate if this can be
+      # moved to `ClassMethods` and the `self.` dropped.
+      #
+      # Edit: Updated to be ClassMethods due to authenticate failing from
+      # missing method, double check that there are no other repercussions, then
+      # remove this note.
+      #++
+      #
+      def generate_random_token
+        SecureRandom.urlsafe_base64(
+          @sorcery_config.token_randomness
+        ).tr('lIO0', 'sxyz')
       end
 
       protected
@@ -367,21 +385,6 @@ module Sorcery
     module InstanceMethods
       def sorcery_config
         self.class.sorcery_config
-      end
-
-      ##
-      # Random secure token, used for salt and temporary tokens.
-      #
-      #--
-      # Having this be loaded via `include` using `self.` is 1:1 with previous
-      # functionality, but doesn't make much sense. Investigate if this can be
-      # moved to `ClassMethods` and the `self.` dropped.
-      #++
-      #
-      def self.generate_random_token
-        SecureRandom.urlsafe_base64(
-          @sorcery_config.token_randomness
-        ).tr('lIO0', 'sxyz')
       end
 
       ##

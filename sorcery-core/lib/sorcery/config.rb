@@ -49,7 +49,8 @@ module Sorcery
       encryption_algorithm:                    :bcrypt,
       # TODO: Remove encryption_key if encrypt method is removed.
       encryption_key:                          nil,
-      encryption_provider:                     'CryptoProviders::BCrypt',
+      # TODO: Remove encryption provider if it proves unnecessary
+      # encryption_provider:                   'CryptoProviders::BCrypt',
       custom_encryption_provider:              nil,
       pepper:                                  '',
       salt_join_token:                         '',
@@ -299,6 +300,18 @@ module Sorcery
         login_session_key.call(self)
       else
         login_session_key
+      end
+    end
+
+    def encryption_provider
+      case @encryption_algorithm.to_sym
+      when :none   then nil
+      when :argon2 then ::Sorcery::CryptoProviders::Argon2
+      when :bcrypt then ::Sorcery::CryptoProviders::BCrypt
+      when :custom then @custom_encryption_provider
+      else
+        raise ArgumentError,
+          "Encryption algorithm supplied, #{@encryption_algorithm}, is invalid"
       end
     end
 
