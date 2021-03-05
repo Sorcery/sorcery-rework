@@ -239,16 +239,18 @@ module Sorcery
     #        instance.
     def add_defaults(defaults)
       self.class.add_defaults(defaults)
+      load_new_defaults!(defaults)
     end
 
-    # TODO: Unused, remove?
-    # def update!
-    #   @defaults.each do |k, v|
-    #     next if instance_variable_defined?(k)
+    # FIXME: The entire settings situation feels a bit jank, consider
+    #        refactoring once a better understanding of the flow is attained.
+    def load_new_defaults!(defaults)
+      defaults.each do |k, v|
+        next if instance_variable_defined?("@#{k}")
 
-    #     instance_variable_set(k, v)
-    #   end
-    # end
+        instance_variable_set("@#{k}", v)
+      end
+    end
 
     def configure(&block)
       @configure_block = block
