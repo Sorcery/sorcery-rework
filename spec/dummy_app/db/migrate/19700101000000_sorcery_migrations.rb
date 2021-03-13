@@ -1,4 +1,7 @@
 class SorceryMigrations < ActiveRecord::Migration[6.0]
+  # TODO: Should this be broken into multiple migrations separated by table?
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def change
     create_table :admins do |t|
       t.string :email, null: false
@@ -20,11 +23,13 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.string :salt
 
       # Brute Force Protection
-      # t.integer  :pineapple_count, default: 0
-      # t.datetime :pineapple_at,    default: nil
-      # t.string   :pineapple_token, default: nil
+      t.integer  :pineapple_count, default: 0
+      t.datetime :pineapple_at,    default: nil
+      t.string   :pineapple_token, default: nil
 
       t.timestamps
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 end

@@ -67,6 +67,9 @@ RSpec.configure do |config|
   # i.e. (create instead of FactoryBot.create)
   config.include FactoryBot::Syntax::Methods
 
+  # Auto include model spec helper methods for all model specs
+  config.include ModelSpecHelper, type: :model
+
   config.before(:suite) { MigrationHelper.setup_orm }
   config.after(:suite) { MigrationHelper.teardown_orm }
   config.before { ActionMailer::Base.deliveries.clear }

@@ -91,6 +91,6 @@ Style/FrozenStringLiteralComment:
 ## Metrics ##
 #############
 
-Metrics/MethodLength:
-  Exclude:
-    - 'spec/dummy_app/db/migrate/**/*'
+# TODO: Is there a good way to break up specs without it getting unwieldy?
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']

@@ -6,6 +6,8 @@ class ApplicationController < ActionController::Base
 
   before_action :require_login
 
+  add_flash_types :error, :success, :alert
+
   protected
 
   def not_authenticated

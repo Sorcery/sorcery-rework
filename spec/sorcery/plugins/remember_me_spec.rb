@@ -5,7 +5,6 @@ require 'sorcery-core'
 
 # TODO: Fill out the rest of the specs...
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe Sorcery::Plugins::RememberMe do
   describe 'controllers' do
     # FIXME: This doesn't work without ActionController due to not responding to
@@ -57,4 +56,3 @@ RSpec.describe Sorcery::Plugins::RememberMe do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

@@ -87,9 +87,10 @@ module Sorcery
             return false unless defined?(cookies)
             return false unless cookies.signed[:remember_me_token].present?
 
-            # TODO: Simplify/DRY to `sorcery_adapter.find_by(remember_me_token:`
+            # TODO: Simplify/DRY to:
+            #       `sorcery_orm_adapter.find_by(remember_me_token:`
             user =
-              user_class.sorcery_adapter.find_by_remember_me_token(
+              user_class.sorcery_orm_adapter.find_by_remember_me_token(
                 cookies.signed[:remember_me_token]
               )
 
