@@ -14,7 +14,7 @@ module Sorcery
   #
   #   # ./config/initializers/sorcery.rb
   #
-  #   Rails.application.config.sorcery.configure do |config|
+  #   Sorcery.configure do |config|
   #     config.some_variable = true
   #
   #     config.load_plugin(
