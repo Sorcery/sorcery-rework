@@ -275,7 +275,7 @@ module Sorcery
 
         return token_response(failure: :user_not_found, &block) unless user
 
-        unless check_expiration_date(user, exp_attr_name)
+        unless sorcery_token_expired?(user, exp_attr_name)
           return token_response(user: user, failure: :token_expired, &block)
         end
 
@@ -369,7 +369,7 @@ module Sorcery
       end
       # rubocop:enable Metrics/MethodLength
 
-      def check_expiration_date(user, token_expiration_date_attr)
+      def sorcery_token_expired?(user, token_expiration_date_attr)
         return true unless token_expiration_date_attr
 
         expires_at = user.send(token_expiration_date_attr)

@@ -9,9 +9,10 @@ class User < ApplicationRecord
       :brute_force_protection,
       {
         model: {
-          failed_logins_count_attribute_name: :pineapple_count,
-          lock_expires_at_attribute_name:     :pineapple_at,
-          unlock_token_attribute_name:        :pineapple_token
+          consecutive_login_retries_amount_limit: 3,
+          failed_logins_count_attribute_name:     :pineapple_count,
+          lock_expires_at_attribute_name:         :pineapple_at,
+          unlock_token_attribute_name:            :pineapple_token
         }
       }
     )

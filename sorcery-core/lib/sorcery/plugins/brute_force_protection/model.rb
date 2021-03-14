@@ -117,7 +117,7 @@ module Sorcery
             config = sorcery_config
             attributes = {
               config.lock_expires_at_attribute_name => Time.current + config.login_lock_time_period,
-              config.unlock_token_attribute_name    => TemporaryToken.generate_random_token
+              config.unlock_token_attribute_name    => self.class.generate_random_token
             }
             sorcery_orm_adapter.update_attributes(attributes)
 

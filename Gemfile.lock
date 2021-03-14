@@ -184,6 +184,7 @@ GEM
     sqlite3 (1.4.2)
     thor (1.0.1)
     thread_safe (0.3.6)
+    timecop (0.9.4)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
@@ -210,6 +211,7 @@ DEPENDENCIES
   shoulda-matchers
   simplecov
   sqlite3
+  timecop
 
 BUNDLED WITH
    2.1.2

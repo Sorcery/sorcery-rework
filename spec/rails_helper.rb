@@ -36,6 +36,7 @@ require 'rspec/rails'
 require 'factory_bot_rails'
 require 'faker'
 require 'shoulda-matchers'
+require 'timecop'
 
 ###############################
 ## Load RSpec support folder ##
