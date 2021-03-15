@@ -179,7 +179,7 @@ module Sorcery
         # This block defines class getters/setters for each new default, and
         # delegates it to the singleton instance.
         defaults.each_key do |default_key|
-          # TODO: Determine why this uses <<- instead of do/end.
+          # NOTE: This uses <<- instead of do/end due to performance gains
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def self.#{default_key}
               instance.#{default_key}
