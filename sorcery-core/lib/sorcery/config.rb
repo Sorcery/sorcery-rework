@@ -65,7 +65,7 @@ module Sorcery
       ################
       downcase_username_before_authenticating: false,
       not_authenticated_action:                :not_authenticated,
-      login_session_key:                       :user_id,
+      session_key:                             :user_id,
       login_sources:                           Set.new,
       before_logout:                           Set.new,
       after_failed_login:                      Set.new,
@@ -288,21 +288,6 @@ module Sorcery
 
     def dup
       self.class.new(attributes)
-    end
-
-    ##
-    # Provides an abstraction to allow setting your session key as a proc.
-    #--
-    # TODO: Are there any consequences to this abstraction layer / allowing
-    # procs? Would it be preferable to remove it?
-    #++
-    #
-    def session_key
-      if login_session_key.is_a?(Proc)
-        login_session_key.call(self)
-      else
-        login_session_key
-      end
     end
 
     def encryption_provider
