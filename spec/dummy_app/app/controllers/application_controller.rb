@@ -2,7 +2,9 @@
 
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  authenticates_with_sorcery!
+  authenticates_with_sorcery! do |config|
+    config.load_plugin(:activity_logging)
+  end
 
   before_action :require_login
 

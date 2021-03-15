@@ -8,6 +8,12 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.string :crypted_password
       t.string :salt
 
+      # Activity Logging
+      t.datetime :last_login_at,              default: nil
+      t.datetime :last_logout_at,             default: nil
+      t.datetime :last_activity_at,           default: nil
+      t.string   :last_login_from_ip_address, default: nil
+
       # Brute Force Protection
       t.integer  :failed_logins_count, default: 0
       t.datetime :lock_expires_at,     default: nil
@@ -21,6 +27,12 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.string :email
       t.string :crypted_password
       t.string :salt
+
+      # Activity Logging
+      t.datetime :last_login_at,              default: nil
+      t.datetime :last_logout_at,             default: nil
+      t.datetime :last_activity_at,           default: nil
+      t.string   :last_login_from_ip_address, default: nil
 
       # Brute Force Protection
       t.integer  :pineapple_count, default: 0

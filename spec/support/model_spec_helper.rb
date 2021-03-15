@@ -2,7 +2,146 @@
 
 # TODO: Find a better way to break this up?
 # rubocop:disable Metrics/BlockLength
+# rubocop:disable Metrics/ModuleLength
 module ModelSpecHelper
+  RSpec.shared_examples 'activity_logging' do
+    let(:class_symbol) { described_class.name.underscore.to_sym }
+    let(:last_login_at_attr_name) do
+      described_class.sorcery_config.last_login_at_attribute_name
+    end
+    let(:last_logout_at_attr_name) do
+      described_class.sorcery_config.last_logout_at_attribute_name
+    end
+    let(:last_activity_at_attr_name) do
+      described_class.sorcery_config.last_activity_at_attribute_name
+    end
+
+    describe 'instance method' do
+      describe 'logged_in?' do
+        subject(:logged_in) { record.logged_in? }
+
+        context 'when last_login_at is nil' do
+          let(:record) { build class_symbol }
+
+          it { is_expected.to be_falsey }
+        end
+
+        context 'when last_login_at is present' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=", Time.current - 3.hours)
+            record
+          end
+
+          it { is_expected.to be_truthy }
+        end
+
+        context 'when last_logout_at is present' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=",  Time.current - 3.hours)
+            record.send("#{last_logout_at_attr_name}=", Time.current)
+            record
+          end
+
+          it { is_expected.to be_falsey }
+        end
+      end
+
+      describe 'logged_out?' do
+        subject(:logged_out) { record.logged_out? }
+
+        context 'when last_login_at is nil' do
+          let(:record) { build class_symbol }
+
+          it { is_expected.to be_truthy }
+        end
+
+        context 'when last_login_at is present' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=", Time.current - 3.hours)
+            record
+          end
+
+          it { is_expected.to be_falsey }
+        end
+
+        context 'when last_logout_at is present' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=",  Time.current - 3.hours)
+            record.send("#{last_logout_at_attr_name}=", Time.current)
+            record
+          end
+
+          it { is_expected.to be_truthy }
+        end
+      end
+
+      describe 'online?' do
+        subject(:online) { record.online? }
+
+        context 'when last_login_at is nil' do
+          let(:record) { build class_symbol }
+
+          it { is_expected.to be_falsey }
+        end
+
+        context 'when last_activity_at is nil' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=", Time.current - 3.hours)
+            record
+          end
+
+          it { is_expected.to be_falsey }
+        end
+
+        context 'when last_activity_at is old' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=",
+              Time.current - 3.hours)
+            record.send("#{last_activity_at_attr_name}=",
+              Time.current - 2.hours)
+            record
+          end
+
+          it { is_expected.to be_falsey }
+        end
+
+        context 'when last_activity_at is recent' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=",
+              Time.current - 3.hours)
+            record.send("#{last_activity_at_attr_name}=",
+              Time.current)
+            record
+          end
+
+          it { is_expected.to be_truthy }
+        end
+
+        context 'when last_logout_at is present' do
+          let(:record) do
+            record = build class_symbol
+            record.send("#{last_login_at_attr_name}=",
+              Time.current - 3.hours)
+            record.send("#{last_activity_at_attr_name}=",
+              Time.current)
+            record.send("#{last_logout_at_attr_name}=",
+              Time.current)
+            record
+          end
+
+          it { is_expected.to be_falsey }
+        end
+      end
+    end
+  end
+
   RSpec.shared_examples 'brute_force_protection' do
     let(:class_symbol) { described_class.name.underscore.to_sym }
     let(:lock_expires_at_attr_name) do
@@ -39,3 +178,4 @@ module ModelSpecHelper
   end
 end
 # rubocop:enable Metrics/BlockLength
+# rubocop:enable Metrics/ModuleLength
