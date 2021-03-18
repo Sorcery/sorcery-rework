@@ -28,4 +28,5 @@ RSpec.describe Admin do
   end
 
   include_examples 'brute_force_protection'
+  include_examples 'remember_me'
 end

@@ -64,6 +64,13 @@ RSpec.configure do |config|
   # by passing in same seed using --seed
   Kernel.srand config.seed
 
+  # These two settings work together to allow you to limit a spec run
+  # to individual examples or groups you care about by tagging them with
+  # `:focus` metadata. When nothing is tagged with `:focus`, all examples
+  # get run.
+  config.filter_run :focus
+  config.run_all_when_everything_filtered = true
+
   # Allow shortened FactoryBot syntax.
   # i.e. (create instead of FactoryBot.create)
   config.include FactoryBot::Syntax::Methods

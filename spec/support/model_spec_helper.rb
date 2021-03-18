@@ -176,6 +176,187 @@ module ModelSpecHelper
       end
     end
   end
+
+  # FIXME: This is pretty messy, both in terms of styling, but also breaking
+  #        down the various scenarios and contexts. Ideally this should be
+  #        cleaned up significantly.
+  # rubocop:disable RSpec/ExampleLength
+  # rubocop:disable RSpec/MultipleExpectations
+  RSpec.shared_examples 'remember_me' do
+    subject(:record) { build class_symbol }
+
+    let(:class_symbol) { described_class.name.underscore.to_sym }
+
+    it { is_expected.to respond_to :remember_me! }
+    it { is_expected.to respond_to :forget_me! }
+    it { is_expected.to respond_to :force_forget_me! }
+
+    describe 'instance method' do
+      describe 'remember_me!' do
+        context 'when persisting globally' do
+          around do |example|
+            prev_val = record.sorcery_config.remember_me_token_persist_globally
+            record.sorcery_config.remember_me_token_persist_globally = true
+            example.run
+            record.sorcery_config.remember_me_token_persist_globally = prev_val
+          end
+
+          it 'generates a new token when token is nil' do
+            expect(record.remember_me_token).to be_nil
+
+            record.remember_me!
+
+            expect(record.remember_me_token).to be_present
+          end
+
+          it 'does not generate a new token when token already exists' do
+            record.remember_me!
+
+            previous_token = record.remember_me_token
+
+            expect(record.remember_me_token).to be_present
+            expect(record.remember_me_token).to eq previous_token
+
+            record.remember_me!
+
+            expect(record.remember_me_token).to be_present
+            expect(record.remember_me_token).to eq previous_token
+          end
+        end
+
+        context 'when not persisting globally' do
+          around do |example|
+            prev_val = record.sorcery_config.remember_me_token_persist_globally
+            record.sorcery_config.remember_me_token_persist_globally = false
+            example.run
+            record.sorcery_config.remember_me_token_persist_globally = prev_val
+          end
+
+          it 'generates a new token when token is nil' do
+            expect(record.remember_me_token).to be_nil
+
+            record.remember_me!
+
+            expect(record.remember_me_token).to be_present
+          end
+
+          it 'generates a new token when token already exists' do
+            record.remember_me!
+
+            previous_token = record.remember_me_token
+
+            expect(record.remember_me_token).to be_present
+            expect(record.remember_me_token).to eq previous_token
+
+            record.remember_me!
+
+            expect(record.remember_me_token).to be_present
+            expect(record.remember_me_token).not_to eq previous_token
+          end
+        end
+      end
+
+      # TODO: Update the subject to already be remembered?
+      describe 'forget_me!' do
+        context 'when persisting globally' do
+          around do |example|
+            prev_val = record.sorcery_config.remember_me_token_persist_globally
+            record.sorcery_config.remember_me_token_persist_globally = true
+            example.run
+            record.sorcery_config.remember_me_token_persist_globally = prev_val
+          end
+
+          it 'does not delete the token' do
+            record.remember_me!
+            expect(record.remember_me_token).to be_present
+            record.forget_me!
+            expect(record.remember_me_token).to be_present
+          end
+
+          it 'does not delete the expiration' do
+            record.remember_me!
+            expect(record.remember_me_token_expires_at).to be_present
+            record.forget_me!
+            expect(record.remember_me_token_expires_at).to be_present
+          end
+        end
+
+        context 'when not persisting globally' do
+          around do |example|
+            prev_val = record.sorcery_config.remember_me_token_persist_globally
+            record.sorcery_config.remember_me_token_persist_globally = false
+            example.run
+            record.sorcery_config.remember_me_token_persist_globally = prev_val
+          end
+
+          it 'deletes the token' do
+            record.remember_me!
+            expect(record.remember_me_token).to be_present
+            record.forget_me!
+            expect(record.remember_me_token).to be_nil
+          end
+
+          it 'deletes the expiration' do
+            record.remember_me!
+            expect(record.remember_me_token_expires_at).to be_present
+            record.forget_me!
+            expect(record.remember_me_token_expires_at).to be_nil
+          end
+        end
+      end
+
+      # TODO: Update the subject to already be remembered?
+      describe 'force_forget_me!' do
+        context 'when persisting globally' do
+          around do |example|
+            prev_val = record.sorcery_config.remember_me_token_persist_globally
+            record.sorcery_config.remember_me_token_persist_globally = true
+            example.run
+            record.sorcery_config.remember_me_token_persist_globally = prev_val
+          end
+
+          it 'deletes the token' do
+            record.remember_me!
+            expect(record.remember_me_token).to be_present
+            record.force_forget_me!
+            expect(record.remember_me_token).to be_nil
+          end
+
+          it 'deletes the expiration' do
+            record.remember_me!
+            expect(record.remember_me_token_expires_at).to be_present
+            record.force_forget_me!
+            expect(record.remember_me_token_expires_at).to be_nil
+          end
+        end
+
+        context 'when not persisting globally' do
+          around do |example|
+            prev_val = record.sorcery_config.remember_me_token_persist_globally
+            record.sorcery_config.remember_me_token_persist_globally = false
+            example.run
+            record.sorcery_config.remember_me_token_persist_globally = prev_val
+          end
+
+          it 'deletes the token' do
+            record.remember_me!
+            expect(record.remember_me_token).to be_present
+            record.force_forget_me!
+            expect(record.remember_me_token).to be_nil
+          end
+
+          it 'deletes the expiration' do
+            record.remember_me!
+            expect(record.remember_me_token_expires_at).to be_present
+            record.force_forget_me!
+            expect(record.remember_me_token_expires_at).to be_nil
+          end
+        end
+      end
+    end
+  end
+  # rubocop:enable RSpec/ExampleLength
+  # rubocop:enable RSpec/MultipleExpectations
 end
 # rubocop:enable Metrics/BlockLength
 # rubocop:enable Metrics/ModuleLength

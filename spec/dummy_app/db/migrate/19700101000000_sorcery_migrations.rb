@@ -13,6 +13,10 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.datetime :lock_expires_at,     default: nil
       t.string   :unlock_token,        default: nil
 
+      # Remember Me
+      t.string   :remember_me_token,            default: nil
+      t.datetime :remember_me_token_expires_at, default: nil
+
       t.timestamps
     end
 
@@ -32,6 +36,10 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.integer  :pineapple_count, default: 0
       t.datetime :pineapple_at,    default: nil
       t.string   :pineapple_token, default: nil
+
+      # Remember Me
+      t.string   :remember_me_token,            default: nil
+      t.datetime :remember_me_token_expires_at, default: nil
 
       t.timestamps
     end

@@ -29,4 +29,5 @@ RSpec.describe User do
 
   include_examples 'activity_logging'
   include_examples 'brute_force_protection'
+  include_examples 'remember_me'
 end

@@ -90,10 +90,10 @@ module Sorcery
           # controller's 'forget_me!' method.
           #
           # We only clear the token value if
-          # remember_me_token_persist_globally == true.
+          # remember_me_token_persist_globally == false.
           #
           def forget_me!
-            return unless sorcery_config.remember_me_token_persist_globally
+            return if sorcery_config.remember_me_token_persist_globally
 
             force_forget_me!
           end
