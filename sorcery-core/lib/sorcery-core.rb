@@ -23,9 +23,56 @@ module Sorcery
   autoload :VERSION, 'sorcery/version'
 
   ##
-  # Password crypto providers
+  # Password crypto providers and related methods.
   #
   module CryptoProviders
+    ##
+    # Based on the Devise secure_compare, which itself appears to be based on
+    # the rails secure_compare fallback when OpenSSL secure compare is
+    # unavailable.
+    #
+    # For additional information, see the following documentation:
+    #
+    # * https://apidock.com/ruby/String/bytesize
+    # * https://apidock.com/ruby/String/each_byte
+    # * https://apidock.com/ruby/String/unpack
+    #
+    # `^`  Is a binary XOR operator. It will return only the bits that are on
+    #      one side and not the other.
+    # `|=` Is a binary OR operator and assignment. It will copy any bits if they
+    #      exist on either side of the operator. Used to persist if we find any
+    #      bytes that are different between the two strings.
+    #
+    #--
+    # TODO: Where is the best place for this method to live?
+    #++
+    #
+    def self.secure_compare(str1, str2)
+      # Forcibly cast to String
+      str1 = str1.to_s
+      str2 = str2.to_s
+      # Skip comparison if either string is empty
+      return false if str1.blank? || str2.blank?
+      # Skip comparison if the string lengths (in bytes) don't match
+      return false if str1.bytesize != str2.bytesize
+
+      # TODO: Verify that this description is accurate to what's happening here.
+      # Unpack the `a` string into 8-bit unsigned chars, according to the
+      # bytesize length of the string.
+      unpacked_str1 = str1.unpack("C#{str1.bytesize}")
+
+      # Start with a clean slate.
+      difference = 0
+
+      # Some binary operator magic, see method description.
+      str2.each_byte do |byte|
+        difference |= byte ^ unpacked_str1.shift
+      end
+
+      # If all the bits in our variable are 0, then the strings were identical.
+      difference.zero?
+    end
+
     autoload :Argon2, 'sorcery/crypto_providers/argon2'
     autoload :BCrypt, 'sorcery/crypto_providers/bcrypt'
   end

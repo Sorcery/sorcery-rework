@@ -77,9 +77,7 @@ module Sorcery
           password = "#{password}#{pepper}" if pepper.present?
           password = ::BCrypt::Engine.hash_secret(password, bcrypt.salt)
 
-          # TODO: Should this be updated to a secure compare that prevents
-          #       timing attacks, similarly to Devise?
-          bcrypt == password
+          ::Sorcery::CryptoProviders.secure_compare(bcrypt, password)
         end
 
         ##
