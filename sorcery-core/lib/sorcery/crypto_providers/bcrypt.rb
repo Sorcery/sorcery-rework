@@ -4,78 +4,119 @@ require 'bcrypt'
 
 module Sorcery
   module CryptoProviders
-    # For most apps Sha512 is plenty secure, but if you are building an app that
-    # stores nuclear launch codes you might want to consider BCrypt. This is an
-    # extremely secure hashing algorithm, mainly because it is slow.
-    # A brute force attack on a BCrypt encrypted password would take much longer
-    # than a brute force attack on a password encrypted with a Sha algorithm.
-    # Keep in mind you are sacrificing performance by using this, generating a
-    # password takes exponentially longer than any of the Sha algorithms.
+    ##
+    # BCrypt is one of the longstanding password hasing algorithms, popular due
+    # to its higher computational cost, and the ability to increase that cost
+    # as processors become more powerful over time. While perfectly suitable for
+    # applications at the time of writing (2021), Argon2 is a more recent
+    # algorithm, and should be preferred for new projects.
     #
     #   config.encryption_algorithm = :bcrypt
     #
     class BCrypt
       class << self
+        ##
         # Setting the option :pepper allows users to append an app-specific
-        # secret token.
-        # Basically it's equivalent to :salt_join_token option, but have a
-        # different name to ensure backward compatibility in generating/matching
-        # passwords.
+        # secret token to all passwords. While the salt is stored alongside the
+        # password, the pepper is kept separate from the database, typically in
+        # the source code of the application.
+        #--
+        # TODO: Is using the method that Devise uses for appending pepper to
+        #       the password ideal? ("#{pw}#{pepper}"), or can we simplify to
+        #       something like password += pepper?
+        #++
+        #
         attr_accessor :pepper
 
-        # This is the :cost option for the BCrpyt library.
-        # The higher the cost the more secure it is and the longer is take the
-        # generate a hash. By default this is 10.
-        # Set this to whatever you want, play around with it to get that perfect
-        # balance between security and performance.
+        ##
+        # This value is used to control BCrypt's computational cost. The higher
+        # this value is, the longer it will take to generate a hash, which makes
+        # the hash more secure against brute force attacks in the case of a
+        # database breach.
+        #
+        # The default value is 10. You can set this to whatever you want, a rule
+        # of thumb you can use is getting the hash generation to take about
+        # 100ms on production. This keeps the user experience reasonable, while
+        # being a reasonably high per-attempt value.
+        #
+        # If you're not sure what a good value for this is, do a search or open
+        # a Github issue to ask.
+        #
         def cost
           @cost ||= 10
         end
 
         attr_writer :cost
 
+        ##
+        # Stretches is another applicable term for the cost.
+        #
         alias stretches cost
         alias stretches= cost=
 
-        # Creates a BCrypt hash for the password passed.
-        def encrypt(*tokens)
-          ::BCrypt::Password.create(join_tokens(tokens), cost: cost)
+        ##
+        # Creates a BCrypt hash for the password provided.
+        #
+        def digest(password)
+          password = "#{password}#{pepper}" if pepper.present?
+          ::BCrypt::Password.create(password, cost: cost).to_s
         end
 
-        # Does the hash match the tokens? Uses the same tokens that were used to
-        # encrypt.
-        def matches?(hash, *tokens)
-          hash = new_from_hash(hash)
-          return false if hash.nil? || hash == {}
+        ##
+        # Compares a password hash (digest) with a provided plaintext password.
+        #--
+        # TODO: Should this check that digest and password are both strings, or
+        #       is the performance hit not worth the type safety?
+        #++
+        #
+        def digest_matches?(digest, password)
+          bcrypt = bcrypt_from_digest(digest)
+          # TODO: Is checking against {} necessary? Why do we do this?
+          return false if bcrypt.nil? || bcrypt == {}
 
-          hash == join_tokens(tokens)
+          password = "#{password}#{pepper}" if pepper.present?
+          password = ::BCrypt::Engine.hash_secret(password, bcrypt.salt)
+
+          # TODO: Should this be updated to a secure compare that prevents
+          #       timing attacks, similarly to Devise?
+          bcrypt == password
         end
 
+        ##
         # This method is used as a flag to tell Sorcery to "resave" the password
-        # upon a successful login, using the new cost
-        def cost_matches?(hash)
-          hash = new_from_hash(hash)
-          if hash.nil? || hash == {}
-            false
-          else
-            hash.cost == cost
-          end
+        # upon a successful login, using the new cost.
+        #--
+        # TODO: Update this to a "needs_redigested?" type method instead, that
+        #       checks all bcrypt params for changes.
+        #++
+        #
+        def cost_matches?(digest)
+          bcrypt = bcrypt_from_digest(digest)
+          # TODO: Is checking against {} necessary? Why do we do this?
+          return false if bcrypt.nil? || bcrypt == {}
+
+          bcrypt.cost == cost
         end
 
-        def reset!
+        ##
+        # Resets cost and pepper to their default values
+        #
+        def reset_to_defaults!
           @cost = 10
           @pepper = ''
         end
 
         private
 
-        def join_tokens(tokens)
-          # Make sure to add pepper in case tokens have only one element
-          tokens.flatten.join.concat(pepper.to_s)
-        end
+        ##
+        # Converts a raw bcrypt hash into a bcrypt password object.
+        #
+        def bcrypt_from_digest(digest)
+          # TODO: Is this guard clause necessary? Won't it just get caught by
+          #       bcrypt because a blank string is an invalid bcrypt hash?
+          return nil if digest.blank?
 
-        def new_from_hash(hash)
-          ::BCrypt::Password.new(hash)
+          ::BCrypt::Password.new(digest)
         rescue ::BCrypt::Errors::InvalidHash
           nil
         end
