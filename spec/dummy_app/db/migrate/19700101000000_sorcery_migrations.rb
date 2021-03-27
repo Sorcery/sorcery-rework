@@ -6,7 +6,6 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
     create_table :admins do |t|
       t.string :email, null: false
       t.string :crypted_password
-      t.string :salt
 
       # Brute Force Protection
       t.integer  :failed_logins_count, default: 0
@@ -24,7 +23,6 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.string :username, null: false
       t.string :email
       t.string :crypted_password
-      t.string :salt
 
       # Activity Logging
       t.datetime :last_login_at,              default: nil

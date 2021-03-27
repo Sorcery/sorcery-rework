@@ -27,6 +27,9 @@ module Sorcery
   #
   module CryptoProviders
     ##
+    # Provides a comparison method that attempts to protect against timing
+    # attacks.
+    #
     # Based on the Devise secure_compare, which itself appears to be based on
     # the rails secure_compare fallback when OpenSSL secure compare is
     # unavailable.

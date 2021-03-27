@@ -44,7 +44,7 @@ module Sorcery
 
           # registers last login time on every login.
           # This runs as a hook just after a successful login.
-          def register_login_time_to_db(user, _credentials)
+          def register_login_time_to_db(user, _username, _password, _options)
             return unless sorcery_config.register_login_time
 
             user.set_last_login_at(Time.current)
@@ -52,7 +52,7 @@ module Sorcery
 
           # Updates IP address on every login.
           # This runs as a hook just after a successful login.
-          def register_last_ip_address(user, _credentials)
+          def register_last_ip_address(user, _username, _password, _options)
             return unless sorcery_config.register_last_ip_address
 
             user.set_last_ip_address(request.remote_ip)

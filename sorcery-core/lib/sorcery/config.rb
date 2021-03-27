@@ -47,14 +47,12 @@ module Sorcery
       ## Passwords ##
       ###############
       encryption_algorithm:                    :bcrypt,
-      # TODO: Remove encryption_key if encrypt method is removed.
-      encryption_key:                          nil,
-      # TODO: Remove encryption provider if it proves unnecessary
-      # encryption_provider:                   'CryptoProviders::BCrypt',
       custom_encryption_provider:              nil,
+      # TODO: Implement migrating/rotating passwords to new algorithms when
+      #       logging in. Will a require method to determine if user should use
+      #       old algo (which will be defined by the application, NOT Sorcery).
+      previous_encryption_provider:            nil,
       pepper:                                  '',
-      salt_join_token:                         '',
-      salt_attribute_name:                     :salt,
       stretches:                               nil,
       ###########
       ## Model ##

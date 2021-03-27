@@ -159,12 +159,12 @@ module Sorcery
       # rubocop:disable Metrics/MethodLength
       #++
       #
-      def login(*credentials)
+      def login(username, password, options = {})
         @current_user = nil
 
-        user_class.authenticate(*credentials) do |user, failure_reason|
+        user_class.authenticate(username, password) do |user, failure_reason|
           if failure_reason
-            after_failed_login!(credentials)
+            after_failed_login!(username, password, options)
 
             yield(user, failure_reason) if block_given?
 
@@ -174,6 +174,7 @@ module Sorcery
 
           # TODO: `to_hash` is functionally different from `to_h`, double check
           # that this usage is intended. (Typically you should use to_h)
+          # https://stackoverflow.com/a/26610268
           old_session = session.dup.to_hash
           reset_sorcery_session
           old_session.each_pair do |key, value|
@@ -182,8 +183,8 @@ module Sorcery
           form_authenticity_token
 
           # credentials[2] is the remember_me value, but is currently unused.
-          auto_login(user, credentials[2])
-          after_login!(user, credentials)
+          auto_login(user, options)
+          after_login!(user, username, password, options)
 
           # Return current user
           block_given? ? yield(current_user, nil) : current_user
@@ -233,19 +234,21 @@ module Sorcery
       end
 
       ##
-      # Login to a user instance
+      # Login to a user instance.
+      #
+      # Options is unused by Sorcery core, but plugins such as remember_me use
+      # it to override this method and do additional things conditionally.
+      #
+      # TODO: Does that even make sense though? Why not just have remember_me do
+      #       that as an after_login callback? As it is, this system doesn't
+      #       support using multiple plugins that modify auto_login in different
+      #       ways.
+      # TODO: Remove options hash from auto_login if this gets reworked.
       #
       # @param [<User-Model>] user the user instance.
       # @return - do not depend on the return value.
       #
-      #--
-      # TODO: The entire naming and flow for login/logout should be reconsidered
-      #       and refactored.
-      # FIXME: It is disconcerting that `should_remember` is unused. Investigate
-      #        and resolve ASAP.
-      #++
-      #
-      def auto_login(user, _should_remember = false)
+      def auto_login(user, _options = {})
         session[sorcery_config.session_key] = user.id.to_s
         @current_user = user
       end
@@ -254,7 +257,10 @@ module Sorcery
       # Overwrite Rails' handle unverified request
       #
       def handle_unverified_request
-        # TODO: Why does this use cookies, shouldn't it be session?
+        # TODO: Why does this use cookies, shouldn't it be session? Also
+        #       shouldn't reseting the remember_me_token be in the plugin?
+        #       The core method shouldn't have to know that remember_me even
+        #       exists.
         cookies[:remember_me_token] = nil
         @current_user = nil
         super # call the default behaviour which resets the session
@@ -311,18 +317,18 @@ module Sorcery
       ##
       # See Sorcery::Controller::InstanceMethods#login
       #
-      def after_login!(user, credentials = [])
+      def after_login!(user, username = '', password = '', options = {})
         sorcery_config.after_login.each do |callback|
-          send(callback, user, credentials)
+          send(callback, user, username, password, options)
         end
       end
 
       ##
       # See Sorcery::Controller::InstanceMethods#login
       #
-      def after_failed_login!(credentials)
+      def after_failed_login!(username = '', password = '', options = {})
         sorcery_config.after_failed_login.each do |callback|
-          send(callback, credentials)
+          send(callback, username, password, options)
         end
       end
 

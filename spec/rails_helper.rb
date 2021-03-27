@@ -34,7 +34,6 @@ require 'dummy_app/config/environment'
 #       deprecation warnings from zeitwerk.
 require 'rspec/rails'
 require 'factory_bot_rails'
-require 'faker'
 require 'shoulda-matchers'
 require 'timecop'
 
@@ -55,22 +54,6 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
 
-  # Find slow specs by running `profiling=true rspec`
-  config.profile_examples = 5 if ENV['profiling'] == 'true'
-
-  # Find load order dependencies
-  config.order = :random
-  # Allow replicating load order dependency
-  # by passing in same seed using --seed
-  Kernel.srand config.seed
-
-  # These two settings work together to allow you to limit a spec run
-  # to individual examples or groups you care about by tagging them with
-  # `:focus` metadata. When nothing is tagged with `:focus`, all examples
-  # get run.
-  config.filter_run :focus
-  config.run_all_when_everything_filtered = true
-
   # Allow shortened FactoryBot syntax.
   # i.e. (create instead of FactoryBot.create)
   config.include FactoryBot::Syntax::Methods
@@ -83,6 +66,9 @@ RSpec.configure do |config|
   config.before { ActionMailer::Base.deliveries.clear }
 end
 
+################################
+## Configure Shoulda Matchers ##
+################################
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     with.test_framework :rspec

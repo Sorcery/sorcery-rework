@@ -135,11 +135,6 @@ module Sorcery
           String,
           length: 255
         )
-        sorcery_orm_adapter.define_field(
-          sorcery_config.salt_attribute_name,
-          String,
-          length: 255
-        )
       end
     end
     # rubocop:enable Metrics/AbcSize
@@ -155,7 +150,7 @@ module Sorcery
     #
     def init_orm_hooks!
       sorcery_orm_adapter.define_callback(
-        :before, :validation, :encrypt_password,
+        :before, :validation, :digest_password,
         if: proc { |record|
           record.send(sorcery_config.password_attribute_name).present?
         }
@@ -204,19 +199,18 @@ module Sorcery
       # rubocop:disable Metrics/PerceivedComplexity
       #++
       #
-      def authenticate(*credentials, &block)
-        unless credentials.is_a?(Array)
-          raise ArgumentError, 'Credentials must be an Array!'
-        end
-
-        if credentials.size < 2
-          # FIXME: I don't like the styling here, update rubocop config to fix.
+      def authenticate(username, password, &block)
+        unless username.present? && password.present?
           raise ArgumentError,
-            'Username and password are required to authenticate via '\
-            'Sorcery!'
+            'Username and password are required to authenticate via Sorcery!'
         end
 
-        if credentials[0].blank?
+        unless username.is_a?(String) && password.is_a?(String)
+          raise ArgumentError,
+            'Username and password must be strings to authenticate via Sorcery!'
+        end
+
+        if username.blank?
           return authentication_response(
             return_value: nil,
             failure:      :invalid_login,
@@ -225,10 +219,12 @@ module Sorcery
         end
 
         if @sorcery_config.downcase_username_before_authenticating
-          credentials[0].downcase!
+          username.downcase!
         end
 
-        user = sorcery_orm_adapter.find_by_credentials(credentials)
+        # TODO: Support multiple emails/usernames via association (and array
+        #       attribute?).
+        user = sorcery_orm_adapter.find_by_credentials(username)
 
         unless user
           return authentication_response(failure: :invalid_login, &block)
@@ -253,7 +249,7 @@ module Sorcery
           end
         end
 
-        unless user.valid_password?(credentials[1])
+        unless user.valid_password?(password)
           return authentication_response(
             user:    user,
             failure: :invalid_password,
@@ -283,24 +279,25 @@ module Sorcery
       end
 
       ##
-      # Encrypt tokens using current encryption_provider.
+      # Create a password hash using the current encryption_provider.
       #
-      #--
-      # TODO: Should this be removed entirely? (only support hashing passwords)
-      #++
-      #
-      def encrypt(*tokens)
-        return tokens.first if @sorcery_config.encryption_provider.nil?
+      def digest(password)
+        # TODO: Raise error instead of returning plaintext? Storing passwords
+        #       plaintext is a god-tier bad practice.
+        return password if @sorcery_config.encryption_provider.nil?
 
+        # TODO: Would it be better to store an instance of the
+        #       encryption_provider, and pass that our current config, rather
+        #       than setting the encryption settings every time? Also
+        #       encryption_provider might still be a misnomer, look into better
+        #       naming.
         set_encryption_attributes
 
-        # FIXME: figure out the plan for AES256 (drop support? bad practice)
-        # CryptoProviders::AES256.key = @sorcery_config.encryption_key
-        @sorcery_config.encryption_provider.encrypt(*tokens)
+        @sorcery_config.encryption_provider.digest(password)
       end
 
       ##
-      # Random secure token, used for salt and temporary tokens.
+      # Random secure token, used for temporary tokens.
       #
       #--
       # Having this be loaded via `include` using `self.` is 1:1 with previous
@@ -337,20 +334,15 @@ module Sorcery
       # TODO: Shouldn't the encryption_provider just read from the config
       #       directly? Or alternatively, these values get set as a part of the
       #       config process instead.
-      # rubocop:disable Metrics/AbcSize
       # rubocop:disable Layout/LineLength
       def set_encryption_attributes
         if @sorcery_config.encryption_provider.respond_to?(:stretches) && @sorcery_config.stretches
           @sorcery_config.encryption_provider.stretches = @sorcery_config.stretches
         end
-        if @sorcery_config.encryption_provider.respond_to?(:join_token) && @sorcery_config.salt_join_token
-          @sorcery_config.encryption_provider.join_token = @sorcery_config.salt_join_token
-        end
         return unless @sorcery_config.encryption_provider.respond_to?(:pepper) && @sorcery_config.pepper
 
         @sorcery_config.encryption_provider.pepper = @sorcery_config.pepper
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Layout/LineLength
 
       # rubocop:disable Metrics/MethodLength
@@ -408,59 +400,41 @@ module Sorcery
       # Calls the configured crypto provider to compare the supplied
       # password with the encrypted one.
       #
-      #--
-      # TODO: Reduce complexity
-      # rubocop:disable Metrics/AbcSize
-      #++
-      #
-      def valid_password?(pass)
+      def valid_password?(password)
         # If the user class doesn't support passwords, then all passwords are
         # by extension invalid.
         unless sorcery_config.crypted_password_attribute_name.present?
           return false
         end
 
+        # TODO: Rename to digest?
         crypted = send(sorcery_config.crypted_password_attribute_name)
 
-        return crypted == pass if sorcery_config.encryption_provider.nil?
+        # TODO: Prevent allowing plaintext comparison? God-tier bad practice.
+        return crypted == password if sorcery_config.encryption_provider.nil?
 
-        salt =
-          if sorcery_config.salt_attribute_name.present?
-            send(sorcery_config.salt_attribute_name)
-          end
+        # FIXME: Shouldn't this also be calling set_encryption_settings?
+        #        Otherwise it might use the wrong values, e.g. pepper and cost.
+        # TODO: Add specs to verify that this works when switching between
+        #       different crypto settings.
 
-        sorcery_config.encryption_provider.matches?(crypted, pass, salt)
+        sorcery_config.encryption_provider.digest_matches?(crypted, password)
       end
-      # rubocop:enable Metrics/AbcSize
 
       protected
 
       ##
-      # Generates a new salt, then takes the password, salt, and crypto provider
-      # to generate the crypted password.
+      # Uses the current crypto provider to generate a password hash (aka
+      # digest) then assign it to the digest attribute.
       #
-      #--
-      # rubocop:disable Metrics/AbcSize
-      # rubocop:disable Metrics/MethodLength
-      #++
+      # TODO: Rename crypted_password to something more appropriate.
       #
-      def encrypt_password
-        new_salt =
-          if sorcery_config.salt_attribute_name.present?
-            self.class.generate_random_token
-          end
-
-        send(:"#{sorcery_config.salt_attribute_name}=", new_salt) if new_salt
-
+      def digest_password
         send(
           :"#{sorcery_config.crypted_password_attribute_name}=",
-          self.class.encrypt(
-            send(sorcery_config.password_attribute_name), new_salt
-          )
+          self.class.digest(send(sorcery_config.password_attribute_name))
         )
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/MethodLength
 
       ##
       # Clears the virtual password and password_confirmation attributes after

@@ -72,22 +72,24 @@ module Sorcery
 
         ##
         #--
+        # TODO: Technically overlaps with find_by_username now. Axe one or the
+        #       other?
         # TODO: Cleanup and simplify method.
         # rubocop:disable Metrics/AbcSize
         # rubocop:disable Metrics/MethodLength
         #++
         #
-        def find_by_credentials(credentials)
+        def find_by_credentials(username)
           relation = nil
 
           @klass.sorcery_config.username_attribute_names.each do |attribute|
             condition =
               if @klass.sorcery_config.downcase_username_before_authenticating
                 @klass.arel_table[attribute].lower.eq(
-                  @klass.arel_table.lower(credentials[0])
+                  @klass.arel_table.lower(username)
                 )
               else
-                @klass.arel_table[attribute].eq(credentials[0])
+                @klass.arel_table[attribute].eq(username)
               end
 
             relation =
