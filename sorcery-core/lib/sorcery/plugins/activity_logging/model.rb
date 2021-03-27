@@ -29,7 +29,6 @@ module Sorcery
         module ClassMethods
           protected
 
-          # rubocop:disable Metrics/AbcSize
           # rubocop:disable Metrics/MethodLength
           def define_activity_logging_fields
             sorcery_orm_adapter.define_field(
@@ -49,7 +48,6 @@ module Sorcery
               String
             )
           end
-          # rubocop:enable Metrics/AbcSize
           # rubocop:enable Metrics/MethodLength
         end
 

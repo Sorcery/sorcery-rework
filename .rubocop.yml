@@ -10,10 +10,6 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.5.0
 
-# Is Rails needed? Unclear if this is intended just for applications.
-Rails:
-  Enabled: true
-
 ###########################
 ## Custom Rubocop Config ##
 ###########################
@@ -94,4 +90,4 @@ Style/FrozenStringLiteralComment:
 
 # TODO: Is there a good way to break up specs without it getting unwieldy?
 Metrics/BlockLength:
-  ExcludedMethods: ['describe', 'context']
+  IgnoredMethods: ['describe', 'context']

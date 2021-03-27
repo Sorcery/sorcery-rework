@@ -57,7 +57,6 @@ module Sorcery
           # You shouldn't really use this one yourself - it's called by the
           # controller's 'remember_me!' method.
           #--
-          # rubocop:disable Metrics/AbcSize
           # rubocop:disable Metrics/MethodLength
           #++
           #
@@ -78,7 +77,6 @@ module Sorcery
 
             sorcery_orm_adapter.update_attributes(update_options)
           end
-          # rubocop:enable Metrics/AbcSize
           # rubocop:enable Metrics/MethodLength
 
           def remember_me_token?

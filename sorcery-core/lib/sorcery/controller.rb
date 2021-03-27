@@ -46,7 +46,7 @@ module Sorcery
 
           plugin_settings.each do |key, value|
             # TODO: This method of assigning keys can probably be improved.
-            config_method = (key.to_s + '=').to_sym
+            config_method = "#{key}=".to_sym
             if @sorcery_config.respond_to?(config_method)
               @sorcery_config.__send__(config_method, value)
             else

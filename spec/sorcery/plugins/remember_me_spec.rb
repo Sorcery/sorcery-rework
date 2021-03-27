@@ -51,8 +51,8 @@ RSpec.describe Sorcery::Plugins::RememberMe do
         expect(user_instance).to respond_to :remember_me!
       end
 
-      it 'accepts plugin settings' do
-      end
+      # TODO: Add test or remove placeholder
+      it 'accepts plugin settings'
     end
   end
 end

@@ -148,11 +148,12 @@ module Sorcery
           # Runs as a hook before authenticate.
           def prevent_locked_user_login
             config = sorcery_config
-            if !login_unlocked? && config.login_lock_time_period != 0
-              if send(config.lock_expires_at_attribute_name) <= Time.current
-                login_unlock!
-              end
-            end
+            should_unlock =
+              !login_unlocked? &&
+              config.login_lock_time_period != 0 &&
+              send(config.lock_expires_at_attribute_name) <= Time.current
+
+            login_unlock! if should_unlock
 
             return false, :locked unless login_unlocked?
 

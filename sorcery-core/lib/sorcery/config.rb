@@ -179,13 +179,13 @@ module Sorcery
         defaults.each_key do |default_key|
           # NOTE: This uses <<- instead of do/end due to performance gains
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
-            def self.#{default_key}
-              instance.#{default_key}
-            end
+            def self.#{default_key}           # def self.session_key
+              instance.#{default_key}         #   instance.session_key
+            end                               # end
 
-            def self.#{default_key}=(value)
-              instance.#{default_key} = value
-            end
+            def self.#{default_key}=(value)   # def self.session_key=(value)
+              instance.#{default_key} = value #   instance.session_key = value
+            end                               # end
           RUBY
         end
 
@@ -204,10 +204,10 @@ module Sorcery
       # Delegate class methods to instance methods
       [:reset!, :user_config, :configure, :configure!].each do |method_name|
         class_eval <<-RUBY, __FILE__, __LINE__ + 1
-          def #{method_name}(&block)
-            return instance.#{method_name}(&block) if block_given?
-            instance.#{method_name}
-          end
+          def #{method_name}(&block)                               # def reset!(&block)
+            return instance.#{method_name}(&block) if block_given? #   return instance.reset!(&block) if block_given?
+            instance.#{method_name}                                #   instance.reset!
+          end                                                      # end
         RUBY
       end
     end
@@ -228,7 +228,7 @@ module Sorcery
     end
 
     def user_config(&block)
-      block_given? ? @user_config = block : @user_config
+      block ? @user_config = block : @user_config
     end
 
     # FIXME: This probably has unintended consequences, such as persisting

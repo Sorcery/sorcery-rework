@@ -5,6 +5,8 @@ require 'sorcery-core'
 
 # FIXME: Find better way to handle context grouping
 # rubocop:disable RSpec/NestedGroups
+# TODO: Why do we care about memoized helpers?
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Sorcery::CryptoProviders::BCrypt do
   let(:original_password) { Faker::Internet.unique.password }
   let(:other_password) { Faker::Internet.unique.password }
@@ -226,3 +228,4 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
   end
 end
 # rubocop:enable RSpec/NestedGroups
+# rubocop:enable RSpec/MultipleMemoizedHelpers

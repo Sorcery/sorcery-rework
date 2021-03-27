@@ -61,10 +61,12 @@ module Sorcery
           # Override.
           # logins a user instance, and optionally remembers them.
           #
-          def auto_login(user, should_remember = false)
+          def auto_login(user, options = {})
+            options = { should_remember: false }.merge(options)
+
             session[sorcery_config.session_key] = user.id.to_s
             @current_user = user
-            remember_me! if should_remember
+            remember_me! if options[:should_remember] == true
           end
 
           protected
