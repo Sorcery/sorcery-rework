@@ -60,6 +60,9 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
+    argon2 (2.0.3)
+      ffi (~> 1.14)
+      ffi-compiler (~> 1.0)
     ast (2.4.2)
     bcrypt (3.1.16)
     builder (3.2.4)
@@ -76,6 +79,10 @@ GEM
       railties (>= 5.0.0)
     faker (2.17.0)
       i18n (>= 1.6, < 2)
+    ffi (1.15.0)
+    ffi-compiler (1.0.1)
+      ffi (>= 1.0.0)
+      rake
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     i18n (1.8.9)
@@ -166,10 +173,6 @@ GEM
     rubocop-performance (1.10.2)
       rubocop (>= 0.90.0, < 2.0)
       rubocop-ast (>= 0.4.0)
-    rubocop-rails (2.9.1)
-      activesupport (>= 4.2.0)
-      rack (>= 1.1)
-      rubocop (>= 0.90.0, < 2.0)
     rubocop-rspec (2.2.0)
       rubocop (~> 1.0)
       rubocop-ast (>= 1.1.0)
@@ -204,6 +207,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  argon2
   bcrypt
   byebug
   factory_bot_rails
@@ -213,7 +217,6 @@ DEPENDENCIES
   rspec-rails
   rubocop
   rubocop-performance
-  rubocop-rails
   rubocop-rspec
   shoulda-matchers
   simplecov
