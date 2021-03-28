@@ -12,8 +12,11 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
   let(:other_password) { Faker::Internet.unique.password }
   let(:original_pepper) { 'pepper' }
   let(:other_pepper) { 'paprika' }
-  let(:minimum_argon2_cost) { 10 }
-  let(:alternative_argon2_cost) { 17 }
+  # NOTE: This minimum is enforced by the Argon2 library, anything lower will
+  #       result in a MEMORY_TOO_LITTLE error.
+  let(:minimum_argon2_cost) { 3 }
+  # Used to test changing the cost of the algorithm.
+  let(:alternative_argon2_cost) { 6 }
 
   before do
     described_class.cost = minimum_argon2_cost
