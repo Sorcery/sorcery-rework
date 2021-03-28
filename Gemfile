@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'argon2'
+gem 'argon2', '~> 3.0.0'
 gem 'bcrypt'
 gem 'rails'
 gem 'sqlite3'

@@ -54,25 +54,14 @@ module Sorcery
         # Creates an Argon2 hash for the password provided.
         #
         def digest(password)
-          argon2 = ::Argon2::Password.new(m_cost: cost, secret: pepper)
-          argon2.create(password).to_s
-          # TODO: Get this implemented upstream
-          # ::Argon2::Password.create(password, m_cost: cost, secret: pepper).
-          #   to_s
+          ::Argon2::Password.create(password, m_cost: cost, secret: pepper).to_s
         end
 
         ##
         # Compares a password hash (digest) with a provided plaintext password.
-        #--
-        # TODO: Should this check that digest and password are both strings, or
-        #       is the performance hit not worth the type safety?
-        #++
         #
         def digest_matches?(digest, password)
-          # TODO: Does Argon2 provide its own secure_compare? Should we avoid
-          #       the verify_password method and do the comparison manually like
-          #       we do with bcrypt?
-          ::Argon2::Password.verify_password(password, digest, pepper)
+          ::Argon2::Password.verify_password(password.to_s, digest.to_s, pepper)
         end
 
         ##
@@ -86,12 +75,11 @@ module Sorcery
         #++
         #
         def cost_matches?(digest)
-          hashcost = /m=(\d+),/.match(digest)
-          unless hashcost.present?
-            raise ArgumentError, 'Invalid Argon2 hash provided to cost_matches?'
-          end
+          argon2 = argon2_from_digest(digest)
 
-          (hashcost[1].to_i == (1 << cost))
+          return false if argon2.nil?
+
+          argon2.m_cost == cost
         end
 
         ##
@@ -100,6 +88,17 @@ module Sorcery
         def reset_to_defaults!
           @cost = 16
           @pepper = ''
+        end
+
+        private
+
+        ##
+        # Converts a raw argon2 hash into an argon2 password object.
+        #
+        def argon2_from_digest(digest)
+          ::Argon2::Password.new(digest)
+        rescue ::Argon2::Errors::InvalidHash
+          nil
         end
       end
     end
