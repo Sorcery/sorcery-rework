@@ -7,7 +7,7 @@ require 'sorcery-core'
 # rubocop:disable RSpec/NestedGroups
 # TODO: Why do we care about memoized helpers?
 # rubocop:disable RSpec/MultipleMemoizedHelpers
-RSpec.describe Sorcery::CryptoProviders::Argon2, focus: true do
+RSpec.describe Sorcery::CryptoProviders::Argon2 do
   let(:original_password) { Faker::Internet.unique.password }
   let(:other_password) { Faker::Internet.unique.password }
   let(:original_pepper) { 'pepper' }

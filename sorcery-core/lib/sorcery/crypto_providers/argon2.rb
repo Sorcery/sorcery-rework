@@ -61,7 +61,7 @@ module Sorcery
         # Compares a password hash (digest) with a provided plaintext password.
         #
         def digest_matches?(digest, password)
-          ::Argon2::Password.verify_password(password.to_s, digest.to_s, pepper)
+          ::Argon2::Password.verify_password(password, digest, pepper)
         end
 
         ##

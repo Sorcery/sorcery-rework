@@ -4,7 +4,10 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'argon2', '~> 3.0.0'
+# TODO: Remove v3.0.0 version lock and Github addressing after 3.0.0 release
+gem 'argon2', '~> 3.0.0',
+  github: 'athix/ruby-argon2',
+  branch: 'feature/additional-helpers'
 gem 'bcrypt'
 gem 'rails'
 gem 'sqlite3'
