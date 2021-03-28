@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/athix/ruby-argon2.git
+  revision: c591ea5d5c04b0b4a9e3c649066da56995ee1aec
+  branch: master
+  specs:
+    argon2 (2.0.3)
+      ffi (~> 1.14)
+      ffi-compiler (~> 1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -60,9 +69,6 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    argon2 (2.0.3)
-      ffi (~> 1.14)
-      ffi-compiler (~> 1.0)
     ast (2.4.2)
     bcrypt (3.1.16)
     builder (3.2.4)
@@ -207,7 +213,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  argon2
+  argon2!
   bcrypt
   byebug
   factory_bot_rails
