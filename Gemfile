@@ -7,7 +7,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # TODO: Remove v3.0.0 version lock and Github addressing after 3.0.0 release
 gem 'argon2', '~> 3.0.0',
   github: 'athix/ruby-argon2',
-  branch: 'feature/additional-helpers'
+  branch: 'feature/additional-helpers',
+  submodules: true
 gem 'bcrypt'
 gem 'rails'
 gem 'sqlite3'

@@ -1,7 +1,8 @@
 GIT
   remote: https://github.com/athix/ruby-argon2.git
-  revision: 3206644f478ff5d964edb30718acdc5cc2901af7
+  revision: 5715a52e6932ee3f35225c6956b587b1e6d6117c
   branch: feature/additional-helpers
+  submodules: true
   specs:
     argon2 (3.0.0)
       ffi (~> 1.14)
