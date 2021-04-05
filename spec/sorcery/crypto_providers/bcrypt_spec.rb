@@ -16,7 +16,7 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
   #       automatically be upped back to 4.
   let(:minimum_bcrypt_cost) { 4 }
   # Used to test changing the cost of the algorithm.
-  let(:alternative_bcrypt_cost) { 7 }
+  let(:alternative_bcrypt_cost) { minimum_bcrypt_cost + 3 }
 
   before do
     described_class.cost = minimum_bcrypt_cost

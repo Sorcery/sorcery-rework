@@ -16,7 +16,7 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
   #       result in a MEMORY_TOO_LITTLE error.
   let(:minimum_argon2_cost) { 3 }
   # Used to test changing the cost of the algorithm.
-  let(:alternative_argon2_cost) { 6 }
+  let(:alternative_argon2_cost) { minimum_argon2_cost + 3 }
 
   before do
     described_class.cost = minimum_argon2_cost
