@@ -3,6 +3,9 @@
 require 'securerandom'
 
 module Sorcery
+  # FIXME: Can any of this be extracted or simplified?
+  # rubocop:disable Metrics/ModuleLength
+
   ##
   # Extends the user model(s) with Sorcery's methods.
   #
@@ -37,6 +40,7 @@ module Sorcery
 
       include_plugins!
       load_plugin_settings!
+      define_sorcery_orm_adapter!
       define_base_fields!
       init_orm_hooks!
 
@@ -55,7 +59,7 @@ module Sorcery
     # railtie.rb
     #
     def sorcery_orm_adapter
-      @sorcery_orm_adapter ||= ::Sorcery::OrmAdapters::Base.new(self)
+      ::Sorcery::OrmAdapters::Base.from(self)
     end
 
     def include_plugins!
@@ -100,6 +104,18 @@ module Sorcery
         'OAuth'
       else
         plugin_symbol.to_s.split('_').map(&:capitalize).join
+      end
+    end
+
+    ##
+    # Provides an abstraction so that we don't overwrite sorcery_orm_adapter if
+    # it's already defined (e.g. by railtie.rb)
+    #
+    def define_sorcery_orm_adapter!
+      return if instance_methods.include?(:sorcery_orm_adapter)
+
+      define_method(:sorcery_orm_adapter) do
+        @sorcery_orm_adapter ||= ::Sorcery::OrmAdapters::Base.new(self)
       end
     end
 
@@ -174,7 +190,6 @@ module Sorcery
     # TODO
     #
     #--
-    # rubocop:disable Metrics/ModuleLength
     #++
     #
     module ClassMethods

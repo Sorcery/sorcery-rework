@@ -32,15 +32,25 @@ module Sorcery
         update_attributes(name => value)
       end
 
-      ##
-      # This will be handled by the specific ORM implementations.
-      #
-      def define_field(name, type, options = {}); end
+      def update_attributes(attrs)
+        attrs.each do |name, value|
+          @model.send(:"#{name}=", value)
+        end
 
-      ##
-      # This will be handled by the specific ORM implementations.
-      #
-      def define_callback(time, event, method_name, options = {}); end
+        nil
+      end
+
+      class << self
+        ##
+        # This will be handled by the specific ORM implementations.
+        #
+        def define_field(name, type, options = {}); end
+
+        ##
+        # This will be handled by the specific ORM implementations.
+        #
+        def define_callback(time, event, method_name, options = {}); end
+      end
     end
   end
 end

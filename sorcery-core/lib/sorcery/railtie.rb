@@ -43,11 +43,13 @@ module Sorcery
       ActiveSupport.on_load(:active_record) do
         extend ::Sorcery::Model
 
+        # Define the instance method
         define_method(:sorcery_orm_adapter) do
           @sorcery_orm_adapter ||=
             ::Sorcery::OrmAdapters::ActiveRecord.new(self)
         end
 
+        # Define the class method
         define_singleton_method(:sorcery_orm_adapter) do
           ::Sorcery::OrmAdapters::ActiveRecord.from(self)
         end
