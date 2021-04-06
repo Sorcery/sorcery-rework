@@ -25,6 +25,26 @@ RSpec.describe Admin do
         expect(described_class.authenticate(admin.email, 'wrong!')).to eq nil
       end
     end
+
+    describe 'sorcery_orm_adapter' do
+      subject(:sorcery_orm_adapter) { described_class.sorcery_orm_adapter }
+
+      it 'uses ActiveRecord' do
+        expect(sorcery_orm_adapter).to eq Sorcery::OrmAdapters::ActiveRecord
+      end
+    end
+  end
+
+  describe 'instance method' do
+    describe 'sorcery_orm_adapter' do
+      subject(:sorcery_orm_adapter) { record.sorcery_orm_adapter.class }
+
+      let(:record) { build :admin }
+
+      it 'uses ActiveRecord' do
+        expect(sorcery_orm_adapter).to eq Sorcery::OrmAdapters::ActiveRecord
+      end
+    end
   end
 
   include_examples 'brute_force_protection'
