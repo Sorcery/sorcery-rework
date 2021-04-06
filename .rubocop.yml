@@ -52,6 +52,7 @@ Layout/SpaceAroundOperators:
 Naming/FileName:
   Exclude:
     - 'sorcery-core/lib/sorcery-core.rb'
+    - 'sorcery-jwt/lib/sorcery-jwt.rb'
     - 'sorcery-mfa/lib/sorcery-mfa.rb'
     - 'sorcery-oauth/lib/sorcery-oauth.rb'
 

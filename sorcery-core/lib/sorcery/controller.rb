@@ -63,6 +63,8 @@ module Sorcery
     # TODO: This is essentially 1:1 with the Model version of this method. DRY?
     def plugin_const_string(plugin_symbol)
       case plugin_symbol
+      when :jwt
+        'JWT'
       when :mfa
         'MFA'
       when :oauth

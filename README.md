@@ -13,6 +13,7 @@ multiple gems released in lock step.
 New Gems:
 
 * `sorcery-core` - All previous sorcery functionality except for OAuth support.
+* `sorcery-jwt` - New plugin to add support for JWT / API only apps.
 * `sorcery-mfa` - New plugin to add support for Authy apps and WebAuthn 2FA.
 * `sorcery-oauth` - Acts as a 1:1 replacement for Sorcery's External module.
 

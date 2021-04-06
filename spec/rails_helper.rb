@@ -11,6 +11,7 @@ require 'rails/all'
 ## Load Sorcery ##
 ##################
 require 'sorcery-core'
+require 'sorcery-jwt'
 require 'sorcery-mfa'
 require 'sorcery-oauth'
 

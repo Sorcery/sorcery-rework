@@ -1,3 +1,4 @@
 sorcery-core/lib
+sorcery-jwt/lib
 sorcery-mfa/lib
 sorcery-oauth/lib
