@@ -116,6 +116,7 @@ module Sorcery
     # it's already defined (e.g. by railtie.rb)
     #
     def define_sorcery_orm_adapter!
+      # Including the super methods on this check is intentional.
       return if instance_methods.include?(:sorcery_orm_adapter)
 
       define_method(:sorcery_orm_adapter) do

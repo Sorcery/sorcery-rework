@@ -19,6 +19,6 @@ New Gems:
 
 Original Gem
 
-* `sorcery` - Will be left as-is so the v1 migration is an optional/manual change.
+* `sorcery` - Will be updated to be a meta gem that includes core and oauth.
 
 Nothing is set in stone at the moment, any and all suggestions are welcomed.

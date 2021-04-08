@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
+# TODO: This isn't done yet. Just adding this so I don't forget about the meta
+#       gem.
+
 version = File.read(File.expand_path('../SORCERY_VERSION', __dir__)).strip
 repo_url = 'https://github.com/sorcery/sorcery'
 
 Gem::Specification.new do |s|
   s.version     = version
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'sorcery-core'
+  s.name        = 'sorcery'
   s.summary     = 'Magical Authentication'
-  s.description =
-    'Provides common authentication needs that can be easily used within your '\
-    'own MVC structure.'
+  s.description = 'Meta gem to ease transition to v1 for existing applications.'
+
+  # TODO: Sign the gem: https://guides.rubygems.org/security/#general
 
   # TODO: Does including minimum rubygems version make sense?
   s.required_ruby_version     = '>= 2.5.0'
@@ -18,11 +21,17 @@ Gem::Specification.new do |s|
 
   s.license = 'MIT'
 
-  s.author   = 'Josh Buker'
+  s.authors = [
+    'Noam Ben Ari',
+    'Kir Shatrov',
+    'Grzegorz Witek',
+    'Chase Gilliam',
+    'Josh Buker'
+  ]
   s.email    = 'crypto@joshbuker.com'
   s.homepage = 'https://sorcerygem.org'
 
-  s.files = ['lib/sorcery-core.rb', 'lib/sorcery/version.rb']
+  s.files = []
 
   s.metadata = {
     'bug_tracker_uri'   => "#{repo_url}/issues",
@@ -31,11 +40,10 @@ Gem::Specification.new do |s|
     'source_code_uri'   => "#{repo_url}/tree/v#{version}"
   }
 
-  # TODO: Rails dependency and version locking
-  # s.add_dependency 'rails'
+  s.add_dependency 'sorcery-core',  version
+  s.add_dependency 'sorcery-oauth', version
 
-  # Crypto providers are optional, make sure to add them to your bundle if used.
-  # This appears to be deprecated, check for recommended alternative
-  # s.add_optional_dependency 'argon2', '~> 2.0'
-  # s.add_optional_dependency 'bcrypt', '~> 3.0'
+  # Because omniauth strat dependencies will be need to be added, might as well
+  # remove the hard requirement for bcrypt.
+  # s.add_dependency 'bcrypt', '~> 3.0'
 end

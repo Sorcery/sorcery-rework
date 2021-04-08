@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# FIXME: This breaks due to a root-level gemspec not being found
+# TODO: Make it so the gem tasks works for the meta gem and all plugin gems/core
 # require 'bundler/gem_tasks'
 
 require 'rspec/core/rake_task'

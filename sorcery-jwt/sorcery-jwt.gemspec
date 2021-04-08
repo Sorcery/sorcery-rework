@@ -30,4 +30,6 @@ Gem::Specification.new do |s|
   }
 
   s.add_dependency 'sorcery-core', version
+
+  s.add_dependency 'jwt', '~> 2.0'
 end
