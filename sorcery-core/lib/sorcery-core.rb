@@ -96,7 +96,11 @@ module Sorcery
   #
   module Plugins
     # Used to allow non-titlecase module naming in plugins.
+    # FIXME: We're intentionally allowing mutation. There has to be a better way
+    #        to do this. Module variables perhaps?
+    # rubocop:disable Style/MutableConstant
     PLUGIN_CONST_MAPPING = {}
+    # rubocop:enable Style/MutableConstant
 
     autoload :ActivityLogging, 'sorcery/plugins/activity_logging'
     autoload :BruteForceProtection, 'sorcery/plugins/brute_force_protection'
