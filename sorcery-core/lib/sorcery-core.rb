@@ -95,6 +95,9 @@ module Sorcery
   # examples on how to approach this.
   #
   module Plugins
+    # Used to allow non-titlecase module naming in plugins.
+    PLUGIN_CONST_MAPPING = {}
+
     autoload :ActivityLogging, 'sorcery/plugins/activity_logging'
     autoload :BruteForceProtection, 'sorcery/plugins/brute_force_protection'
     autoload :RememberMe, 'sorcery/plugins/remember_me'

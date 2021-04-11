@@ -96,16 +96,9 @@ module Sorcery
     end
     # rubocop:enable Metrics/MethodLength
 
-    # FIXME: This setup means that any new plugins that don't follow titlecase
-    #        will be unable to load without upstream changes...
     def plugin_const_string(plugin_symbol)
-      case plugin_symbol
-      when :JWT
-        'JWT'
-      when :mfa
-        'MFA'
-      when :oauth
-        'OAuth'
+      if Sorcery::Plugins::PLUGIN_CONST_MAPPING.key?(plugin_symbol)
+        Sorcery::Plugins::PLUGIN_CONST_MAPPING[plugin_symbol]
       else
         plugin_symbol.to_s.split('_').map(&:capitalize).join
       end
