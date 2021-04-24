@@ -39,6 +39,7 @@ module Sorcery
       ################
       ## Attributes ##
       ################
+      # TODO: Rename `crypted_password` -> `password_digest`?
       crypted_password_attribute_name:         :crypted_password,
       email_attribute_name:                    :email,
       password_attribute_name:                 :password,
