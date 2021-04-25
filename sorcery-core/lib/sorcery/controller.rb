@@ -26,9 +26,7 @@ module Sorcery
     def include_plugins!
       class_eval do
         @sorcery_config.plugins.each do |plugin|
-          include ::Sorcery::Plugins.
-            const_get(plugin_const_string(plugin)).
-            const_get('Controller')
+          include controller_plugin_const(plugin)
         end
       end
       # TODO: This should also take config settings from `load_plugin` calls,
@@ -60,18 +58,9 @@ module Sorcery
     end
     # rubocop:enable Metrics/MethodLength
 
-    # TODO: This is essentially 1:1 with the Model version of this method. DRY?
-    def plugin_const_string(plugin_symbol)
-      case plugin_symbol
-      when :jwt
-        'JWT'
-      when :mfa
-        'MFA'
-      when :oauth
-        'OAuth'
-      else
-        plugin_symbol.to_s.split('_').map(&:capitalize).join
-      end
+    # TODO: Extract plugin const detection into an object and depend on it.
+    def controller_plugin_const(plugin_symbol)
+      ::Sorcery::Plugins.plugin_const(plugin_symbol).const_get('Controller')
     end
 
     ##

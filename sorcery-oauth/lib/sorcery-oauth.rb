@@ -6,11 +6,9 @@ module Sorcery
   ##
   #
   module Plugins
-    # FIXME: This seems like it might be really dumb. That said, it allows
-    #        plugins to define their own const mapping without upstream changes.
-    #        Double check that this is sane, and that there aren't any other
-    #        better solutions.
-    PLUGIN_CONST_MAPPING[:oauth] = 'OAuth'
+    def self.oauth_plugin_const
+      :OAuth
+    end
 
     autoload :OAuth, 'sorcery/plugins/oauth'
   end

@@ -65,9 +65,7 @@ module Sorcery
     def include_plugins!
       class_eval do
         @sorcery_config.plugins.each do |plugin|
-          include ::Sorcery::Plugins.
-            const_get(plugin_const_string(plugin)).
-            const_get('Model')
+          include model_plugin_const(plugin)
         end
       end
     end
@@ -96,12 +94,9 @@ module Sorcery
     end
     # rubocop:enable Metrics/MethodLength
 
-    def plugin_const_string(plugin_symbol)
-      if Sorcery::Plugins::PLUGIN_CONST_MAPPING.key?(plugin_symbol)
-        Sorcery::Plugins::PLUGIN_CONST_MAPPING[plugin_symbol]
-      else
-        plugin_symbol.to_s.split('_').map(&:capitalize).join
-      end
+    # TODO: Extract plugin const detection into an object and depend on it.
+    def model_plugin_const(plugin_symbol)
+      ::Sorcery::Plugins.plugin_const(plugin_symbol).const_get('Model')
     end
 
     ##
