@@ -12,17 +12,16 @@ module Sorcery
       # options.
       #
       module Controller
-        def self.included(base)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.after_login << :reset_failed_logins_count!
-          base.sorcery_config.after_failed_login << :update_failed_logins_count!
+        def self.plugin_callbacks
+          {
+            after_login:        [:reset_failed_logins_count!],
+            after_failed_login: [:update_failed_logins_count!]
+          }
         end
 
-        ##
-        # TODO
-        #
-        module InstanceMethods
+        module InstanceMethods # :nodoc:
           protected
 
           #################

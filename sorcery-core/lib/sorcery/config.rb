@@ -74,8 +74,8 @@ module Sorcery
       ###########
       ## Other ##
       ###########
-      after_config:                            [],
-      before_authenticate:                     [],
+      after_config:                            Set.new,
+      before_authenticate:                     Set.new,
       email_delivery_method:                   :deliver_now,
       save_return_to_url:                      true,
       token_randomness:                        15,
@@ -239,6 +239,18 @@ module Sorcery
     def add_plugin_defaults(defaults)
       self.class.add_defaults(defaults)
       load_plugin_defaults!(defaults)
+    end
+
+    def add_callbacks(callback_hash)
+      callback_hash.each do |callback_name, callbacks|
+        unless instance_variable_defined?("@#{callback_name}")
+          raise ArgumentError, "Unknown callback #{callback_name}!"
+        end
+
+        callbacks.each do |callback|
+          send(callback_name) << callback
+        end
+      end
     end
 
     # FIXME: The entire settings situation feels a bit jank, consider

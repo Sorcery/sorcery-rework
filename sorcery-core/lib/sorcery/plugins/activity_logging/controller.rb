@@ -11,31 +11,32 @@ module Sorcery
       # Sorcery::Plugins::ActivityLogging::Model
       #
       module Controller
-        #--
-        # rubocop:disable Metrics/MethodLength
-        #++
-        def self.included(base)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        def self.add_callbacks(base)
+          base.after_action :register_last_activity_time_to_db
+        end
+
+        def self.plugin_callbacks
+          {
+            after_login:   [
+              :register_login_time_to_db,
+              :register_last_ip_address
+            ],
+            before_logout: [:register_logout_time_to_db]
+          }
+        end
+
+        def self.plugin_defaults
+          {
             register_login_time:         true,
             register_logout_time:        true,
             register_last_activity_time: true,
             register_last_ip_address:    true
-          )
-
-          base.sorcery_config.after_login   << :register_login_time_to_db
-          base.sorcery_config.after_login   << :register_last_ip_address
-          base.sorcery_config.before_logout << :register_logout_time_to_db
-
-          base.after_action :register_last_activity_time_to_db
+          }
         end
-        # rubocop:enable Metrics/MethodLength
 
-        ##
-        # TODO
-        #
-        module InstanceMethods
+        module InstanceMethods # :nodoc:
           protected
 
           #################

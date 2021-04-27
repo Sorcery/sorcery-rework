@@ -10,12 +10,17 @@ module Sorcery
       # options and methods for locking and unlocking the user.
       #
       module Model
-        # rubocop:disable Metrics/MethodLength
-        def self.included(base)
-          base.extend(ClassMethods)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        def self.plugin_callbacks
+          {
+            before_authenticate: [:prevent_locked_user_login],
+            after_config:        [:define_brute_force_protection_fields]
+          }
+        end
+
+        def self.plugin_defaults
+          {
             failed_logins_count_attribute_name:     :failed_logins_count,
             lock_expires_at_attribute_name:         :lock_expires_at,
             consecutive_login_retries_amount_limit: 50,
@@ -24,13 +29,8 @@ module Sorcery
             unlock_token_email_method_name:         :send_unlock_token_email,
             unlock_token_mailer_disabled:           false,
             unlock_token_mailer:                    nil
-          )
-
-          base.sorcery_config.before_authenticate << :prevent_locked_user_login
-          base.sorcery_config.after_config <<
-            :define_brute_force_protection_fields
+          }
         end
-        # rubocop:enable Metrics/MethodLength
 
         ##
         # TODO

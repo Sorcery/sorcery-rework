@@ -4,19 +4,25 @@ module Sorcery
   module Plugins
     module SessionTimeout
       module Controller # :nodoc:
-        def self.included(base)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        def self.add_callbacks(base)
+          base.prepend_before_action :validate_session
+        end
+
+        def self.plugin_callbacks
+          {
+            after_login:       [:register_login_time],
+            after_remember_me: [:register_login_time]
+          }
+        end
+
+        def self.plugin_defaults
+          {
             session_timeout:                                    3600, # 1.hour
             session_timeout_from_last_action:                   false,
             session_timeout_invalidate_active_sessions_enabled: false
-          )
-
-          base.sorcery_config.after_login << :register_login_time
-          base.sorcery_config.after_remember_me << :register_login_time
-
-          base.prepend_before_action :validate_session
+          }
         end
 
         ##

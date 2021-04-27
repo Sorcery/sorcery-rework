@@ -4,14 +4,46 @@ module Sorcery
   module Plugins
     module UserActivation
       module Model # :nodoc:
-        # rubocop:disable Layout/LineLength
-        # rubocop:disable Metrics/AbcSize
-        # rubocop:disable Metrics/MethodLength
-        def self.included(base)
-          base.extend(ClassMethods)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        # rubocop:disable Metrics/MethodLength
+        def self.add_callbacks(base)
+          base.class_eval do
+            # don't setup activation if no password supplied - this user is
+            # created automatically
+            sorcery_orm_adapter.define_callback(
+              :before, :create,
+              :setup_activation,
+              if: proc { |user|
+                    user.send(sorcery_config.password_attribute_name).present?
+                  }
+            )
+            # don't send activation needed email if no crypted password created
+            # - this user is external (OAuth etc.)
+            sorcery_orm_adapter.define_callback(
+              :after, :commit,
+              :send_activation_needed_email!,
+              on: :create,
+              if: :send_activation_needed_email?
+            )
+          end
+        end
+        # rubocop:enable Metrics/MethodLength
+
+        def self.plugin_callbacks
+          {
+            after_config:        [
+              :validate_mailer_defined,
+              :define_user_activation_fields
+            ],
+            before_authenticate: [:prevent_non_active_login]
+          }
+        end
+
+        # rubocop:disable Layout/LineLength
+        # rubocop:disable Metrics/MethodLength
+        def self.plugin_defaults
+          {
             activation_state_attribute_name:            :activation_state,
             activation_token_attribute_name:            :activation_token,
             activation_token_expires_at_attribute_name: :activation_token_expires_at,
@@ -21,36 +53,12 @@ module Sorcery
             activation_needed_email_method_name:        :activation_needed_email,
             activation_success_email_method_name:       :activation_success_email,
             prevent_non_active_users_to_login:          true
-          )
-
-          base.class_eval do
-            # don't setup activation if no password supplied - this user is created automatically
-            sorcery_orm_adapter.define_callback(
-              :before, :create,
-              :setup_activation,
-              if: proc { |user| user.send(sorcery_config.password_attribute_name).present? }
-            )
-            # don't send activation needed email if no crypted password created - this user is external (OAuth etc.)
-            sorcery_orm_adapter.define_callback(
-              :after, :commit,
-              :send_activation_needed_email!,
-              on: :create,
-              if: :send_activation_needed_email?
-            )
-          end
-
-          base.sorcery_config.after_config << :validate_mailer_defined
-          base.sorcery_config.after_config << :define_user_activation_fields
-          base.sorcery_config.before_authenticate << :prevent_non_active_login
+          }
         end
         # rubocop:enable Layout/LineLength
-        # rubocop:enable Metrics/AbcSize
         # rubocop:enable Metrics/MethodLength
 
-        ##
-        # TODO
-        #
-        module ClassMethods
+        module ClassMethods # :nodoc:
           # Find user by token, also checks for expiration.
           # Returns the user if token found and is valid.
           def load_from_activation_token(token, &block)

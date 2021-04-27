@@ -4,13 +4,18 @@ module Sorcery
   module Plugins
     module MagicLogin
       module Model # :nodoc:
-        # rubocop:disable Metrics/MethodLength
-        # rubocop:disable Layout/LineLength
-        def self.included(base)
-          base.extend(ClassMethods)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        def self.plugin_callbacks
+          {
+            after_config: [:validate_mailer_defined, :define_magic_login_fields]
+          }
+        end
+
+        # FIXME: Shorter names?
+        # rubocop:disable Layout/LineLength
+        def self.plugin_defaults
+          {
             magic_login_token_attribute_name:            :magic_login_token,
             magic_login_token_expires_at_attribute_name: :magic_login_token_expires_at,
             magic_login_email_sent_at_attribute_name:    :magic_login_email_sent_at,
@@ -19,13 +24,9 @@ module Sorcery
             magic_login_email_method_name:               :magic_login_email,
             magic_login_expiration_period:               15 * 60,
             magic_login_time_between_emails:             5 * 60
-          )
-
-          base.sorcery_config.after_config << :validate_mailer_defined
-          base.sorcery_config.after_config << :define_magic_login_fields
+          }
         end
         # rubocop:enable Layout/LineLength
-        # rubocop:enable Metrics/MethodLength
 
         module ClassMethods # :nodoc:
           ##

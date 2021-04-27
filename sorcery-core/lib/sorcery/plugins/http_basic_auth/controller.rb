@@ -4,14 +4,20 @@ module Sorcery
   module Plugins
     module HttpBasicAuth
       module Controller # :nodoc:
-        def self.included(base)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        def self.plugin_callbacks
+          {
+            # FIXME: Login source isn't a callback, but this still works...Find
+            #        better naming?
+            login_sources: [:login_from_basic_auth]
+          }
+        end
+
+        def self.plugin_defaults
+          {
             controller_to_realm_map: { 'application' => 'Application' }
-          )
-
-          base.sorcery_config.login_sources << :login_from_basic_auth
+          }
         end
 
         module InstanceMethods # :nodoc:

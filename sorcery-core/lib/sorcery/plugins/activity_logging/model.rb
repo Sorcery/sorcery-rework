@@ -8,19 +8,22 @@ module Sorcery
       # Sorcery::Plugins::ActivityLogging::Controller
       #
       module Model
-        def self.included(base)
-          base.extend(ClassMethods)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        def self.plugin_callbacks
+          {
+            after_config: [:define_activity_logging_fields]
+          }
+        end
+
+        def self.plugin_defaults
+          {
             last_login_at_attribute_name:    :last_login_at,
             last_logout_at_attribute_name:   :last_logout_at,
             last_activity_at_attribute_name: :last_activity_at,
             last_login_from_ip_address_name: :last_login_from_ip_address,
             activity_timeout:                10 * 60
-          )
-
-          base.sorcery_config.after_config << :define_activity_logging_fields
+          }
         end
 
         ##

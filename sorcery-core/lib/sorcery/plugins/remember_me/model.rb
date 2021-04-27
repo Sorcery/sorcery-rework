@@ -10,31 +10,26 @@ module Sorcery
       # options and methods for locking and unlocking the user.
       #
       module Model
-        ##
-        #--
-        # TODO: Fix LineLength (shorter attribute names?)
-        # rubocop:disable Layout/LineLength
-        #++
-        #
-        def self.included(base)
-          base.extend(ClassMethods)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
+        def self.plugin_callbacks
+          {
+            after_config: [:define_remember_me_fields]
+          }
+        end
+
+        # rubocop:disable Layout/LineLength
+        def self.plugin_defaults
+          {
             remember_me_token_attribute_name:            :remember_me_token,
             remember_me_token_expires_at_attribute_name: :remember_me_token_expires_at,
             remember_me_token_persist_globally:          false,
             remember_me_for:                             7 * 60 * 60 * 24
-          )
-
-          base.sorcery_config.after_config << :define_remember_me_fields
+          }
         end
         # rubocop:enable Layout/LineLength
 
-        ##
-        # TODO
-        #
-        module ClassMethods
+        module ClassMethods # :nodoc:
           protected
 
           def define_remember_me_fields

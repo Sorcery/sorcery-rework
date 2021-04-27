@@ -4,13 +4,21 @@ module Sorcery
   module Plugins
     module ResetPassword
       module Model # :nodoc:
+        extend Sorcery::Plugin
+
+        def self.plugin_callbacks
+          {
+            after_config: [
+              :validate_mailer_defined,
+              :define_reset_password_fields
+            ]
+          }
+        end
+
         # rubocop:disable Layout/LineLength
         # rubocop:disable Metrics/MethodLength
-        def self.included(base)
-          base.extend(ClassMethods)
-          base.send(:include, InstanceMethods)
-
-          base.sorcery_config.add_plugin_defaults(
+        def self.plugin_defaults
+          {
             reset_password_token_attribute_name:             :reset_password_token,
             reset_password_token_expires_at_attribute_name:  :reset_password_token_expires_at,
             reset_password_page_access_count_attribute_name: :access_count_to_reset_password_page,
@@ -20,18 +28,12 @@ module Sorcery
             reset_password_email_method_name:                :reset_password_email,
             reset_password_expiration_period:                nil,
             reset_password_time_between_emails:              5 * 60
-          )
-
-          base.sorcery_config.after_config << :validate_mailer_defined
-          base.sorcery_config.after_config << :define_reset_password_fields
+          }
         end
         # rubocop:enable Layout/LineLength
         # rubocop:enable Metrics/MethodLength
 
-        ##
-        # TODO
-        #
-        module ClassMethods
+        module ClassMethods # :nodoc:
           # Find user by token, also checks for expiration.
           # Returns the user if token found and is valid.
           def load_from_reset_password_token(token, &block)

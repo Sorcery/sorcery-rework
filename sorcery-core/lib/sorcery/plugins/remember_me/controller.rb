@@ -9,22 +9,23 @@ module Sorcery
       # the cookie expires.
       #
       module Controller
-        def self.included(base)
-          base.send(:include, InstanceMethods)
+        extend Sorcery::Plugin
 
-          base.sorcery_config.add_plugin_defaults(
-            cookie_domain:        nil,
-            remember_me_httponly: true
-          )
-
-          base.sorcery_config.login_sources << :login_from_cookie
-          base.sorcery_config.before_logout << :forget_me!
+        def self.plugin_callbacks
+          {
+            login_sources: [:login_from_cookie],
+            before_logout: [:forget_me!]
+          }
         end
 
-        ##
-        # TODO
-        #
-        module InstanceMethods
+        def self.plugin_defaults
+          {
+            cookie_domain:        nil,
+            remember_me_httponly: true
+          }
+        end
+
+        module InstanceMethods # :nodoc:
           ##
           # This method sets the cookie and calls the user to save the token and
           # the expiration to db.
