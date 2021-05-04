@@ -18,7 +18,8 @@ module Sorcery
   ####################################
   autoload :Config, 'sorcery/config'
   autoload :Controller, 'sorcery/controller'
-  autoload :Error, 'sorcery/error' # TODO: Should this be a require?
+  autoload :Error, 'sorcery/errors' # TODO: Should this be a require?
+  autoload :Errors, 'sorcery/errors'
   autoload :Model, 'sorcery/model'
   autoload :Plugin, 'sorcery/plugin'
   autoload :VERSION, 'sorcery/version'

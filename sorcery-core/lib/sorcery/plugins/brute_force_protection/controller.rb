@@ -5,7 +5,7 @@ module Sorcery
     module BruteForceProtection
       ##
       # This module helps protect user accounts by locking them down after too
-      # many failed attemps to login were detected.
+      # many failed attempts to login were detected.
       # This is the controller part of the submodule which takes care of
       # updating the failed logins and resetting them.
       # See Sorcery::Plugins::BruteForceProtection::Model for configuration
@@ -20,6 +20,10 @@ module Sorcery
             after_failed_login: [:update_failed_logins_count!]
           }
         end
+
+        # def self.plugin_dependencies
+        #   [:password_login]
+        # end
 
         module InstanceMethods # :nodoc:
           protected

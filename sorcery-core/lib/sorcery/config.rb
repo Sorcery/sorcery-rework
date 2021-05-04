@@ -39,22 +39,22 @@ module Sorcery
       ################
       ## Attributes ##
       ################
-      # TODO: Rename `crypted_password` -> `password_digest`?
-      crypted_password_attribute_name:         :crypted_password,
-      email_attribute_name:                    :email,
-      password_attribute_name:                 :password,
-      username_attribute_names:                [:email],
+      password_digest_attr_name:               :password_digest,
+      email_attr_name:                         :email,
+      password_attr_name:                      :password,
+      username_attr_names:                     [:email],
       ###############
       ## Passwords ##
       ###############
-      encryption_algorithm:                    :bcrypt,
+      password_hashing_algorithm:              :bcrypt,
+      password_hashing_settings:               { pepper: '', stretches: nil },
       custom_encryption_provider:              nil,
       # TODO: Implement migrating/rotating passwords to new algorithms when
       #       logging in. Will a require method to determine if user should use
       #       old algo (which will be defined by the application, NOT Sorcery).
-      previous_encryption_provider:            nil,
-      pepper:                                  '',
-      stretches:                               nil,
+      # previous_encryption_provider:            nil,
+      # pepper:                                  '',
+      # stretches:                               nil,
       ###########
       ## Model ##
       ###########
@@ -66,7 +66,13 @@ module Sorcery
       not_authenticated_action:                :not_authenticated,
       session_key:                             :user_id,
       login_sources:                           Set.new,
+      ###############
+      ## Callbacks ##
+      ###############
+      before_authenticate:                     Set.new,
       before_logout:                           Set.new,
+      before_unverified_request:               Set.new,
+      after_config:                            Set.new,
       after_failed_login:                      Set.new,
       after_login:                             Set.new,
       after_logout:                            Set.new,
@@ -74,8 +80,6 @@ module Sorcery
       ###########
       ## Other ##
       ###########
-      after_config:                            Set.new,
-      before_authenticate:                     Set.new,
       email_delivery_method:                   :deliver_now,
       save_return_to_url:                      true,
       token_randomness:                        15,
@@ -302,14 +306,15 @@ module Sorcery
     end
 
     def encryption_provider
-      case @encryption_algorithm.to_sym
+      case @password_hashing_algorithm.to_sym
       when :none   then nil
       when :argon2 then ::Sorcery::CryptoProviders::Argon2
       when :bcrypt then ::Sorcery::CryptoProviders::BCrypt
       when :custom then @custom_encryption_provider
       else
-        raise ArgumentError,
-          "Encryption algorithm supplied, #{@encryption_algorithm}, is invalid"
+        raise Sorcery::Errors::ConfigError,
+          "The password hashing algorithm supplied, "\
+          "#{@password_hashing_algorithm}, is invalid"
       end
     end
 

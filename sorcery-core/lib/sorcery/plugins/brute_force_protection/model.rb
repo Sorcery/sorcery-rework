@@ -21,16 +21,20 @@ module Sorcery
 
         def self.plugin_defaults
           {
-            failed_logins_count_attribute_name:     :failed_logins_count,
-            lock_expires_at_attribute_name:         :lock_expires_at,
+            failed_logins_count_attr_name:          :failed_logins_count,
+            lock_expires_at_attr_name:              :lock_expires_at,
             consecutive_login_retries_amount_limit: 50,
             login_lock_time_period:                 60 * 60,
-            unlock_token_attribute_name:            :unlock_token,
+            unlock_token_attr_name:                 :unlock_token,
             unlock_token_email_method_name:         :send_unlock_token_email,
             unlock_token_mailer_disabled:           false,
             unlock_token_mailer:                    nil
           }
         end
+
+        # def self.plugin_dependencies
+        #   [:password_login]
+        # end
 
         ##
         # TODO
@@ -42,7 +46,7 @@ module Sorcery
 
             load_from_token(
               token,
-              sorcery_config.unlock_token_attribute_name,
+              sorcery_config.unlock_token_attr_name,
               &block
             )
           end
@@ -52,16 +56,16 @@ module Sorcery
           # rubocop:disable Metrics/MethodLength
           def define_brute_force_protection_fields
             sorcery_orm_adapter.define_field(
-              sorcery_config.failed_logins_count_attribute_name,
+              sorcery_config.failed_logins_count_attr_name,
               Integer,
               default: 0
             )
             sorcery_orm_adapter.define_field(
-              sorcery_config.lock_expires_at_attribute_name,
+              sorcery_config.lock_expires_at_attr_name,
               Time
             )
             sorcery_orm_adapter.define_field(
-              sorcery_config.unlock_token_attribute_name,
+              sorcery_config.unlock_token_attr_name,
               String
             )
           end
@@ -79,9 +83,9 @@ module Sorcery
             return unless login_unlocked?
 
             sorcery_orm_adapter.
-              increment(config.failed_logins_count_attribute_name)
+              increment(config.failed_logins_count_attr_name)
 
-            failed_count = send(config.failed_logins_count_attribute_name)
+            failed_count = send(config.failed_logins_count_attr_name)
             failed_limit = config.consecutive_login_retries_amount_limit
             return unless failed_count >= failed_limit
 
@@ -94,9 +98,9 @@ module Sorcery
           def login_unlock!
             config = sorcery_config
             attributes = {
-              config.lock_expires_at_attribute_name     => nil,
-              config.failed_logins_count_attribute_name => 0,
-              config.unlock_token_attribute_name        => nil
+              config.lock_expires_at_attr_name     => nil,
+              config.failed_logins_count_attr_name => 0,
+              config.unlock_token_attr_name        => nil
             }
             sorcery_orm_adapter.update_attributes(attributes)
           end
@@ -116,8 +120,8 @@ module Sorcery
           def login_lock!
             config = sorcery_config
             attributes = {
-              config.lock_expires_at_attribute_name => Time.current + config.login_lock_time_period,
-              config.unlock_token_attribute_name    => self.class.generate_random_token
+              config.lock_expires_at_attr_name => Time.current + config.login_lock_time_period,
+              config.unlock_token_attr_name    => self.class.generate_random_token
             }
             sorcery_orm_adapter.update_attributes(attributes)
 
@@ -131,7 +135,7 @@ module Sorcery
 
           def login_unlocked?
             config = sorcery_config
-            send(config.lock_expires_at_attribute_name).nil?
+            send(config.lock_expires_at_attr_name).nil?
           end
 
           def send_unlock_token_email!
@@ -151,7 +155,7 @@ module Sorcery
             should_unlock =
               !login_unlocked? &&
               config.login_lock_time_period != 0 &&
-              send(config.lock_expires_at_attribute_name) <= Time.current
+              send(config.lock_expires_at_attr_name) <= Time.current
 
             login_unlock! if should_unlock
 

@@ -122,7 +122,7 @@ module Sorcery
     #
     def define_base_fields!
       class_eval do
-        sorcery_config.username_attribute_names.each do |username|
+        sorcery_config.username_attr_names.each do |username|
           sorcery_orm_adapter.define_field(
             username,
             String,
@@ -131,16 +131,16 @@ module Sorcery
         end
         # FIXME: LineLength here is a little tricky to solve.
         # rubocop:disable Layout/LineLength
-        unless sorcery_config.username_attribute_names.include?(sorcery_config.email_attribute_name)
+        unless sorcery_config.username_attr_names.include?(sorcery_config.email_attr_name)
           sorcery_orm_adapter.define_field(
-            sorcery_config.email_attribute_name,
+            sorcery_config.email_attr_name,
             String,
             length: 255
           )
         end
         # rubocop:enable Layout/LineLength
         sorcery_orm_adapter.define_field(
-          sorcery_config.crypted_password_attribute_name,
+          sorcery_config.password_digest_attr_name,
           String,
           length: 255
         )
@@ -161,20 +161,20 @@ module Sorcery
       sorcery_orm_adapter.define_callback(
         :before, :validation, :digest_password,
         if: proc { |record|
-          record.send(sorcery_config.password_attribute_name).present?
+          record.send(sorcery_config.password_attr_name).present?
         }
       )
 
       sorcery_orm_adapter.define_callback(
         :after, :save, :clear_virtual_password,
         if: proc { |record|
-          record.send(sorcery_config.password_attribute_name).present?
+          record.send(sorcery_config.password_attr_name).present?
         }
       )
 
-      return unless sorcery_config.password_attribute_name.present?
+      return unless sorcery_config.password_attr_name.present?
 
-      attr_accessor sorcery_config.password_attribute_name
+      attr_accessor sorcery_config.password_attr_name
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
@@ -395,13 +395,11 @@ module Sorcery
       def external?
         # If the user class doesn't support passwords, then external? should
         # always be true.
-        unless sorcery_config.crypted_password_attribute_name.present?
-          return true
-        end
+        return true unless sorcery_config.password_digest_attr_name.present?
 
         # Otherwise, check if the specific user instance has a password saved in
         # the database.
-        send(sorcery_config.crypted_password_attribute_name).nil?
+        send(sorcery_config.password_digest_attr_name).nil?
       end
 
       ##
@@ -411,12 +409,10 @@ module Sorcery
       def valid_password?(password)
         # If the user class doesn't support passwords, then all passwords are
         # by extension invalid.
-        unless sorcery_config.crypted_password_attribute_name.present?
-          return false
-        end
+        return false unless sorcery_config.password_digest_attr_name.present?
 
         # TODO: Rename to digest?
-        crypted = send(sorcery_config.crypted_password_attribute_name)
+        crypted = send(sorcery_config.password_digest_attr_name)
 
         # TODO: Prevent allowing plaintext comparison? God-tier bad practice.
         return crypted == password if sorcery_config.encryption_provider.nil?
@@ -435,12 +431,10 @@ module Sorcery
       # Uses the current crypto provider to generate a password hash (aka
       # digest) then assign it to the digest attribute.
       #
-      # TODO: Rename crypted_password to something more appropriate.
-      #
       def digest_password
         send(
-          :"#{sorcery_config.crypted_password_attribute_name}=",
-          self.class.digest(send(sorcery_config.password_attribute_name))
+          :"#{sorcery_config.password_digest_attr_name}=",
+          self.class.digest(send(sorcery_config.password_attr_name))
         )
       end
 
@@ -453,15 +447,15 @@ module Sorcery
       #++
       #
       def clear_virtual_password
-        send(:"#{sorcery_config.password_attribute_name}=", nil)
+        send(:"#{sorcery_config.password_attr_name}=", nil)
 
         # FIXME: This solution to LineLength looks bad, but the other options
         #        look even worse. Maybe consider config = sorcery_config again?
         return unless respond_to?(
-          :"#{sorcery_config.password_attribute_name}_confirmation="
+          :"#{sorcery_config.password_attr_name}_confirmation="
         )
 
-        send(:"#{sorcery_config.password_attribute_name}_confirmation=", nil)
+        send(:"#{sorcery_config.password_attr_name}_confirmation=", nil)
       end
 
       ##

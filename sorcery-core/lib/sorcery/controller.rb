@@ -48,7 +48,7 @@ module Sorcery
             if @sorcery_config.respond_to?(config_method)
               @sorcery_config.__send__(config_method, value)
             else
-              raise ArgumentError,
+              raise Sorcery::Errors::ConfigError,
                 "Invalid plugin setting provided! `#{key}` is not a valid "\
                 "option for the Sorcery `#{plugin}` plugin."
             end
@@ -146,7 +146,6 @@ module Sorcery
       #
       #--
       # TODO: Audit login method for security as well as logic.
-      # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/MethodLength
       #++
       #
@@ -163,15 +162,7 @@ module Sorcery
             return nil
           end
 
-          # TODO: `to_hash` is functionally different from `to_h`, double check
-          # that this usage is intended. (Typically you should use to_h)
-          # https://stackoverflow.com/a/26610268
-          old_session = session.dup.to_hash
           reset_sorcery_session
-          old_session.each_pair do |key, value|
-            session[key.to_sym] = value
-          end
-          form_authenticity_token
 
           # credentials[2] is the remember_me value, but is currently unused.
           auto_login(user, options)
@@ -181,15 +172,45 @@ module Sorcery
           block_given? ? yield(current_user, nil) : current_user
         end
       end
-      # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
 
+      # def login(username, password, options = {})
+      #   @current_user = nil
+
+      #   user_class.authenticate(username, password) do |user, status|
+      #     unless [:success, :verification_required].include?(status)
+      #       after_failed_login!(username, password, options)
+
+      #       yield(user, status) if block_given?
+
+      #       # No user on failed login, return nil.
+      #       return nil
+      #     end
+
+      #     reset_sorcery_session
+
+      #     return_value = login_as_user(user)
+      #     after_login!(user, username, password, options)
+
+      #     yield(current_user, status) if block_given?
+
+      #     return_value
+      #   end
+      # end
+
       ##
-      # TODO: Is abstracting this method call necessary? Replace with a direct
-      #       call to reset_session if abstraction doesn't provide any benefits.
+      # Protect from session fixation attacks
       #
       def reset_sorcery_session
-        reset_session # protect from session fixation attacks
+        # TODO: `to_hash` is functionally different from `to_h`, double check
+        # that this usage is intended. (Typically you should use to_h)
+        # https://stackoverflow.com/a/26610268
+        old_session = session.dup.to_hash
+        reset_session
+        old_session.each_pair do |key, value|
+          session[key.to_sym] = value
+        end
+        form_authenticity_token
       end
 
       ##
@@ -239,20 +260,23 @@ module Sorcery
       # @param [<User-Model>] user the user instance.
       # @return - do not depend on the return value.
       #
-      def auto_login(user, _options = {})
+      def login_as_user(user)
         session[sorcery_config.session_key] = user.id.to_s
         @current_user = user
+      end
+
+      # Add deprecation warning
+      def auto_login(user, _options = {})
+        login_as_user(user)
       end
 
       ##
       # Overwrite Rails' handle unverified request
       #
       def handle_unverified_request
-        # TODO: Why does this use cookies, shouldn't it be session? Also
-        #       shouldn't reseting the remember_me_token be in the plugin?
-        #       The core method shouldn't have to know that remember_me even
-        #       exists.
-        cookies[:remember_me_token] = nil
+        sorcery_config.before_unverified_request.each do |callback|
+          send(callback)
+        end
         @current_user = nil
         super # call the default behaviour which resets the session
       end

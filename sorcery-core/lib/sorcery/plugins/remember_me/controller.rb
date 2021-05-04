@@ -13,8 +13,10 @@ module Sorcery
 
         def self.plugin_callbacks
           {
-            login_sources: [:login_from_cookie],
-            before_logout: [:forget_me!]
+            login_sources:             [:login_from_cookie],
+            before_logout:             [:forget_me!],
+            before_unverified_request: [:clear_remember_me_token],
+            after_login:               [:auto_remember!]
           }
         end
 
@@ -59,15 +61,23 @@ module Sorcery
           end
 
           ##
-          # Override.
-          # logins a user instance, and optionally remembers them.
+          # Before unverified request callback
           #
-          def auto_login(user, options = {})
-            options = { should_remember: false }.merge(options)
+          def clear_remember_me_token
+            # TODO: Why does this use cookies, shouldn't it be session?
+            cookies[:remember_me_token] = nil
+          end
 
-            session[sorcery_config.session_key] = user.id.to_s
-            @current_user = user
-            remember_me! if options[:should_remember] == true
+          ##
+          # After login callback
+          #
+          # TODO: if in API mode, should this auto request a refresh token?
+          #
+          def auto_remember!(_user, _username, _password, options)
+            options = { should_remember: false }.merge(options)
+            return unless options[:should_remember] == true
+
+            remember_me!
           end
 
           protected

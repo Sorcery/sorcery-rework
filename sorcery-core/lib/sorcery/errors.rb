@@ -8,5 +8,7 @@ module Sorcery
 
   module Errors
     class ConfigError < Sorcery::Error; end
+
+    class PluginDependencyError < ConfigError; end
   end
 end

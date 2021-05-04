@@ -9,13 +9,43 @@ module Sorcery
       add_sorcery_plugin(base)
     end
 
+    def plugin_name
+      to_s.split('::').third
+    end
+
     def add_sorcery_plugin(base)
+      check_plugin_dependencies(base)
       add_methods(base)
       add_config(base)
       add_callbacks(base)
     end
 
-    # FIXME: self::Module might be too clever for its own good (aka confusing)
+    ##
+    # Extends the model or controller with the class and instance methods
+    # defined in the plugin submodules.
+    #
+    #    module MyPlugin
+    #      module Model
+    #        extend Sorcery::Plugin
+    #
+    #        module InstanceMethods
+    #          def my_instance_method
+    #            puts 'Does stuff!'
+    #          end
+    #        end
+    #      end
+    #    end
+    #
+    #    class User < ApplicationRecord
+    #      authenticates_with_sorcery! do |config|
+    #        config.load_plugin(:my_plugin)
+    #      end
+    #    end
+    #
+    #    User.new.my_instance_method
+    #    => "Does stuff!"
+    #
+    #
     def add_methods(base)
       base.extend(self::ClassMethods) if defined?(self::ClassMethods)
       return unless defined?(self::InstanceMethods)
@@ -33,12 +63,28 @@ module Sorcery
     #
     def add_callbacks(base); end
 
+    def check_plugin_dependencies(base)
+      missing_plugins = plugin_dependencies.reject do |plugin|
+        base.sorcery_config.plugins.include?(plugin)
+      end
+
+      return unless missing_plugins.any?
+
+      raise Sorcery::Errors::PluginDependencyError,
+        "The Sorcery #{plugin_name} plugin depends on the following other "\
+        "plugins: #{missing_plugins.join(', ')}"
+    end
+
     def plugin_callbacks
       {}
     end
 
     def plugin_defaults
       {}
+    end
+
+    def plugin_dependencies
+      []
     end
   end
 end
