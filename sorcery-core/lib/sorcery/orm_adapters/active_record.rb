@@ -82,7 +82,7 @@ module Sorcery
         def find_by_credentials(username)
           relation = nil
 
-          @klass.sorcery_config.username_attribute_names.each do |attribute|
+          @klass.sorcery_config.username_attr_names.each do |attribute|
             condition =
               if @klass.sorcery_config.downcase_username_before_authenticating
                 @klass.arel_table[attribute].lower.eq(
@@ -122,7 +122,7 @@ module Sorcery
         end
 
         def find_by_username(username)
-          @klass.sorcery_config.username_attribute_names.each do |attribute|
+          @klass.sorcery_config.username_attr_names.each do |attribute|
             if @klass.sorcery_config.downcase_username_before_authenticating
               username = username.downcase
             end

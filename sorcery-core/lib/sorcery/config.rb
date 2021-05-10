@@ -47,12 +47,12 @@ module Sorcery
       ## Passwords ##
       ###############
       password_hashing_algorithm:              :bcrypt,
-      password_hashing_settings:               { pepper: '', stretches: nil },
-      custom_encryption_provider:              nil,
+      password_hashing_settings:               {},
+      custom_hashing_provider:                 nil,
       # TODO: Implement migrating/rotating passwords to new algorithms when
       #       logging in. Will a require method to determine if user should use
       #       old algo (which will be defined by the application, NOT Sorcery).
-      # previous_encryption_provider:            nil,
+      # previous_hashing_provider:               nil,
       # pepper:                                  '',
       # stretches:                               nil,
       ###########
@@ -64,7 +64,9 @@ module Sorcery
       ################
       downcase_username_before_authenticating: false,
       not_authenticated_action:                :not_authenticated,
+      session_store:                           :local_session,
       session_key:                             :user_id,
+      verify_session_key:                      :verify_user_id,
       login_sources:                           Set.new,
       ###############
       ## Callbacks ##
@@ -83,7 +85,8 @@ module Sorcery
       email_delivery_method:                   :deliver_now,
       save_return_to_url:                      true,
       token_randomness:                        15,
-      user_class:                              :nil
+      user_class:                              nil,
+      session_class:                           nil
     }.freeze
 
     private_constant :DEFAULTS
@@ -305,12 +308,20 @@ module Sorcery
       self.class.new(attributes)
     end
 
-    def encryption_provider
+    def hashing_provider
       case @password_hashing_algorithm.to_sym
-      when :none   then nil
-      when :argon2 then ::Sorcery::CryptoProviders::Argon2
-      when :bcrypt then ::Sorcery::CryptoProviders::BCrypt
-      when :custom then @custom_encryption_provider
+      when :none
+        nil
+      when :argon2
+        ::Sorcery::CryptoProviders::Argon2.new(
+          settings: password_hashing_settings
+        )
+      when :bcrypt
+        ::Sorcery::CryptoProviders::BCrypt.new(
+          settings: password_hashing_settings
+        )
+      when :custom
+        @custom_hashing_provider.new(settings: password_hashing_settings)
       else
         raise Sorcery::Errors::ConfigError,
           "The password hashing algorithm supplied, "\

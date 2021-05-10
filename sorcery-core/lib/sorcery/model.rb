@@ -43,6 +43,7 @@ module Sorcery
       define_sorcery_orm_adapter!
       define_base_fields!
       init_orm_hooks!
+      init_hashing_provider!
 
       if @sorcery_config.model_subclasses_inherit_config
         @sorcery_config.after_config << :add_config_inheritance
@@ -179,6 +180,10 @@ module Sorcery
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
 
+    def init_hashing_provider!
+      @sorcery_hashing_provider = @sorcery_config.hashing_provider
+    end
+
     ##
     # TODO
     #
@@ -188,6 +193,10 @@ module Sorcery
     module ClassMethods
       def sorcery_config
         @sorcery_config
+      end
+
+      def sorcery_hashing_provider
+        @sorcery_hashing_provider
       end
 
       ##
@@ -226,7 +235,7 @@ module Sorcery
           )
         end
 
-        if @sorcery_config.downcase_username_before_authenticating
+        if sorcery_config.downcase_username_before_authenticating
           username.downcase!
         end
 
@@ -238,8 +247,6 @@ module Sorcery
           return authentication_response(failure: :invalid_login, &block)
         end
 
-        set_encryption_attributes
-
         inactive_for_authentication = (
           user.respond_to?(:active_for_authentication?) &&
           !user.active_for_authentication?
@@ -249,7 +256,7 @@ module Sorcery
           return authentication_response(user: user, failure: :inactive, &block)
         end
 
-        @sorcery_config.before_authenticate.each do |callback|
+        sorcery_config.before_authenticate.each do |callback|
           success, reason = user.send(callback)
 
           unless success
@@ -287,21 +294,12 @@ module Sorcery
       end
 
       ##
-      # Create a password hash using the current encryption_provider.
+      # Create a password hash using the current hashing_provider.
       #
       def digest(password)
-        # TODO: Raise error instead of returning plaintext? Storing passwords
-        #       plaintext is a god-tier bad practice.
-        return password if @sorcery_config.encryption_provider.nil?
+        raise NotImplementedError if @sorcery_hashing_provider.nil?
 
-        # TODO: Would it be better to store an instance of the
-        #       encryption_provider, and pass that our current config, rather
-        #       than setting the encryption settings every time? Also
-        #       encryption_provider might still be a misnomer, look into better
-        #       naming.
-        set_encryption_attributes
-
-        @sorcery_config.encryption_provider.digest(password)
+        @sorcery_hashing_provider.digest(password)
       end
 
       ##
@@ -319,7 +317,7 @@ module Sorcery
       #
       def generate_random_token
         SecureRandom.urlsafe_base64(
-          @sorcery_config.token_randomness
+          sorcery_config.token_randomness
         ).tr('lIO0', 'sxyz')
       end
 
@@ -339,18 +337,18 @@ module Sorcery
       end
 
       # TODO: Reduce complexity
-      # TODO: Shouldn't the encryption_provider just read from the config
+      # TODO: Shouldn't the hashing_provider just read from the config
       #       directly? Or alternatively, these values get set as a part of the
       #       config process instead.
       # rubocop:disable Layout/LineLength
-      def set_encryption_attributes
-        if @sorcery_config.encryption_provider.respond_to?(:stretches) && @sorcery_config.stretches
-          @sorcery_config.encryption_provider.stretches = @sorcery_config.stretches
-        end
-        return unless @sorcery_config.encryption_provider.respond_to?(:pepper) && @sorcery_config.pepper
+      # def set_encryption_attributes
+      #   if @sorcery_config.hashing_provider.respond_to?(:stretches) && @sorcery_config.stretches
+      #     @sorcery_config.hashing_provider.stretches = @sorcery_config.stretches
+      #   end
+      #   return unless @sorcery_config.hashing_provider.respond_to?(:pepper) && @sorcery_config.pepper
 
-        @sorcery_config.encryption_provider.pepper = @sorcery_config.pepper
-      end
+      #   @sorcery_config.hashing_provider.pepper = @sorcery_config.pepper
+      # end
       # rubocop:enable Layout/LineLength
 
       # rubocop:disable Metrics/MethodLength
@@ -387,6 +385,10 @@ module Sorcery
         self.class.sorcery_config
       end
 
+      def sorcery_hashing_provider
+        self.class.sorcery_hashing_provider
+      end
+
       ##
       # Identifies whether a user is regular, i.e. we hold their credentials in
       # the db, or that they are external and their credentials are saved
@@ -404,25 +406,21 @@ module Sorcery
 
       ##
       # Calls the configured crypto provider to compare the supplied
-      # password with the encrypted one.
+      # password with the hashed one.
       #
       def valid_password?(password)
         # If the user class doesn't support passwords, then all passwords are
         # by extension invalid.
         return false unless sorcery_config.password_digest_attr_name.present?
 
-        # TODO: Rename to digest?
-        crypted = send(sorcery_config.password_digest_attr_name)
+        raise NotImplementedError if sorcery_hashing_provider.nil?
 
-        # TODO: Prevent allowing plaintext comparison? God-tier bad practice.
-        return crypted == password if sorcery_config.encryption_provider.nil?
+        digest = send(sorcery_config.password_digest_attr_name)
 
-        # FIXME: Shouldn't this also be calling set_encryption_settings?
-        #        Otherwise it might use the wrong values, e.g. pepper and cost.
         # TODO: Add specs to verify that this works when switching between
         #       different crypto settings.
 
-        sorcery_config.encryption_provider.digest_matches?(crypted, password)
+        sorcery_hashing_provider.digest_matches?(digest, password)
       end
 
       protected

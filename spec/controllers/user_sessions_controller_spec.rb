@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe SessionsController do
+RSpec.describe UserSessionsController do
   let(:user) { create :user, password: 'secret' }
 
   describe 'new' do

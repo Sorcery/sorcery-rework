@@ -25,18 +25,14 @@ module Sorcery
           }
         end
 
-        ##
-        # TODO
-        #
-        module InstanceMethods
+        module InstanceMethods # :nodoc:
           def invalidate_active_sessions!
             unless Config.session_timeout_invalidate_active_sessions_enabled
               return
             end
             return unless current_user.present?
 
-            current_user.send(:invalidate_sessions_before=,
-              Time.now.in_time_zone)
+            current_user.send(:invalidate_sessions_before=, Time.current)
             current_user.save
           end
 
@@ -45,8 +41,8 @@ module Sorcery
           # Registers last login to be used as the timeout starting point.
           # Runs as a hook after a successful login.
           def register_login_time(_user, _credentials = nil)
-            session[:login_time] =
-              session[:last_action_time] = Time.now.in_time_zone
+            session[:login_time]       = Time.current
+            session[:last_action_time] = Time.current
           end
 
           # Checks if session timeout was reached and expires the current
@@ -59,13 +55,13 @@ module Sorcery
               reset_sorcery_session
               remove_instance_variable :@current_user if defined? @current_user
             else
-              session[:last_action_time] = Time.now.in_time_zone
+              session[:last_action_time] = Time.current
             end
           end
           # rubocop:enable Layout/LineLength
 
           def sorcery_session_expired?(time)
-            Time.now.in_time_zone - time > Config.session_timeout
+            Time.current - time > Config.session_timeout
           end
 
           # Use login time if present, otherwise use last action time.
@@ -78,7 +74,7 @@ module Sorcery
               return false
             end
 
-            time = session[:login_time] || session[:last_action_time] || Time.now.in_time_zone
+            time = session[:login_time] || session[:last_action_time] || Time.current
             time < current_user.invalidate_sessions_before
           end
           # rubocop:enable Layout/LineLength

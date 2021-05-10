@@ -19,5 +19,7 @@ class User < ApplicationRecord
     )
   end
 
+  has_many :user_sessions, dependent: :destroy
+
   validates :username, presence: true
 end

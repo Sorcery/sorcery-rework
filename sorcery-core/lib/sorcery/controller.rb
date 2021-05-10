@@ -149,68 +149,74 @@ module Sorcery
       # rubocop:disable Metrics/MethodLength
       #++
       #
-      def login(username, password, options = {})
-        @current_user = nil
-
-        user_class.authenticate(username, password) do |user, failure_reason|
-          if failure_reason
-            after_failed_login!(username, password, options)
-
-            yield(user, failure_reason) if block_given?
-
-            # No user on failed login, return nil.
-            return nil
-          end
-
-          reset_sorcery_session
-
-          # credentials[2] is the remember_me value, but is currently unused.
-          auto_login(user, options)
-          after_login!(user, username, password, options)
-
-          # Return current user
-          block_given? ? yield(current_user, nil) : current_user
-        end
-      end
-      # rubocop:enable Metrics/MethodLength
-
       # def login(username, password, options = {})
       #   @current_user = nil
-
-      #   user_class.authenticate(username, password) do |user, status|
-      #     unless [:success, :verification_required].include?(status)
+      #
+      #   user_class.authenticate(username, password) do |user, failure_reason|
+      #     if failure_reason
       #       after_failed_login!(username, password, options)
-
-      #       yield(user, status) if block_given?
-
+      #
+      #       yield(user, failure_reason) if block_given?
+      #
       #       # No user on failed login, return nil.
       #       return nil
       #     end
-
-      #     reset_sorcery_session
-
-      #     return_value = login_as_user(user)
+      #
+      #     reset_sorcery_session(keep_values: true)
+      #
+      #     # credentials[2] is the remember_me value, but is currently unused.
+      #     auto_login(user, options)
       #     after_login!(user, username, password, options)
-
-      #     yield(current_user, status) if block_given?
-
-      #     return_value
+      #
+      #     # Return current user
+      #     block_given? ? yield(current_user, nil) : current_user
       #   end
       # end
+      # rubocop:enable Metrics/MethodLength
+
+      def login(username, password, options = {})
+        @current_user = nil
+
+        user_class.authenticate(username, password) do |user, status|
+          case status
+          when :success
+            login = login_as_user(user)
+            after_login!(user, username, password, options)
+
+            yield(user, status) if block_given?
+
+            return login
+          when :verification_required
+            raise NotImplementedError
+          else
+            # No user on failed login, return nil.
+            login = nil
+            after_failed_login!(username, password, options)
+
+            yield(user, status) if block_given?
+
+            return login
+          end
+        end
+      end
 
       ##
       # Protect from session fixation attacks
       #
-      def reset_sorcery_session
-        # TODO: `to_hash` is functionally different from `to_h`, double check
-        # that this usage is intended. (Typically you should use to_h)
-        # https://stackoverflow.com/a/26610268
-        old_session = session.dup.to_hash
-        reset_session
-        old_session.each_pair do |key, value|
-          session[key.to_sym] = value
+      def reset_sorcery_session(keep_values: false)
+        if keep_values
+          # TODO: `to_hash` is functionally different from `to_h`, double check
+          # that this usage is intended. (Typically you should use to_h)
+          # https://stackoverflow.com/a/26610268
+          old_session = session.dup.to_hash
+          reset_session
+          old_session.each_pair do |key, value|
+            session[key.to_sym] = value
+          end
+          form_authenticity_token
+        else
+          reset_session
         end
-        form_authenticity_token
       end
 
       ##
@@ -248,19 +254,24 @@ module Sorcery
       ##
       # Login to a user instance.
       #
-      # Options is unused by Sorcery core, but plugins such as remember_me use
-      # it to override this method and do additional things conditionally.
-      #
-      # TODO: Does that even make sense though? Why not just have remember_me do
-      #       that as an after_login callback? As it is, this system doesn't
-      #       support using multiple plugins that modify auto_login in different
-      #       ways.
-      # TODO: Remove options hash from auto_login if this gets reworked.
-      #
       # @param [<User-Model>] user the user instance.
       # @return - do not depend on the return value.
       #
       def login_as_user(user)
+        session_store_method =
+          "create_sorcery_#{sorcery_config.session_store}".to_sym
+
+        unless respond_to?(session_store_method)
+          raise Sorcery::Errors::ConfigError,
+            "Unknown session store: #{sorcery_config.session_store}\n"\
+            "Double check that you included the necessary plugins."
+        end
+
+        send(session_store_method, user)
+      end
+
+      def create_sorcery_local_session(user)
+        reset_sorcery_session(keep_values: true)
         session[sorcery_config.session_key] = user.id.to_s
         @current_user = user
       end
