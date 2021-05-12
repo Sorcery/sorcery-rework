@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SessionsController < ApplicationController
+class UserSessionsController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
   before_action :prevent_double_login, only: [:new, :create]
 

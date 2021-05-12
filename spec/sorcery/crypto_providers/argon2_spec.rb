@@ -8,6 +8,8 @@ require 'sorcery-core'
 # TODO: Why do we care about memoized helpers?
 # rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Sorcery::CryptoProviders::Argon2 do
+  subject(:hashing_provider) { described_class.new(settings: settings) }
+
   let(:original_password) { Faker::Internet.unique.password }
   let(:other_password) { Faker::Internet.unique.password }
   let(:original_pepper) { 'pepper' }
@@ -17,57 +19,21 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
   let(:minimum_argon2_cost) { 3 }
   # Used to test changing the cost of the algorithm.
   let(:alternative_argon2_cost) { minimum_argon2_cost + 3 }
+  let(:settings) { { m_cost: minimum_argon2_cost } }
 
-  before do
-    described_class.cost = minimum_argon2_cost
-  end
-
-  after do
-    described_class.reset_to_defaults!
-  end
-
-  it 'responds to stretches' do
-    expect(described_class).to respond_to :stretches
-    expect(described_class).to respond_to :stretches=
-  end
-
-  it 'responds to pepper' do
-    expect(described_class).to respond_to :pepper
-    expect(described_class).to respond_to :pepper=
-  end
+  # Does testing accessors provide value?
+  it { should respond_to :pepper }
+  it { should respond_to :pepper= }
+  it { should respond_to :t_cost }
+  it { should respond_to :t_cost= }
+  it { should respond_to :m_cost }
+  it { should respond_to :m_cost= }
+  it { should respond_to :p_cost }
+  it { should respond_to :p_cost= }
 
   describe 'class methods' do
-    describe 'stretches' do
-      subject(:alias_name) { described_class.method(:stretches).original_name }
-
-      it 'is an alias of cost' do
-        expect(alias_name).to eq described_class.method(:cost).original_name
-      end
-
-      it 'returns cost' do
-        expect(described_class.stretches).to eq minimum_argon2_cost
-      end
-    end
-
-    describe 'stretches=' do
-      subject(:alias_name) { described_class.method(:stretches=).original_name }
-
-      it 'is an alias of cost=' do
-        expect(alias_name).to eq described_class.method(:cost=).original_name
-      end
-
-      # TODO: Redundant with alias name checking, remove?
-      it 'sets cost' do
-        expect(described_class.cost).to eq minimum_argon2_cost
-
-        described_class.stretches = 5
-
-        expect(described_class.cost).to eq 5
-      end
-    end
-
     describe 'digest' do
-      subject(:digest) { described_class.digest(original_password) }
+      subject(:digest) { hashing_provider.digest(original_password) }
 
       let(:argon2) { ::Argon2::Password.new(digest) }
 
@@ -83,9 +49,8 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
       end
 
       context 'when cost is the alternative_argon2_cost' do
-        subject(:digest) do
-          described_class.cost = alternative_argon2_cost
-          described_class.digest(original_password)
+        let(:settings) do
+          { m_cost: alternative_argon2_cost }
         end
 
         it 'is comparable with original secret' do
@@ -98,9 +63,8 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
       end
 
       context 'when pepper is provided' do
-        subject(:digest) do
-          described_class.pepper = original_pepper
-          described_class.digest(original_password)
+        let(:settings) do
+          { m_cost: minimum_argon2_cost, pepper: original_pepper }
         end
 
         it 'is comparable with original secret with pepper appended' do
@@ -108,10 +72,19 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
         end
       end
 
+      context 'when pepper is nil' do
+        let(:settings) do
+          { cost: minimum_argon2_cost, pepper: nil }
+        end
+
+        it 'is comparable with original secret with no pepper' do
+          expect(argon2).to be_matches original_password
+        end
+      end
+
       context 'when pepper is an empty string' do
-        subject(:digest) do
-          described_class.pepper = ''
-          described_class.digest(original_password)
+        let(:settings) do
+          { m_cost: minimum_argon2_cost, pepper: '' }
         end
 
         it 'is comparable with original secret with no pepper' do
@@ -121,115 +94,138 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
     end
 
     describe 'digest_matches?' do
-      subject(:digest) do
-        ::Argon2::Password.create(
-          original_password,
-          m_cost: described_class.cost
-        )
-      end
-
-      it 'returns true when given valid password' do
-        expect(described_class).to be_digest_matches(digest, original_password)
-      end
-
-      it 'returns false when given invalid password' do
-        expect(described_class).not_to be_digest_matches(digest, other_password)
-      end
-
-      context 'when pepper is provided' do
-        subject(:digest) do
-          ::Argon2::Password.create(
-            original_password,
-            m_cost: described_class.cost,
-            secret: original_pepper
-          )
-        end
-
-        # FIXME: If we set this inside the subject, it can cause a weird edge
-        #        case where we set the pepper to something else, then it gets
-        #        set back to the original pepper when we call `digest`.
-        before do
-          described_class.pepper = original_pepper
-        end
-
-        it 'returns true when given valid password' do
-          expect(described_class).to(
-            be_digest_matches(digest, original_password)
-          )
-        end
-
-        it 'returns false when given invalid password' do
-          expect(described_class).not_to(
-            be_digest_matches(digest, other_password)
-          )
-        end
-
-        it 'returns false when given valid password but different pepper' do
-          described_class.pepper = other_pepper
-          expect(described_class).not_to(
-            be_digest_matches(digest, original_password)
-          )
-        end
-
-        it 'returns false when given valid password and no pepper' do
-          described_class.pepper = ''
-          expect(described_class).not_to(
-            be_digest_matches(digest, original_password)
-          )
-        end
-      end
-
-      context 'when pepper is an empty string (default)' do
-        subject(:digest) do
-          ::Argon2::Password.create(
-            original_password,
-            m_cost: described_class.cost
-          )
-        end
-
-        # FIXME: If we set this inside the subject, it can cause a weird edge
-        #        case where we set the pepper to something else, then it gets
-        #        set back to the original pepper when we call `digest`.
-        before do
-          described_class.pepper = ''
-        end
-
-        it 'returns true when given valid password' do
-          expect(described_class).to(
-            be_digest_matches(digest, original_password)
-          )
-        end
-
-        it 'returns false when given invalid password' do
-          expect(described_class).not_to(
-            be_digest_matches(digest, other_password)
-          )
-        end
-
-        it 'returns false when given valid password but a new pepper' do
-          described_class.pepper = other_pepper
-          expect(described_class).not_to(
-            be_digest_matches(digest, original_password)
-          )
-        end
-      end
-    end
-
-    describe 'cost_matches?' do
-      subject(:digest) do
+      let(:digest) do
         ::Argon2::Password.create(
           original_password,
           m_cost: minimum_argon2_cost
         )
       end
 
-      it 'returns true when cost matches digest cost' do
-        expect(described_class).to be_cost_matches(digest)
+      it 'returns true when given valid password' do
+        expect(hashing_provider).to be_digest_matches(digest, original_password)
       end
 
-      it 'returns false when cost does not match digest cost' do
-        described_class.cost = alternative_argon2_cost
-        expect(described_class).not_to be_cost_matches(digest)
+      it 'returns false when given invalid password' do
+        expect(hashing_provider).not_to be_digest_matches(digest, other_password)
+      end
+
+      context 'when pepper is provided' do
+        let(:digest) do
+          ::Argon2::Password.create(
+            original_password,
+            m_cost: minimum_argon2_cost,
+            secret: original_pepper
+          )
+        end
+
+        let(:settings) do
+          { m_cost: minimum_argon2_cost, pepper: original_pepper }
+        end
+
+        it 'returns true when given valid password' do
+          expect(hashing_provider).to(
+            be_digest_matches(digest, original_password)
+          )
+        end
+
+        it 'returns false when given invalid password' do
+          expect(hashing_provider).not_to(
+            be_digest_matches(digest, other_password)
+          )
+        end
+
+        it 'returns false when given valid password but different pepper' do
+          hashing_provider.pepper = other_pepper
+          expect(hashing_provider).not_to(
+            be_digest_matches(digest, original_password)
+          )
+        end
+
+        it 'returns false when given valid password and no pepper' do
+          hashing_provider.pepper = nil
+          expect(hashing_provider).not_to(
+            be_digest_matches(digest, original_password)
+          )
+        end
+      end
+
+      context 'when pepper is nil (default)' do
+        subject(:digest) do
+          ::Argon2::Password.create(
+            original_password,
+            m_cost: minimum_argon2_cost
+          )
+        end
+
+        let(:settings) { { m_cost: minimum_argon2_cost, pepper: nil } }
+
+        it 'returns true when given valid password' do
+          expect(hashing_provider).to(
+            be_digest_matches(digest, original_password)
+          )
+        end
+
+        it 'returns false when given invalid password' do
+          expect(hashing_provider).not_to(
+            be_digest_matches(digest, other_password)
+          )
+        end
+
+        it 'returns false when given valid password but a new pepper' do
+          hashing_provider.pepper = other_pepper
+          expect(hashing_provider).not_to(
+            be_digest_matches(digest, original_password)
+          )
+        end
+      end
+
+      context 'when pepper is an empty string' do
+        subject(:digest) do
+          ::Argon2::Password.create(
+            original_password,
+            m_cost: minimum_argon2_cost
+          )
+        end
+
+        let(:settings) { { m_cost: minimum_argon2_cost, pepper: '' } }
+
+        it 'returns true when given valid password' do
+          expect(hashing_provider).to(
+            be_digest_matches(digest, original_password)
+          )
+        end
+
+        it 'returns false when given invalid password' do
+          expect(hashing_provider).not_to(
+            be_digest_matches(digest, other_password)
+          )
+        end
+
+        it 'returns false when given valid password but a new pepper' do
+          hashing_provider.pepper = other_pepper
+          expect(hashing_provider).not_to(
+            be_digest_matches(digest, original_password)
+          )
+        end
+      end
+    end
+
+    describe 'needs_redigested?' do
+      let(:digest) do
+        ::Argon2::Password.create(
+          original_password,
+          m_cost: minimum_argon2_cost
+        )
+      end
+
+      context 'when m_cost matches' do
+        it { should_not be_needs_redigested(digest) }
+      end
+
+      context 'when m_cost does not match' do
+        let(:settings) { { m_cost: alternative_argon2_cost } }
+
+        it { should be_needs_redigested(digest) }
       end
     end
   end

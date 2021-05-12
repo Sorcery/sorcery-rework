@@ -55,6 +55,9 @@ RSpec.configure do |config|
   # by passing in same seed using --seed
   Kernel.srand config.seed
 
+  # Allows you to pass the `--only-failures` flag to RSpec.
+  config.example_status_persistence_file_path = 'tmp/rspec_example_status.txt'
+
   # Find slow specs by running `profiling=true rspec`
   config.profile_examples = 5 if ENV['profiling'] == 'true'
 end

@@ -18,8 +18,8 @@ module Sorcery
       attr_accessor :pepper, :cost
 
       def initialize(settings: {})
-        @cost   = settings[:cost]   || DEFAULT_COST
         @pepper = settings[:pepper] || DEFAULT_PEPPER
+        @cost   = settings[:cost]   || DEFAULT_COST
       end
 
       ##

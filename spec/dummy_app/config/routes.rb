@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   get 'restricted' => 'home#restricted'
 
-  get 'login' => 'sessions#new'
-  post 'login' => 'sessions#create'
-  delete 'logout' => 'sessions#destroy'
+  get    'user/login'  => 'user_sessions#new'
+  post   'user/login'  => 'user_sessions#create'
+  delete 'user/logout' => 'user_sessions#destroy'
 end
