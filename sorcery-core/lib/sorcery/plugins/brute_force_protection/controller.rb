@@ -36,7 +36,7 @@ module Sorcery
           # Runs as a hook after a successful login.
           def reset_failed_logins_count!(user, _username, _password, _options)
             user.sorcery_orm_adapter.update_attribute(
-              user_class.sorcery_config.failed_logins_count_attribute_name,
+              user_class.sorcery_config.failed_logins_count_attr_name,
               0
             )
           end

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class ApiController < ActionController::API
-  protect_from_forgery
-
   authenticates_with_sorcery! do |config|
     config.session_store = :jwt_session
 

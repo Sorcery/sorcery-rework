@@ -19,10 +19,10 @@ module Sorcery
         # rubocop:disable Metrics/MethodLength
         def self.plugin_defaults
           {
-            reset_password_token_attribute_name:             :reset_password_token,
-            reset_password_token_expires_at_attribute_name:  :reset_password_token_expires_at,
-            reset_password_page_access_count_attribute_name: :access_count_to_reset_password_page,
-            reset_password_email_sent_at_attribute_name:     :reset_password_email_sent_at,
+            reset_password_token_attr_name:             :reset_password_token,
+            reset_password_token_expires_at_attr_name:  :reset_password_token_expires_at,
+            reset_password_page_access_count_attr_name: :access_count_to_reset_password_page,
+            reset_password_email_sent_at_attr_name:     :reset_password_email_sent_at,
             reset_password_mailer:                           nil,
             reset_password_mailer_disabled:                  false,
             reset_password_email_method_name:                :reset_password_email,
@@ -39,8 +39,8 @@ module Sorcery
           def load_from_reset_password_token(token, &block)
             load_from_token(
               token,
-              @sorcery_config.reset_password_token_attribute_name,
-              @sorcery_config.reset_password_token_expires_at_attribute_name,
+              @sorcery_config.reset_password_token_attr_name,
+              @sorcery_config.reset_password_token_expires_at_attr_name,
               &block
             )
           end
@@ -62,15 +62,15 @@ module Sorcery
           # rubocop:disable Metrics/MethodLength
           def define_reset_password_fields
             sorcery_adapter.define_field(
-              sorcery_config.reset_password_token_attribute_name,
+              sorcery_config.reset_password_token_attr_name,
               String
             )
             sorcery_adapter.define_field(
-              sorcery_config.reset_password_token_expires_at_attribute_name,
+              sorcery_config.reset_password_token_expires_at_attr_name,
               Time
             )
             sorcery_adapter.define_field(
-              sorcery_config.reset_password_email_sent_at_attribute_name,
+              sorcery_config.reset_password_email_sent_at_attr_name,
               Time
             )
           end
@@ -86,11 +86,11 @@ module Sorcery
           def generate_reset_password_token!
             config = sorcery_config
             attributes = {
-              config.reset_password_token_attribute_name         => self.class.generate_random_token,
-              config.reset_password_email_sent_at_attribute_name => Time.now.in_time_zone
+              config.reset_password_token_attr_name         => self.class.generate_random_token,
+              config.reset_password_email_sent_at_attr_name => Time.now.in_time_zone
             }
             if config.reset_password_expiration_period
-              attributes[config.reset_password_token_expires_at_attribute_name] =
+              attributes[config.reset_password_token_expires_at_attr_name] =
                 Time.now.in_time_zone + config.reset_password_expiration_period
             end
 
@@ -107,7 +107,7 @@ module Sorcery
             mail = false
             config = sorcery_config
             # hammering protection
-            if config.reset_password_time_between_emails.present? && send(config.reset_password_email_sent_at_attribute_name) && send(config.reset_password_email_sent_at_attribute_name) > config.reset_password_time_between_emails.seconds.ago.utc
+            if config.reset_password_time_between_emails.present? && send(config.reset_password_email_sent_at_attr_name) && send(config.reset_password_email_sent_at_attr_name) > config.reset_password_time_between_emails.seconds.ago.utc
               return false
             end
 
@@ -128,7 +128,7 @@ module Sorcery
           # 1, which means the user doesn't have a right to access.
           def increment_password_reset_page_access_counter
             sorcery_adapter.increment(
-              sorcery_config.reset_password_page_access_count_attribute_name
+              sorcery_config.reset_password_page_access_count_attr_name
             )
           end
 
@@ -137,7 +137,7 @@ module Sorcery
           # rubocop:disable Layout/LineLength
           def reset_password_reset_page_access_counter
             send(
-              :"#{sorcery_config.reset_password_page_access_count_attribute_name}=", 0
+              :"#{sorcery_config.reset_password_page_access_count_attr_name}=", 0
             )
             sorcery_adapter.save
           end
@@ -146,7 +146,7 @@ module Sorcery
           # Clears token and tries to update the new password for the user.
           def change_password(new_password, raise_on_failure: false)
             clear_reset_password_token
-            send(:"#{sorcery_config.password_attribute_name}=", new_password)
+            send(:"#{sorcery_config.password_attr_name}=", new_password)
             sorcery_adapter.save raise_on_failure: raise_on_failure
           end
 
@@ -164,11 +164,11 @@ module Sorcery
           # Clears the token.
           def clear_reset_password_token
             config = sorcery_config
-            send(:"#{config.reset_password_token_attribute_name}=", nil)
+            send(:"#{config.reset_password_token_attr_name}=", nil)
             return unless config.reset_password_expiration_period
 
             send(
-              :"#{config.reset_password_token_expires_at_attribute_name}=",
+              :"#{config.reset_password_token_expires_at_attr_name}=",
               nil
             )
           end

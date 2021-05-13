@@ -67,6 +67,9 @@ RSpec/FilePath:
 # Allow 2 expectations for before/after checking
 RSpec/MultipleExpectations:
   Max: 2
+# `should` and `should_not` read nicely
+RSpec/ImplicitExpect:
+  EnforcedStyle: should
 
 ###########
 ## Style ##

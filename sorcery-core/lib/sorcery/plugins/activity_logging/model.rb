@@ -18,9 +18,9 @@ module Sorcery
 
         def self.plugin_defaults
           {
-            last_login_at_attribute_name:    :last_login_at,
-            last_logout_at_attribute_name:   :last_logout_at,
-            last_activity_at_attribute_name: :last_activity_at,
+            last_login_at_attr_name:    :last_login_at,
+            last_logout_at_attr_name:   :last_logout_at,
+            last_activity_at_attr_name: :last_activity_at,
             last_login_from_ip_address_name: :last_login_from_ip_address,
             activity_timeout:                10 * 60
           }
@@ -35,15 +35,15 @@ module Sorcery
           # rubocop:disable Metrics/MethodLength
           def define_activity_logging_fields
             sorcery_orm_adapter.define_field(
-              sorcery_config.last_login_at_attribute_name,
+              sorcery_config.last_login_at_attr_name,
               Time
             )
             sorcery_orm_adapter.define_field(
-              sorcery_config.last_logout_at_attribute_name,
+              sorcery_config.last_logout_at_attr_name,
               Time
             )
             sorcery_orm_adapter.define_field(
-              sorcery_config.last_activity_at_attribute_name,
+              sorcery_config.last_activity_at_attr_name,
               Time
             )
             sorcery_orm_adapter.define_field(
@@ -63,21 +63,21 @@ module Sorcery
           # rubocop:disable Naming/AccessorMethodName
           def set_last_login_at(time)
             sorcery_orm_adapter.update_attribute(
-              sorcery_config.last_login_at_attribute_name,
+              sorcery_config.last_login_at_attr_name,
               time
             )
           end
 
           def set_last_logout_at(time)
             sorcery_orm_adapter.update_attribute(
-              sorcery_config.last_logout_at_attribute_name,
+              sorcery_config.last_logout_at_attr_name,
               time
             )
           end
 
           def set_last_activity_at(time)
             sorcery_orm_adapter.update_attribute(
-              sorcery_config.last_activity_at_attribute_name,
+              sorcery_config.last_activity_at_attr_name,
               time
             )
           end
@@ -99,12 +99,12 @@ module Sorcery
           end
 
           def recently_active?
-            if send(sorcery_config.last_activity_at_attribute_name).nil?
+            if send(sorcery_config.last_activity_at_attr_name).nil?
               return false
             end
 
             (
-              send(sorcery_config.last_activity_at_attribute_name) >
+              send(sorcery_config.last_activity_at_attr_name) >
               sorcery_config.activity_timeout.seconds.ago
             )
           end
@@ -115,10 +115,10 @@ module Sorcery
           # `online?`
           #
           def logged_in?
-            last_login = send(sorcery_config.last_login_at_attribute_name)
+            last_login = send(sorcery_config.last_login_at_attr_name)
             return false if last_login.nil?
 
-            last_logout = send(sorcery_config.last_logout_at_attribute_name)
+            last_logout = send(sorcery_config.last_logout_at_attr_name)
             return true if last_login.present? && last_logout.nil?
 
             last_login > last_logout

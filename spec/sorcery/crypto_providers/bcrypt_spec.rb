@@ -33,8 +33,8 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
 
       let(:bcrypt) { ::BCrypt::Password.new(digest) }
 
-      it { is_expected.to be_a String }
-      it { is_expected.to be_present }
+      it { should be_a String }
+      it { should be_present }
 
       it 'is comparable with original secret' do
         expect(bcrypt).to eq original_password

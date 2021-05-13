@@ -37,8 +37,8 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
 
       let(:argon2) { ::Argon2::Password.new(digest) }
 
-      it { is_expected.to be_a String }
-      it { is_expected.to be_present }
+      it { should be_a String }
+      it { should be_present }
 
       it 'is comparable with original secret' do
         expect(argon2).to be_matches original_password

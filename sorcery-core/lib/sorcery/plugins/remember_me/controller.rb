@@ -122,10 +122,10 @@ module Sorcery
           def set_remember_me_cookie!(user)
             cookies.signed[:remember_me_token] = {
               value:    user.send(
-                user.sorcery_config.remember_me_token_attribute_name
+                user.sorcery_config.remember_me_token_attr_name
               ),
               expires:  user.send(
-                user.sorcery_config.remember_me_token_expires_at_attribute_name
+                user.sorcery_config.remember_me_token_expires_at_attr_name
               ),
               httponly: sorcery_config.remember_me_httponly,
               domain:   sorcery_config.cookie_domain

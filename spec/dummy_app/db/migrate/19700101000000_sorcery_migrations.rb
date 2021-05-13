@@ -5,7 +5,7 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
   def change
     create_table :admins do |t|
       t.string :email, null: false
-      t.string :password_digest
+      t.string :cryptic
 
       # Brute Force Protection
       t.integer  :failed_logins_count, default: 0

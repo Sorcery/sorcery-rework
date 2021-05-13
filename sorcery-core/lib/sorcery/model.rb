@@ -229,8 +229,7 @@ module Sorcery
 
         if username.blank?
           return authentication_response(
-            return_value: nil,
-            failure:      :invalid_login,
+            status: :invalid_login,
             &block
           )
         end
@@ -244,7 +243,7 @@ module Sorcery
         user = sorcery_orm_adapter.find_by_credentials(username)
 
         unless user
-          return authentication_response(failure: :invalid_login, &block)
+          return authentication_response(status: :invalid_login, &block)
         end
 
         inactive_for_authentication = (
@@ -253,26 +252,31 @@ module Sorcery
         )
 
         if inactive_for_authentication
-          return authentication_response(user: user, failure: :inactive, &block)
+          return authentication_response(user: user, status: :inactive, &block)
         end
 
         sorcery_config.before_authenticate.each do |callback|
           success, reason = user.send(callback)
 
           unless success
-            return authentication_response(user: user, failure: reason, &block)
+            return authentication_response(user: user, status: reason, &block)
           end
         end
 
         unless user.valid_password?(password)
           return authentication_response(
             user:    user,
-            failure: :invalid_password,
+            status: :invalid_password,
             &block
           )
         end
 
-        authentication_response(user: user, return_value: user, &block)
+        authentication_response(
+          user: user,
+          status: :success,
+          return_value: user,
+          &block
+        )
       end
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/CyclomaticComplexity
@@ -324,14 +328,14 @@ module Sorcery
       protected
 
       def authentication_response(options = {})
-        yield(options[:user], options[:failure]) if block_given?
+        yield(options[:user], options[:status]) if block_given?
 
         options[:return_value]
       end
 
       # TODO: Identical to authentication_response, DRY?
       def token_response(options = {})
-        yield(options[:user], options[:failure]) if block_given?
+        yield(options[:user], options[:status]) if block_given?
 
         options[:return_value]
       end

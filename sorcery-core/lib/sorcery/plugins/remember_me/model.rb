@@ -21,8 +21,8 @@ module Sorcery
         # rubocop:disable Layout/LineLength
         def self.plugin_defaults
           {
-            remember_me_token_attribute_name:            :remember_me_token,
-            remember_me_token_expires_at_attribute_name: :remember_me_token_expires_at,
+            remember_me_token_attr_name:            :remember_me_token,
+            remember_me_token_expires_at_attr_name: :remember_me_token_expires_at,
             remember_me_token_persist_globally:          false,
             remember_me_for:                             7 * 60 * 60 * 24
           }
@@ -34,11 +34,11 @@ module Sorcery
 
           def define_remember_me_fields
             sorcery_orm_adapter.define_field(
-              sorcery_config.remember_me_token_attribute_name,
+              sorcery_config.remember_me_token_attr_name,
               String
             )
             sorcery_orm_adapter.define_field(
-              sorcery_config.remember_me_token_expires_at_attribute_name,
+              sorcery_config.remember_me_token_expires_at_attr_name,
               Time
             )
           end
@@ -57,7 +57,7 @@ module Sorcery
           #
           def remember_me!
             update_options = {
-              sorcery_config.remember_me_token_expires_at_attribute_name => (
+              sorcery_config.remember_me_token_expires_at_attr_name => (
                 Time.current + sorcery_config.remember_me_for
               )
             }
@@ -66,7 +66,7 @@ module Sorcery
             unless sorcery_config.remember_me_token_persist_globally &&
                    remember_me_token?
 
-              update_options[sorcery_config.remember_me_token_attribute_name] =
+              update_options[sorcery_config.remember_me_token_attr_name] =
                 self.class.generate_random_token
             end
 
@@ -75,7 +75,7 @@ module Sorcery
           # rubocop:enable Metrics/MethodLength
 
           def remember_me_token?
-            send(sorcery_config.remember_me_token_attribute_name).present?
+            send(sorcery_config.remember_me_token_attr_name).present?
           end
 
           ##
@@ -97,8 +97,8 @@ module Sorcery
           #
           def force_forget_me!
             sorcery_orm_adapter.update_attributes(
-              sorcery_config.remember_me_token_attribute_name            => nil,
-              sorcery_config.remember_me_token_expires_at_attribute_name => nil
+              sorcery_config.remember_me_token_attr_name            => nil,
+              sorcery_config.remember_me_token_expires_at_attr_name => nil
             )
           end
         end

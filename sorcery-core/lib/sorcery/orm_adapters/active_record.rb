@@ -38,8 +38,8 @@ module Sorcery
         #       `@user_config`
         @user_config ||= @model.sorcery_config
         conditions = {
-          @user_config.provider_uid_attribute_name => uid,
-          @user_config.provider_attribute_name     => provider
+          @user_config.provider_uid_attr_name => uid,
+          @user_config.provider_attr_name     => provider
         }
 
         @model.public_send(relation_name).where(conditions).first
@@ -57,8 +57,8 @@ module Sorcery
         def find_by_oauth_credentials(provider, uid)
           @user_config ||= @model.sorcery_config
           conditions = {
-            @user_config.provider_uid_attribute_name => uid,
-            @user_config.provider_attribute_name     => provider
+            @user_config.provider_uid_attr_name => uid,
+            @user_config.provider_attr_name     => provider
           }
 
           @klass.where(conditions).first
@@ -66,7 +66,7 @@ module Sorcery
 
         def find_by_remember_me_token(token)
           @klass.where(
-            @klass.sorcery_config.remember_me_token_attribute_name => token
+            @klass.sorcery_config.remember_me_token_attr_name => token
           ).first
         end
 
@@ -113,7 +113,7 @@ module Sorcery
 
         def find_by_activation_token(token)
           @klass.where(
-            @klass.sorcery_config.activation_token_attribute_name => token
+            @klass.sorcery_config.activation_token_attr_name => token
           ).first
         end
 
@@ -134,7 +134,7 @@ module Sorcery
 
         def find_by_email(email)
           @klass.where(
-            @klass.sorcery_config.email_attribute_name => email
+            @klass.sorcery_config.email_attr_name => email
           ).first
         end
 

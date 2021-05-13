@@ -15,7 +15,7 @@ module Sorcery
               :before, :create,
               :setup_activation,
               if: proc { |user|
-                    user.send(sorcery_config.password_attribute_name).present?
+                    user.send(sorcery_config.password_attr_name).present?
                   }
             )
             # don't send activation needed email if no crypted password created
@@ -44,9 +44,9 @@ module Sorcery
         # rubocop:disable Metrics/MethodLength
         def self.plugin_defaults
           {
-            activation_state_attribute_name:            :activation_state,
-            activation_token_attribute_name:            :activation_token,
-            activation_token_expires_at_attribute_name: :activation_token_expires_at,
+            activation_state_attr_name:            :activation_state,
+            activation_token_attr_name:            :activation_token,
+            activation_token_expires_at_attr_name: :activation_token_expires_at,
             activation_token_expiration_period:         nil,
             user_activation_mailer:                     nil,
             activation_mailer_disabled:                 false,
@@ -64,8 +64,8 @@ module Sorcery
           def load_from_activation_token(token, &block)
             load_from_token(
               token,
-              @sorcery_config.activation_token_attribute_name,
-              @sorcery_config.activation_token_expires_at_attribute_name,
+              @sorcery_config.activation_token_attr_name,
+              @sorcery_config.activation_token_expires_at_attr_name,
               &block
             )
           end
@@ -88,15 +88,15 @@ module Sorcery
           def define_user_activation_fields
             class_eval do
               sorcery_adapter.define_field(
-                sorcery_config.activation_state_attribute_name,
+                sorcery_config.activation_state_attr_name,
                 String
               )
               sorcery_adapter.define_field(
-                sorcery_config.activation_token_attribute_name,
+                sorcery_config.activation_token_attr_name,
                 String
               )
               sorcery_adapter.define_field(
-                sorcery_config.activation_token_expires_at_attribute_name,
+                sorcery_config.activation_token_expires_at_attr_name,
                 Time
               )
             end
@@ -110,17 +110,17 @@ module Sorcery
             config = sorcery_config
             generated_activation_token = self.class.generate_random_token
             send(
-              :"#{config.activation_token_attribute_name}=",
+              :"#{config.activation_token_attr_name}=",
               generated_activation_token
             )
             send(
-              :"#{config.activation_state_attribute_name}=",
+              :"#{config.activation_state_attr_name}=",
               'pending'
             )
             return unless config.activation_token_expiration_period
 
             send(
-              :"#{config.activation_token_expires_at_attribute_name}=",
+              :"#{config.activation_token_expires_at_attr_name}=",
               Time.now.in_time_zone + config.activation_token_expiration_period
             )
           end
@@ -130,8 +130,8 @@ module Sorcery
           # sends a success email.
           def activate!
             config = sorcery_config
-            send(:"#{config.activation_token_attribute_name}=", nil)
-            send(:"#{config.activation_state_attribute_name}=", 'active')
+            send(:"#{config.activation_token_attr_name}=", nil)
+            send(:"#{config.activation_state_attr_name}=", 'active')
             send_activation_success_email! if send_activation_success_email?
             sorcery_adapter.save(validate: false, raise_on_failure: true)
           end
@@ -177,7 +177,7 @@ module Sorcery
           def prevent_non_active_login
             config = sorcery_config
             return true unless config.prevent_non_active_users_to_login
-            if send(config.activation_state_attribute_name) == 'active'
+            if send(config.activation_state_attr_name) == 'active'
               return true
             end
 

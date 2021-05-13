@@ -16,9 +16,9 @@ module Sorcery
         # rubocop:disable Layout/LineLength
         def self.plugin_defaults
           {
-            magic_login_token_attribute_name:            :magic_login_token,
-            magic_login_token_expires_at_attribute_name: :magic_login_token_expires_at,
-            magic_login_email_sent_at_attribute_name:    :magic_login_email_sent_at,
+            magic_login_token_attr_name:            :magic_login_token,
+            magic_login_token_expires_at_attr_name: :magic_login_token_expires_at,
+            magic_login_email_sent_at_attr_name:    :magic_login_email_sent_at,
             magic_login_mailer_class:                    nil,
             magic_login_mailer_disabled:                 true,
             magic_login_email_method_name:               :magic_login_email,
@@ -36,8 +36,8 @@ module Sorcery
           def load_from_magic_login_token(token, &block)
             load_from_token(
               token,
-              sorcery_config.magic_login_token_attribute_name,
-              sorcery_config.magic_login_token_expires_at_attribute_name,
+              sorcery_config.magic_login_token_attr_name,
+              sorcery_config.magic_login_token_expires_at_attr_name,
               &block
             )
           end
@@ -61,15 +61,15 @@ module Sorcery
           # rubocop:disable Metrics/MethodLength
           def define_magic_login_fields
             sorcery_adapter.define_field(
-              sorcery_config.magic_login_token_attribute_name,
+              sorcery_config.magic_login_token_attr_name,
               String
             )
             sorcery_adapter.define_field(
-              sorcery_config.magic_login_token_expires_at_attribute_name,
+              sorcery_config.magic_login_token_expires_at_attr_name,
               Time
             )
             sorcery_adapter.define_field(
-              sorcery_config.magic_login_email_sent_at_attribute_name,
+              sorcery_config.magic_login_email_sent_at_attr_name,
               Time
             )
           end
@@ -82,11 +82,11 @@ module Sorcery
           def generate_magic_login_token!
             config = sorcery_config
             attributes = {
-              config.magic_login_token_attribute_name         => self.class.generate_random_token,
-              config.magic_login_email_sent_at_attribute_name => Time.now.in_time_zone
+              config.magic_login_token_attr_name         => self.class.generate_random_token,
+              config.magic_login_email_sent_at_attr_name => Time.now.in_time_zone
             }
             if config.magic_login_expiration_period
-              attributes[config.magic_login_token_expires_at_attribute_name] =
+              attributes[config.magic_login_token_expires_at_attr_name] =
                 Time.now.in_time_zone + config.magic_login_expiration_period
             end
 
@@ -104,8 +104,8 @@ module Sorcery
             config = sorcery_config
             # hammering protection
             return false if !config.magic_login_time_between_emails.nil? &&
-                            send(config.magic_login_email_sent_at_attribute_name) &&
-                            send(config.magic_login_email_sent_at_attribute_name) > config.magic_login_time_between_emails.seconds.ago
+                            send(config.magic_login_email_sent_at_attr_name) &&
+                            send(config.magic_login_email_sent_at_attr_name) > config.magic_login_time_between_emails.seconds.ago
 
             self.class.sorcery_orm_adapter.transaction do
               generate_magic_login_token!
@@ -124,8 +124,8 @@ module Sorcery
           def clear_magic_login_token!
             config = sorcery_config
             sorcery_adapter.update_attributes(
-              config.magic_login_token_attribute_name            => nil,
-              config.magic_login_token_expires_at_attribute_name => nil
+              config.magic_login_token_attr_name            => nil,
+              config.magic_login_token_expires_at_attr_name => nil
             )
           end
 
