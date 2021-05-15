@@ -182,21 +182,17 @@ module Sorcery
           when :success
             login = login_as_user(user)
             after_login!(user, username, password, options)
-
-            yield(user, status) if block_given?
-
-            return login
           when :verification_required
             raise NotImplementedError
           else
             # No user on failed login, return nil.
             login = nil
             after_failed_login!(username, password, options)
-
-            yield(user, status) if block_given?
-
-            return login
           end
+
+          yield(user, status) if block_given?
+
+          return login
         end
       end
 

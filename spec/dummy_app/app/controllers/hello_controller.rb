@@ -3,7 +3,11 @@
 class HelloController < ApiController
   skip_before_action :require_login, only: [:index]
 
-  def index; end
+  def index
+    render json: { hello: 'there' }
+  end
 
-  def restricted; end
+  def restricted
+    render json: { restricted: 'content here' }
+  end
 end

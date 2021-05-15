@@ -40,22 +40,20 @@ module Sorcery
           }
         end
 
-        # rubocop:disable Layout/LineLength
         # rubocop:disable Metrics/MethodLength
         def self.plugin_defaults
           {
             activation_state_attr_name:            :activation_state,
             activation_token_attr_name:            :activation_token,
             activation_token_expires_at_attr_name: :activation_token_expires_at,
-            activation_token_expiration_period:         nil,
-            user_activation_mailer:                     nil,
-            activation_mailer_disabled:                 false,
-            activation_needed_email_method_name:        :activation_needed_email,
-            activation_success_email_method_name:       :activation_success_email,
-            prevent_non_active_users_to_login:          true
+            activation_token_expiration_period:    nil,
+            user_activation_mailer:                nil,
+            activation_mailer_disabled:            false,
+            activation_needed_email_method_name:   :activation_needed_email,
+            activation_success_email_method_name:  :activation_success_email,
+            prevent_non_active_users_to_login:     true
           }
         end
-        # rubocop:enable Layout/LineLength
         # rubocop:enable Metrics/MethodLength
 
         module ClassMethods # :nodoc:

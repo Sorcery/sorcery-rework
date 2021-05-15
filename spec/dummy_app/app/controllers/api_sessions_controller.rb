@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class ApiSessionsController < ApiController
-  skip_before_action :require_login, only: [:new, :create]
-  before_action :prevent_double_login, only: [:new, :create]
-
-  def new; end
+  skip_before_action :require_login, only: [:create]
+  before_action :prevent_double_login, only: [:create]
 
   def create
     if (session_jwt_token = login(params[:login], params[:password]))
@@ -18,12 +16,11 @@ class ApiSessionsController < ApiController
   def destroy
     if logged_in?
       logout
-      flash[:success] = 'Logged out successfully!'
+      head :ok
     else
-      flash[:error] = 'You must be logged in to logout!'
+      render json: { error: 'You must be logged in to logout!' },
+        status: :bad_request
     end
-
-    redirect_to root_path
   end
 
   private
@@ -31,9 +28,6 @@ class ApiSessionsController < ApiController
   def prevent_double_login
     return unless logged_in?
 
-    redirect_back(
-      fallback_location: root_path,
-      error:             'You\'re already logged in!'
-    )
+    render json: { error: 'You\'re already logged in!' }, status: :bad_request
   end
 end

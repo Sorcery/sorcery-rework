@@ -15,4 +15,7 @@ Rails.application.routes.draw do
   get    'admin/login'  => 'admin_sessions#new'
   post   'admin/login'  => 'admin_sessions#create'
   delete 'admin/logout' => 'admin_sessions#destroy'
+
+  post   'api/login'  => 'api_sessions#create'
+  delete 'api/logout' => 'api_sessions#destroy'
 end

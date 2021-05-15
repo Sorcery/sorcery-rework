@@ -15,10 +15,11 @@ RSpec.describe HelloController do
   describe 'restricted' do
     context 'when logged in' do
       let(:user) { create :user }
-      let(:session) { create :user_session, user: user }
 
       it 'allows access' do
-        request.headers['Authorization'] = create_sorcery_jwt_session(user)
+        # FIXME: Should be able to set directly to login_as_user value?
+        request.headers['Authorization'] =
+          "Bearer #{controller.login_as_user(user)}"
         get :restricted
 
         expect(response).to have_http_status(:ok)

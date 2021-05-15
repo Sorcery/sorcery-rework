@@ -5,6 +5,7 @@ class ApiController < ActionController::API
     config.session_store = :jwt_session
 
     config.load_plugin(:activity_logging)
+    config.load_plugin(:jwt)
   end
 
   before_action :require_login

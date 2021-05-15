@@ -41,6 +41,18 @@ RSpec.describe UserSessionsController do
       end
     end
 
+    context 'when logged in on another device' do
+      # Waiting on session management changes
+      pending 'allows logging in on the current device' do
+        post :create, params: { login: user.username, password: 'secret' }
+
+        expect(controller).to(
+          set_flash[:success].to('Logged in successfully!')
+        )
+        expect(response).to redirect_to(root_path)
+      end
+    end
+
     context 'when logged out with bad credentials' do
       before do
         post :create, params: { login: user.username, password: 'wrong!' }
