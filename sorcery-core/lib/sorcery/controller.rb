@@ -18,6 +18,8 @@ module Sorcery
       include_plugins!
       load_plugin_settings!
       add_config_inheritance!
+
+      @sorcery_config.after_config.each { |c| send(c) }
     end
 
     private
