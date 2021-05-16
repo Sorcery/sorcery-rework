@@ -7,8 +7,6 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gem 'bcrypt'
 gem 'jwt'
 gem 'rails'
-gem 'sorcery-argon2'
-gem 'sqlite3'
 
 group :rubocop do
   gem 'rubocop'
@@ -24,5 +22,7 @@ group :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
+  gem 'sorcery-argon2'
+  gem 'sqlite3'
   gem 'timecop'
 end
