@@ -34,6 +34,11 @@ require 'dummy_app/config/environment'
 # NOTE: It's critical to include rspec/rails _after_ DummyApp! Otherwise we get
 #       deprecation warnings from zeitwerk.
 require 'rspec/rails'
+
+##################################
+## Load other test dependencies ##
+##################################
+require 'capybara/rspec'
 require 'factory_bot_rails'
 require 'shoulda-matchers'
 require 'timecop'
@@ -52,7 +57,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }
 RSpec.configure do |config|
   config.mock_with :rspec
 
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
 
   # Allow shortened FactoryBot syntax.
@@ -61,6 +66,11 @@ RSpec.configure do |config|
 
   # Auto include model spec helper methods for all model specs
   config.include ModelSpecHelper, type: :model
+
+  config.before(:each, type: :system) do
+    driven_by :rack_test
+    # driven_by :selenium, using: :firefox
+  end
 
   config.before(:suite) { MigrationHelper.setup_orm }
   config.after(:suite) { MigrationHelper.teardown_orm }
