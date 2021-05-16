@@ -54,8 +54,8 @@ module Sorcery
 
         # TODO: Should this also check that pepper matches?
         argon2.t_cost != t_cost ||
-        argon2.m_cost != m_cost ||
-        argon2.p_cost != p_cost
+          argon2.m_cost != m_cost ||
+          argon2.p_cost != p_cost
       end
 
       private

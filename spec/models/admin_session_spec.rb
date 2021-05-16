@@ -10,10 +10,10 @@ RSpec.describe AdminSession do
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:admin) }
+    it { should belong_to(:admin) }
   end
 
   describe 'validations' do
-    it { is_expected.to validate_uniqueness_of(:admin_id) }
+    it { should validate_uniqueness_of(:admin_id) }
   end
 end

@@ -10,11 +10,11 @@ RSpec.describe Admin do
   end
 
   describe 'associations' do
-    it { is_expected.to have_one(:admin_session).dependent(:destroy) }
+    it { should have_one(:admin_session).dependent(:destroy) }
   end
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:email) }
+    it { should validate_presence_of(:email) }
   end
 
   describe 'class method' do

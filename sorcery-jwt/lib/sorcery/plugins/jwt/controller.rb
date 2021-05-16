@@ -10,7 +10,7 @@ module Sorcery
 
         def self.plugin_callbacks
           {
-            after_config: [:validate_jwt_secret_defined],
+            after_config:  [:validate_jwt_secret_defined],
             login_sources: [:login_from_jwt]
           }
         end
@@ -19,17 +19,17 @@ module Sorcery
           {
             # Secret used to encode JWTs. Should correspond to the type needed
             # by the algorithm used.
-            jwt_algorithm: 'HS256',
+            jwt_algorithm:      'HS256',
             # Type of the algorithm used to encode JWTs. Corresponds to the
             # options available in jwt/ruby-jwt.
             jwt_session_expiry: (60 * 60 * 24 * 7 * 2), # 2 weeks
             # How long the session should be valid for in seconds. Will be set
             # as the exp claim in the token.
-            jwt_secret: nil
+            jwt_secret:         nil
           }
         end
 
-        module ClassMethods
+        module ClassMethods # :nodoc:
           def validate_jwt_secret_defined
             return unless sorcery_config.jwt_secret.nil?
 
@@ -78,7 +78,7 @@ module Sorcery
           def token
             return nil unless authorization_header
 
-            authorization_header.split(' ').last
+            authorization_header.split.last
           end
 
           def authorization_header

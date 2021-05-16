@@ -49,9 +49,9 @@ RSpec.describe Sorcery::Plugins::RememberMe::Model do
       user_class
     end
 
-    it { is_expected.to respond_to :remember_me! }
-    it { is_expected.to respond_to :forget_me! }
-    it { is_expected.to respond_to :force_forget_me! }
+    it { should respond_to :remember_me! }
+    it { should respond_to :forget_me! }
+    it { should respond_to :force_forget_me! }
 
     describe 'remember_me!' do
       context 'when persisting globally' do

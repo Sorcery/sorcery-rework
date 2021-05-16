@@ -10,6 +10,6 @@ RSpec.describe UserSession do
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:user) }
+    it { should belong_to(:user) }
   end
 end

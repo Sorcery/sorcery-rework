@@ -53,7 +53,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
       context 'when last_login_at is nil' do
         let(:record) { user_class.new }
 
-        it { is_expected.to be_falsey }
+        it { should be_falsey }
       end
 
       context 'when last_login_at is present' do
@@ -63,7 +63,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_truthy }
+        it { should be_truthy }
       end
 
       context 'when last_logout_at is present' do
@@ -74,7 +74,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_falsey }
+        it { should be_falsey }
       end
     end
 
@@ -84,7 +84,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
       context 'when last_login_at is nil' do
         let(:record) { user_class.new }
 
-        it { is_expected.to be_truthy }
+        it { should be_truthy }
       end
 
       context 'when last_login_at is present' do
@@ -94,7 +94,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_falsey }
+        it { should be_falsey }
       end
 
       context 'when last_logout_at is present' do
@@ -105,7 +105,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_truthy }
+        it { should be_truthy }
       end
     end
 
@@ -115,7 +115,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
       context 'when last_login_at is nil' do
         let(:record) { user_class.new }
 
-        it { is_expected.to be_falsey }
+        it { should be_falsey }
       end
 
       context 'when last_activity_at is nil' do
@@ -125,7 +125,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_falsey }
+        it { should be_falsey }
       end
 
       context 'when last_activity_at is old' do
@@ -136,7 +136,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_falsey }
+        it { should be_falsey }
       end
 
       context 'when last_activity_at is recent' do
@@ -147,7 +147,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_truthy }
+        it { should be_truthy }
       end
 
       context 'when last_logout_at is present' do
@@ -159,7 +159,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
           record
         end
 
-        it { is_expected.to be_falsey }
+        it { should be_falsey }
       end
     end
   end

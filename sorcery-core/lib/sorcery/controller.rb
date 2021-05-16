@@ -148,7 +148,6 @@ module Sorcery
       #
       #--
       # TODO: Audit login method for security as well as logic.
-      # rubocop:disable Metrics/MethodLength
       #++
       #
       # def login(username, password, options = {})
@@ -174,8 +173,7 @@ module Sorcery
       #     block_given? ? yield(current_user, nil) : current_user
       #   end
       # end
-      # rubocop:enable Metrics/MethodLength
-
+      # rubocop:disable Metrics/MethodLength
       def login(username, password, options = {})
         @current_user = nil
 
@@ -197,6 +195,7 @@ module Sorcery
           return login
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       ##
       # Protect from session fixation attacks
@@ -262,7 +261,7 @@ module Sorcery
         unless respond_to?(session_store_method)
           raise Sorcery::Errors::ConfigError,
             "Unknown session store: #{sorcery_config.session_store}\n"\
-            "Double check that you included the necessary plugins."
+            'Double check that you included the necessary plugins.'
         end
 
         send(session_store_method, user)

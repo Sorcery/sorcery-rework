@@ -308,6 +308,7 @@ module Sorcery
       self.class.new(attributes)
     end
 
+    # rubocop:disable Metrics/MethodLength
     def hashing_provider
       case @password_hashing_algorithm.to_sym
       when :none
@@ -324,10 +325,11 @@ module Sorcery
         @custom_hashing_provider.new(settings: password_hashing_settings)
       else
         raise Sorcery::Errors::ConfigError,
-          "The password hashing algorithm supplied, "\
+          'The password hashing algorithm supplied, '\
           "#{@password_hashing_algorithm}, is invalid"
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     # TODO: Is there a better way to access all instance variables?
     private

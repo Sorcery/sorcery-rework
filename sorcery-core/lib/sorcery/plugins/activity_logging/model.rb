@@ -18,9 +18,9 @@ module Sorcery
 
         def self.plugin_defaults
           {
-            last_login_at_attr_name:    :last_login_at,
-            last_logout_at_attr_name:   :last_logout_at,
-            last_activity_at_attr_name: :last_activity_at,
+            last_login_at_attr_name:         :last_login_at,
+            last_logout_at_attr_name:        :last_logout_at,
+            last_activity_at_attr_name:      :last_activity_at,
             last_login_from_ip_address_name: :last_login_from_ip_address,
             activity_timeout:                10 * 60
           }
@@ -99,9 +99,7 @@ module Sorcery
           end
 
           def recently_active?
-            if send(sorcery_config.last_activity_at_attr_name).nil?
-              return false
-            end
+            return false if send(sorcery_config.last_activity_at_attr_name).nil?
 
             (
               send(sorcery_config.last_activity_at_attr_name) >

@@ -16,6 +16,7 @@ RSpec.describe ApiSessionsController do
         }
       end
 
+      # rubocop:disable RSpec/ExampleLength
       it 'prevents logging in twice' do
         request.headers.merge! headers
         post :create, params: { login: user.username, password: 'secret' }
@@ -25,6 +26,7 @@ RSpec.describe ApiSessionsController do
           eq({ error: 'You\'re already logged in!' }.to_json)
         )
       end
+      # rubocop:enable RSpec/ExampleLength
     end
 
     # Waiting on session management changes

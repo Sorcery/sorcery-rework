@@ -23,11 +23,11 @@ module Sorcery
             reset_password_token_expires_at_attr_name:  :reset_password_token_expires_at,
             reset_password_page_access_count_attr_name: :access_count_to_reset_password_page,
             reset_password_email_sent_at_attr_name:     :reset_password_email_sent_at,
-            reset_password_mailer:                           nil,
-            reset_password_mailer_disabled:                  false,
-            reset_password_email_method_name:                :reset_password_email,
-            reset_password_expiration_period:                nil,
-            reset_password_time_between_emails:              5 * 60
+            reset_password_mailer:                      nil,
+            reset_password_mailer_disabled:             false,
+            reset_password_email_method_name:           :reset_password_email,
+            reset_password_expiration_period:           nil,
+            reset_password_time_between_emails:         5 * 60
           }
         end
         # rubocop:enable Layout/LineLength

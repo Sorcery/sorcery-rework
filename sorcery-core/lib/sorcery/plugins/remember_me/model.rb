@@ -23,8 +23,8 @@ module Sorcery
           {
             remember_me_token_attr_name:            :remember_me_token,
             remember_me_token_expires_at_attr_name: :remember_me_token_expires_at,
-            remember_me_token_persist_globally:          false,
-            remember_me_for:                             7 * 60 * 60 * 24
+            remember_me_token_persist_globally:     false,
+            remember_me_for:                        7 * 60 * 60 * 24
           }
         end
         # rubocop:enable Layout/LineLength

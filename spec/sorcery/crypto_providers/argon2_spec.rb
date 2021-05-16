@@ -106,7 +106,8 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
       end
 
       it 'returns false when given invalid password' do
-        expect(hashing_provider).not_to be_digest_matches(digest, other_password)
+        expect(hashing_provider).not_to be_digest_matches(digest,
+          other_password)
       end
 
       context 'when pepper is provided' do

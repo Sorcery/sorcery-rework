@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 
+# rubocop:disable RSpec/DescribeClass
+# rubocop:disable RSpec/RepeatedExampleGroupBody
 RSpec.describe 'User login' do
   let(:user) { create :user, password: 'secret' }
 
@@ -40,3 +42,5 @@ RSpec.describe 'User login' do
     it 'allows access if good credentials are given'
   end
 end
+# rubocop:enable RSpec/DescribeClass
+# rubocop:enable RSpec/RepeatedExampleGroupBody

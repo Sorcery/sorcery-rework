@@ -4,7 +4,6 @@ require 'securerandom'
 
 module Sorcery
   # FIXME: Can any of this be extracted or simplified?
-  # rubocop:disable Metrics/ModuleLength
 
   ##
   # Extends the user model(s) with Sorcery's methods.
@@ -265,15 +264,15 @@ module Sorcery
 
         unless user.valid_password?(password)
           return authentication_response(
-            user:    user,
+            user:   user,
             status: :invalid_password,
             &block
           )
         end
 
         authentication_response(
-          user: user,
-          status: :success,
+          user:         user,
+          status:       :success,
           return_value: user,
           &block
         )
@@ -379,7 +378,6 @@ module Sorcery
         !expires_at || (Time.now.in_time_zone < expires_at)
       end
     end
-    # rubocop:enable Metrics/ModuleLength
 
     ##
     # TODO
