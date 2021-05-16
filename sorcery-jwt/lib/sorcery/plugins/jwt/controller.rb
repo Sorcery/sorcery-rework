@@ -34,14 +34,15 @@ module Sorcery
             return unless sorcery_config.jwt_secret.nil?
 
             raise Sorcery::Errors::ConfigError,
-              'A secret must be configured when using the Sorcery::Jwt '\
+              'A secret must be configured when using the Sorcery::JWT '\
               'extension.'
           end
         end
 
         module InstanceMethods # :nodoc:
           def login_from_jwt
-            session_key = decoded_token.first.slice(sorcery_config.session_key)
+            session_key =
+              decoded_token.first[sorcery_config.session_key.to_s]
 
             @current_user = user_class.sorcery_orm_adapter.find_by_id(
               session_key

@@ -7,7 +7,6 @@ class ApiSessionsController < ApiController
   def create
     if (session_jwt_token = login(params[:login], params[:password]))
       render json: { session_token: session_jwt_token }
-      redirect_back_or_to root_path, success: 'Logged in successfully!'
     else
       render json: { error: 'Failed to login' }, status: :bad_request
     end

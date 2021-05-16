@@ -42,8 +42,8 @@ RSpec.describe AdminSessionsController do
     end
 
     context 'when logged in on another device' do
-      # Waiting on session management changes
-      pending 'prevents logging in on the current device' do
+      it 'prevents logging in on the current device' do
+        pending 'Waiting on session management changes'
         post :create, params: { login: admin.email, password: 'secret' }
 
         expect(controller).to set_flash[:error].to 'You\'re already logged in!'

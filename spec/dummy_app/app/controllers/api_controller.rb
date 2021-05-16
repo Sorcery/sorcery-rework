@@ -5,7 +5,16 @@ class ApiController < ActionController::API
     config.session_store = :jwt_session
 
     config.load_plugin(:activity_logging)
-    config.load_plugin(:jwt)
+    config.load_plugin(
+      :jwt,
+      {
+        controller: {
+          jwt_secret: Rails.application.secrets.secret_key_base
+        }
+      }
+    )
+
+    config.unload_plugin(:remember_me)
   end
 
   before_action :require_login

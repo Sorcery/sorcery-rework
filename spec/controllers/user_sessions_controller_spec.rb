@@ -43,7 +43,7 @@ RSpec.describe UserSessionsController do
 
     context 'when logged in on another device' do
       # Waiting on session management changes
-      pending 'allows logging in on the current device' do
+      it 'allows logging in on the current device' do
         post :create, params: { login: user.username, password: 'secret' }
 
         expect(controller).to(

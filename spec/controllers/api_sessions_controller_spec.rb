@@ -7,57 +7,61 @@ RSpec.describe ApiSessionsController do
 
   describe 'create' do
     context 'when logged in' do
-      before do
-        # FIXME: Should be able to set directly to login_as_user value?
-        request.headers['Authorization'] =
-          "Bearer #{controller.login_as_user(user)}"
-        post :create,
-          params:  { login: user.username, password: 'secret' }
+      let!(:headers) do
+        token = controller.login_as_user(user)
+        # FIXME: Controller specs don't reset instance vars between calls
+        controller.remove_instance_variable(:@current_user)
+        {
+          'Authorization' => "Bearer #{token}"
+        }
       end
 
       it 'prevents logging in twice' do
-        expect(request).to have_http_status :bad_request
-        expect(request.body).to(
+        request.headers.merge! headers
+        post :create, params: { login: user.username, password: 'secret' }
+
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to(
           eq({ error: 'You\'re already logged in!' }.to_json)
         )
       end
     end
 
+    # Waiting on session management changes
     context 'when logged in on another device' do
-      # Waiting on session management changes
-      pending 'allows logging in on the current device' do
+      before do
+        post :create, params: { login: user.username, password: 'secret' }
+        # FIXME: Controller specs don't reset instance vars between calls
+        controller.remove_instance_variable(:@current_user)
+      end
+
+      it 'allows logging in on the current device' do
         post :create, params: { login: user.username, password: 'secret' }
 
-        expect(controller).to(
-          set_flash[:success].to('Logged in successfully!')
-        )
-        expect(response).to redirect_to(root_path)
+        expect(response).to have_http_status :ok
+        token = JSON.parse(response.body)['session_token']
+        expect(token).to be_present
       end
     end
 
     context 'when logged out with bad credentials' do
-      before do
-        post :create, params: { login: user.username, password: 'wrong!' }
-      end
-
       it 'denies access' do
-        expect(controller).not_to(
-          set_flash[:success].to('Logged in successfully!')
+        post :create, params: { login: user.username, password: 'wrong!' }
+
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to(
+          eq({ error: 'Failed to login' }.to_json)
         )
-        expect(response).not_to redirect_to(root_path)
       end
     end
 
     context 'when logged out with good credentials' do
-      before do
-        post :create, params: { login: user.username, password: 'secret' }
-      end
-
       it 'allows access' do
-        expect(controller).to(
-          set_flash[:success].to('Logged in successfully!')
-        )
-        expect(response).to redirect_to(root_path)
+        post :create, params: { login: user.username, password: 'secret' }
+
+        expect(response).to have_http_status :ok
+        token = JSON.parse(response.body)['session_token']
+        expect(token).to be_present
       end
     end
 
@@ -66,15 +70,15 @@ RSpec.describe ApiSessionsController do
         3.times do
           post :create, params: { login: user.username, password: 'wrong!' }
         end
-
-        post :create, params: { login: user.username, password: 'secret' }
       end
 
       it 'denies access' do
-        expect(controller).not_to(
-          set_flash[:success].to('Logged in successfully!')
+        post :create, params: { login: user.username, password: 'secret' }
+
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to(
+          eq({ error: 'Failed to login' }.to_json)
         )
-        expect(response).not_to redirect_to(root_path)
       end
     end
 
@@ -101,29 +105,28 @@ RSpec.describe ApiSessionsController do
 
         post :create, params: { login: user.username, password: 'secret' }
 
-        expect(controller).not_to(
-          set_flash[:success].to('Logged in successfully!')
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to(
+          eq({ error: 'Failed to login' }.to_json)
         )
-        expect(response).not_to redirect_to(root_path)
       end
       # rubocop:enable RSpec/ExampleLength
 
       it 'still denies access if bad credentials are given' do
         post :create, params: { login: user.username, password: 'wrong!' }
 
-        expect(controller).not_to(
-          set_flash[:success].to('Logged in successfully!')
+        expect(response).to have_http_status :bad_request
+        expect(response.body).to(
+          eq({ error: 'Failed to login' }.to_json)
         )
-        expect(response).not_to redirect_to(root_path)
       end
 
       it 'allows access if correct credentials are given' do
         post :create, params: { login: user.username, password: 'secret' }
 
-        expect(controller).to(
-          set_flash[:success].to('Logged in successfully!')
-        )
-        expect(response).to redirect_to(root_path)
+        expect(response).to have_http_status :ok
+        token = JSON.parse(response.body)['session_token']
+        expect(token).to be_present
       end
     end
   end
