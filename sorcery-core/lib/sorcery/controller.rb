@@ -273,8 +273,11 @@ module Sorcery
         @current_user = user
       end
 
-      # Add deprecation warning
+      # @deprecated Please use {#login_as_user} instead.
       def auto_login(user, _options = {})
+        warn Kernel.caller.first +
+             '[DEPRECATION] `auto_login` is deprecated. Please use '\
+             '`login_as_user` instead.'
         login_as_user(user)
       end
 
