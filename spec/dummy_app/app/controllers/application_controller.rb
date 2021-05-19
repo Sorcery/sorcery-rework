@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def not_authenticated
+    byebug # session => {}
     redirect_to root_path, alert: 'Please login first.'
   end
 end
