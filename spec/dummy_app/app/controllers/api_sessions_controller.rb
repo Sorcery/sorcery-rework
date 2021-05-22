@@ -18,7 +18,7 @@ class ApiSessionsController < ApiController
       head :ok
     else
       render json:   { error: 'You must be logged in to logout!' },
-             status: :bad_request
+        status: :bad_request
     end
   end
 
