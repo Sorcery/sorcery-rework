@@ -10,7 +10,6 @@ RSpec.describe 'User logout' do
   context 'when logged in on current device' do
     before do
       post '/user/login', params:  { login: user.username, password: 'secret' }
-      byebug # session => has stuff
     end
 
     it 'allows logging out' do

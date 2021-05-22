@@ -7,5 +7,6 @@ module DummyApp
     config.load_defaults '6.0'
 
     config.eager_load = false
+    config.action_controller.allow_forgery_protection = false
   end
 end
