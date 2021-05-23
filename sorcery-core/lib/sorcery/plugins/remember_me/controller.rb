@@ -110,9 +110,11 @@ module Sorcery
             return false unless user&.remember_me_token?
 
             set_remember_me_cookie!(user)
-            session[sorcery_config.session_key] = user.id.to_s
+            sorcery_session = user_class.create_sorcery_session!
+            session[sorcery_config.session_key] = sorcery_session.id.to_s
             after_remember_me!(user)
             @current_user = user
+            @current_sorcery_session = sorcery_session
           end
           # rubocop:enable Metrics/AbcSize
           # rubocop:enable Metrics/MethodLength

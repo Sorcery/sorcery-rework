@@ -44,18 +44,19 @@ module Sorcery
             session_key =
               decoded_token.first[sorcery_config.session_key.to_s]
 
-            @current_user = user_class.sorcery_orm_adapter.find_by_id(
-              session_key
-            )
+            @current_sorcery_session =
+              sorcery_session_class.sorcery_orm_adapter.find_by_id(session_key)
           rescue ::JWT::DecodeError, ::JWT::ExpiredSignature
-            @current_user = nil
+            # TODO: Why nil this out? It isn't set in the first place.
+            @current_sorcery_session = nil
             false
           end
 
           def create_sorcery_jwt_session(user)
             @current_user = user
+            @current_sorcery_session = user.create_sorcery_session!
             issue_jwt_token(
-              { sorcery_config.session_key => @current_user.id.to_s }
+              { sorcery_config.session_key => @current_sorcery_session.id.to_s }
             )
           end
 

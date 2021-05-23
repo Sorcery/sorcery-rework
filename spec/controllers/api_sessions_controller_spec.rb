@@ -11,6 +11,7 @@ RSpec.describe ApiSessionsController, focus: true do
         token = controller.login_as_user(user)
         # FIXME: Controller specs don't reset instance vars between calls
         controller.remove_instance_variable(:@current_user)
+        controller.remove_instance_variable(:@current_sorcery_session)
         {
           'Authorization' => "Bearer #{token}"
         }
@@ -35,6 +36,7 @@ RSpec.describe ApiSessionsController, focus: true do
         post :create, params: { login: user.username, password: 'secret' }
         # FIXME: Controller specs don't reset instance vars between calls
         controller.remove_instance_variable(:@current_user)
+        controller.remove_instance_variable(:@current_sorcery_session)
       end
 
       it 'allows logging in on the current device' do

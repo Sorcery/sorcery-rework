@@ -10,5 +10,7 @@ module Sorcery
     class ConfigError < Sorcery::Error; end
 
     class PluginDependencyError < ConfigError; end
+
+    class SessionNotDestroyed < Sorcery::Error; end
   end
 end

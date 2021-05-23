@@ -198,6 +198,15 @@ module Sorcery
         @sorcery_hashing_provider
       end
 
+      def sorcery_session_class
+        @sorcery_session_class ||= sorcery_config.session_class.to_s.constantize
+      rescue NameError
+        raise Sorcery::Errors::ConfigError,
+          'You have incorrectly defined session_class or have forgotten to '\
+          'define it in your Sorcery initializer file '\
+          '(config.session_class = \'UserSession\').'
+      end
+
       ##
       # The default authentication method.
       # Takes a username and password,
@@ -389,6 +398,17 @@ module Sorcery
 
       def sorcery_hashing_provider
         self.class.sorcery_hashing_provider
+      end
+
+      def sorcery_session_class
+        self.class.sorcery_session_class
+      end
+
+      def create_sorcery_session!
+        sorcery_session = sorcery_session_class.new
+        sorcery_session.user = self
+        sorcery_session.save!
+        sorcery_session
       end
 
       ##

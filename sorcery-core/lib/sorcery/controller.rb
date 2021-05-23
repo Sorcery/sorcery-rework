@@ -133,11 +133,22 @@ module Sorcery
       def current_user
         return @current_user if defined?(@current_user)
 
-        @current_user = login_from_session || login_from_other_sources || nil
+        @current_user = current_sorcery_session&.user
       end
 
       def current_user=(user)
         @current_user = user
+      end
+
+      def current_sorcery_session
+        return @current_sorcery_session if defined?(@current_sorcery_session)
+
+        @current_sorcery_session =
+          login_from_session || login_from_other_sources || nil
+      end
+
+      def current_sorcery_session=(sorcery_session)
+        @current_sorcery_session = sorcery_session
       end
 
       ##
@@ -223,9 +234,15 @@ module Sorcery
         return unless logged_in?
 
         user = current_user
+        sorcery_session = current_sorcery_session
         before_logout!
         @current_user = nil
+        @current_sorcery_session.destroy
+        @current_sorcery_session = nil
         reset_sorcery_session
+        # FIXME: Allowing errors inside the logout sounds like a security vuln
+        #        just waiting to happen. Critical to review this thoroughly!
+        raise Sorcery::Errors::SessionNotDestroyed if sorcery_session.persisted?
         after_logout!(user)
       end
 
@@ -269,7 +286,9 @@ module Sorcery
 
       def create_sorcery_local_session(user)
         reset_sorcery_session(keep_values: true)
-        session[sorcery_config.session_key] = user.id.to_s
+        sorcery_session = user.create_sorcery_session!
+        session[sorcery_config.session_key] = sorcery_session.id.to_s
+        @current_sorcery_session = sorcery_session
         @current_user = user
       end
 
@@ -301,9 +320,10 @@ module Sorcery
       def login_from_session
         return nil unless session[sorcery_config.session_key].present?
 
-        @current_user = user_class.sorcery_orm_adapter.find_by_id(
-          session[sorcery_config.session_key]
-        )
+        @current_sorcery_session =
+          sorcery_session_class.sorcery_orm_adapter.find_by_id(
+            session[sorcery_config.session_key]
+          )
       end
 
       ##
@@ -330,10 +350,19 @@ module Sorcery
       def user_class
         @user_class ||= sorcery_config.user_class.to_s.constantize
       rescue NameError
-        raise ArgumentError,
+        raise Sorcery::Errors::ConfigError,
           'You have incorrectly defined user_class or have forgotten to '\
           'define it in your Sorcery initializer file '\
           '(config.user_class = \'User\').'
+      end
+
+      def sorcery_session_class
+        @sorcery_session_class ||= sorcery_config.session_class.to_s.constantize
+      rescue NameError
+        raise Sorcery::Errors::ConfigError,
+          'You have incorrectly defined session_class or have forgotten to '\
+          'define it in your Sorcery initializer file '\
+          '(config.session_class = \'UserSession\').'
       end
 
       #######################

@@ -36,6 +36,7 @@ module Sorcery
           end
           # rubocop:enable Layout/LineLength
 
+          # TODO: Dear god, how am I going to make this accept sessions?
           def login_from_basic_auth
             authenticate_with_http_basic do |username, password|
               @current_user =
