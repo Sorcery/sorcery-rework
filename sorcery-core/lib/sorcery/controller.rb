@@ -133,7 +133,12 @@ module Sorcery
       def current_user
         return @current_user if defined?(@current_user)
 
-        @current_user = current_sorcery_session&.user
+        if current_sorcery_session
+          user_class_symbol = user_class.model_name.singular.to_sym
+          @current_user = current_sorcery_session.send(user_class_symbol)
+        else
+          @current_user = nil
+        end
       end
 
       def current_user=(user)
@@ -187,6 +192,7 @@ module Sorcery
       # rubocop:disable Metrics/MethodLength
       def login(username, password, options = {})
         @current_user = nil
+        # TODO: Should this also `@current_sorcery_session = nil`?
 
         user_class.authenticate(username, password) do |user, status|
           case status
@@ -243,6 +249,7 @@ module Sorcery
         # FIXME: Allowing errors inside the logout sounds like a security vuln
         #        just waiting to happen. Critical to review this thoroughly!
         raise Sorcery::Errors::SessionNotDestroyed if sorcery_session.persisted?
+
         after_logout!(user)
       end
 

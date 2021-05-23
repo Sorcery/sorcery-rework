@@ -183,13 +183,8 @@ module Sorcery
       @sorcery_hashing_provider = @sorcery_config.hashing_provider
     end
 
-    ##
-    # TODO
-    #
-    #--
-    #++
-    #
-    module ClassMethods
+    # rubocop:disable Metrics/ModuleLength
+    module ClassMethods # :nodoc:
       def sorcery_config
         @sorcery_config
       end
@@ -387,11 +382,9 @@ module Sorcery
         !expires_at || (Time.now.in_time_zone < expires_at)
       end
     end
+    # rubocop:enable Metrics/ModuleLength
 
-    ##
-    # TODO
-    #
-    module InstanceMethods
+    module InstanceMethods # :nodoc:
       def sorcery_config
         self.class.sorcery_config
       end
@@ -406,7 +399,8 @@ module Sorcery
 
       def create_sorcery_session!
         sorcery_session = sorcery_session_class.new
-        sorcery_session.user = self
+        association_symbol = "#{model_name.singular}=".to_sym
+        sorcery_session.send(association_symbol, self)
         sorcery_session.save!
         sorcery_session
       end

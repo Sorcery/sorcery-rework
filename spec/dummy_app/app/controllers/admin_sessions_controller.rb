@@ -10,7 +10,7 @@ class AdminSessionsController < ApplicationController
   authenticates_with_sorcery! do |config|
     config.user_class = 'Admin'
     config.session_class = 'AdminSession'
-    config.session_key = 'admin_id'
+    config.session_key = 'admin_session_id'
 
     config.unload_plugin(:activity_logging)
   end
@@ -23,6 +23,11 @@ class AdminSessionsController < ApplicationController
     else
       render :new
     end
+  rescue ActiveRecord::RecordInvalid
+    redirect_back(
+      fallback_location: root_path,
+      error:             'You\'re already logged in!'
+    )
   end
 
   def destroy

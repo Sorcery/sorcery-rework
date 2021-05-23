@@ -3,15 +3,15 @@
 require 'rails_helper'
 
 # rubocop:disable RSpec/RepeatedExampleGroupBody
-RSpec.describe 'User login' do
-  let(:user) { create :user, password: 'secret' }
+RSpec.describe 'Admin login' do
+  let(:admin) { create :admin, password: 'secret' }
 
   context 'when logged in on current device' do
     it 'prevents logging in twice'
   end
 
   context 'when logged in on another device' do
-    it 'allows logging in on second device'
+    it 'prevents logging in on second device'
   end
 
   context 'when logged out everywhere' do

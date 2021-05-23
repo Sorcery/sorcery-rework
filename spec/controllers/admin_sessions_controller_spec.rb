@@ -7,7 +7,10 @@ RSpec.describe AdminSessionsController do
 
   describe 'new' do
     context 'when logged in' do
-      before { get :new, session: { admin_id: admin.id } }
+      before do
+        admin_session = create :admin_session, admin: admin
+        get :new, session: { admin_session_id: admin_session.id }
+      end
 
       it 'prevents logging in twice' do
         expect(controller).to set_flash[:error].to 'You\'re already logged in!'
@@ -30,9 +33,10 @@ RSpec.describe AdminSessionsController do
   describe 'create' do
     context 'when logged in' do
       before do
+        admin_session = create :admin_session, admin: admin
         post :create,
           params:  { login: admin.email, password: 'secret' },
-          session: { admin_id: admin.id }
+          session: { admin_session_id: admin_session.id }
       end
 
       it 'prevents logging in twice' do
@@ -43,7 +47,7 @@ RSpec.describe AdminSessionsController do
 
     context 'when logged in on another device' do
       it 'prevents logging in on the current device' do
-        pending 'Waiting on session management changes'
+        create :admin_session, admin: admin
         post :create, params: { login: admin.email, password: 'secret' }
 
         expect(controller).to set_flash[:error].to 'You\'re already logged in!'

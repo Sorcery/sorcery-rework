@@ -2,8 +2,6 @@
 
 require 'rails_helper'
 
-# rubocop:disable RSpec/DescribeClass
-# rubocop:disable RSpec/RepeatedExampleGroupBody
 RSpec.describe 'User logout' do
   let(:user) { create :user, password: 'secret' }
 
@@ -35,7 +33,9 @@ RSpec.describe 'User logout' do
   end
 
   context 'when logged in on another device' do
-    let!(:other_session) { create :user_session, user: user }
+    before do
+      create :user_session, user: user
+    end
 
     it 'prevents logging out' do
       delete '/user/logout'
@@ -54,5 +54,3 @@ RSpec.describe 'User logout' do
     end
   end
 end
-# rubocop:enable RSpec/DescribeClass
-# rubocop:enable RSpec/RepeatedExampleGroupBody

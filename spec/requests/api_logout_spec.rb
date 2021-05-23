@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'API Logout' do
@@ -20,7 +22,7 @@ RSpec.describe 'API Logout' do
     end
   end
 
-  context 'when logged out after logging in', focus: true do
+  context 'when logged out after logging in' do
     let!(:headers) do
       post '/api/login', params: { login: user.username, password: 'secret' }
       token = JSON.parse(response.body)['session_token']
@@ -43,13 +45,15 @@ RSpec.describe 'API Logout' do
   end
 
   context 'when logged in on another device' do
-    let!(:other_session) { create :user_session, user: user }
+    before do
+      post '/api/login', params: { login: user.username, password: 'secret' }
+    end
 
     it 'prevents logging out' do
       delete '/api/logout'
 
-      expect(flash[:alert]).to eq 'Please login first.'
-      expect(response).to redirect_to(root_path)
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.body).to eq({ error: 'Please login first.' }.to_json)
     end
   end
 
@@ -57,8 +61,8 @@ RSpec.describe 'API Logout' do
     it 'prevents logging out' do
       delete '/api/logout'
 
-      expect(flash[:alert]).to eq 'Please login first.'
-      expect(response).to redirect_to(root_path)
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.body).to eq({ error: 'Please login first.' }.to_json)
     end
   end
 end

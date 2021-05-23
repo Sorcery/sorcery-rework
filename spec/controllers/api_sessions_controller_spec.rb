@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe ApiSessionsController, focus: true do
+RSpec.describe ApiSessionsController do
   let(:user) { create :user, password: 'secret' }
 
   describe 'create' do
@@ -30,7 +30,6 @@ RSpec.describe ApiSessionsController, focus: true do
       # rubocop:enable RSpec/ExampleLength
     end
 
-    # Waiting on session management changes
     context 'when logged in on another device' do
       before do
         post :create, params: { login: user.username, password: 'secret' }

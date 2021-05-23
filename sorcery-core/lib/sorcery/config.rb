@@ -65,8 +65,8 @@ module Sorcery
       downcase_username_before_authenticating: false,
       not_authenticated_action:                :not_authenticated,
       session_store:                           :local_session,
-      session_key:                             :user_id,
-      verify_session_key:                      :verify_user_id,
+      session_key:                             :user_session_id,
+      verify_session_key:                      :verify_user_session_id,
       login_sources:                           Set.new,
       ###############
       ## Callbacks ##

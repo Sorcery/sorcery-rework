@@ -70,6 +70,10 @@ RSpec/MultipleExpectations:
 # `should` and `should_not` read nicely
 RSpec/ImplicitExpect:
   EnforcedStyle: should
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/requests/**/*'
+    - 'spec/system/**/*'
 
 ###########
 ## Style ##

@@ -7,7 +7,10 @@ RSpec.describe UserSessionsController do
 
   describe 'new' do
     context 'when logged in' do
-      before { get :new, session: { user_id: user.id } }
+      before do
+        user_session = create :user_session, user: user
+        get :new, session: { user_session_id: user_session.id }
+      end
 
       it 'prevents logging in twice' do
         expect(controller).to set_flash[:error].to 'You\'re already logged in!'
@@ -30,9 +33,10 @@ RSpec.describe UserSessionsController do
   describe 'create' do
     context 'when logged in' do
       before do
+        user_session = create :user_session, user: user
         post :create,
           params:  { login: user.username, password: 'secret' },
-          session: { user_id: user.id }
+          session: { user_session_id: user_session.id }
       end
 
       it 'prevents logging in twice' do
@@ -42,7 +46,10 @@ RSpec.describe UserSessionsController do
     end
 
     context 'when logged in on another device' do
-      # Waiting on session management changes
+      before do
+        create :user_session, user: user
+      end
+
       it 'allows logging in on the current device' do
         post :create, params: { login: user.username, password: 'secret' }
 
