@@ -21,6 +21,14 @@ module Sorcery
       ###########################
       ## ActionController::API ##
       ###########################
+      # FIXME: Can we hook into after JBuilder overloads the API controller to
+      #        load our custom helper methods?
+      #
+      # If you want to use JBuilder, you'll need to call the following in your
+      # application_controller.rb:
+      #
+      # helper_method :current_user
+      # helper_method :logged_in?
       ActiveSupport.on_load(:action_controller_api) do
         extend ::Sorcery::Controller
       end
