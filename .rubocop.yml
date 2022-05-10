@@ -9,7 +9,7 @@ require:
 AllCops:
   NewCops: enable
   SuggestExtensions: false
-  TargetRubyVersion: 2.5.0
+  TargetRubyVersion: 2.6.0
 
 ###########################
 ## Custom Rubocop Config ##
@@ -20,7 +20,7 @@ AllCops:
 ############
 
 Layout/LineLength:
-  IgnoredPatterns: ['it { is_expected.']
+  AllowedPatterns: ['it { is_expected.']
   Max: 80
 # Variable assignment can be indented weirdly, so align to the ending statement
 # instead

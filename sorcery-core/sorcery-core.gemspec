@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
     'own MVC structure.'
 
   # TODO: Does including minimum rubygems version make sense?
-  s.required_ruby_version     = '>= 2.5.0'
+  s.required_ruby_version     = '>= 2.6.0'
   s.required_rubygems_version = '>= 1.8.11'
 
   s.license = 'MIT'
