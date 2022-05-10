@@ -26,7 +26,7 @@ RSpec.describe User do
       end
 
       it 'returns nil if credentials are bad' do
-        expect(described_class.authenticate(user.username, 'wrong!')).to eq nil
+        expect(described_class.authenticate(user.username, 'wrong!')).to be_nil
       end
     end
   end

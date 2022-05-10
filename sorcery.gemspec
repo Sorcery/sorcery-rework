@@ -34,10 +34,11 @@ Gem::Specification.new do |s|
   s.files = []
 
   s.metadata = {
-    'bug_tracker_uri'   => "#{repo_url}/issues",
-    'changelog_uri'     => "#{repo_url}/releases/tag/v#{version}",
-    'documentation_uri' => "#{repo_url}/wiki",
-    'source_code_uri'   => "#{repo_url}/tree/v#{version}"
+    'bug_tracker_uri'       => "#{repo_url}/issues",
+    'changelog_uri'         => "#{repo_url}/releases/tag/v#{version}",
+    'documentation_uri'     => "#{repo_url}/wiki",
+    'source_code_uri'       => "#{repo_url}/tree/v#{version}",
+    'rubygems_mfa_required' => 'true'
   }
 
   s.add_dependency 'sorcery-core',  version

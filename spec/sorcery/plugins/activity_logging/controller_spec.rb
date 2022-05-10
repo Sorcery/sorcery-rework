@@ -24,7 +24,7 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Controller do
 
       expect(
         controller_instance.sorcery_config.register_login_time
-      ).to eq(false)
+      ).to be(false)
     end
     # rubocop:enable RSpec/ExampleLength
   end

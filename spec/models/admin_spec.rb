@@ -26,7 +26,7 @@ RSpec.describe Admin do
       end
 
       it 'returns nil if credentials are bad' do
-        expect(described_class.authenticate(admin.email, 'wrong!')).to eq nil
+        expect(described_class.authenticate(admin.email, 'wrong!')).to be_nil
       end
     end
   end

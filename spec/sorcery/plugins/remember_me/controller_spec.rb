@@ -24,7 +24,7 @@ RSpec.describe Sorcery::Plugins::RememberMe::Controller do
 
       expect(
         controller_instance.sorcery_config.remember_me_httponly
-      ).to eq(false)
+      ).to be(false)
     end
     # rubocop:enable RSpec/ExampleLength
   end

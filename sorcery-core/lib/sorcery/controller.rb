@@ -62,7 +62,7 @@ module Sorcery
 
     # TODO: Extract plugin const detection into an object and depend on it.
     def controller_plugin_const(plugin_symbol)
-      ::Sorcery::Plugins.plugin_const(plugin_symbol).const_get('Controller')
+      ::Sorcery::Plugins.plugin_const(plugin_symbol).const_get(:Controller)
     end
 
     ##

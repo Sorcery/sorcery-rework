@@ -336,7 +336,7 @@ module Sorcery
 
     def attributes
       keys = @defaults.keys + [:user_config, :configure_block]
-      keys.map { |key| [key, instance_variable_get("@#{key}")] }.to_h
+      keys.to_h { |key| [key, instance_variable_get("@#{key}")] }
     end
 
     add_defaults(DEFAULTS)
