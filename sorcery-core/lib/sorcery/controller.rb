@@ -51,7 +51,7 @@ module Sorcery
               @sorcery_config.__send__(config_method, value)
             else
               raise Sorcery::Errors::ConfigError,
-                "Invalid plugin setting provided! `#{key}` is not a valid "\
+                "Invalid plugin setting provided! `#{key}` is not a valid " \
                 "option for the Sorcery `#{plugin}` plugin."
             end
           end
@@ -284,7 +284,7 @@ module Sorcery
 
         unless respond_to?(session_store_method)
           raise Sorcery::Errors::ConfigError,
-            "Unknown session store: #{sorcery_config.session_store}\n"\
+            "Unknown session store: #{sorcery_config.session_store}\n" \
             'Double check that you included the necessary plugins.'
         end
 
@@ -302,7 +302,7 @@ module Sorcery
       # @deprecated Please use {#login_as_user} instead.
       def auto_login(user, _options = {})
         warn Kernel.caller.first +
-             '[DEPRECATION] `auto_login` is deprecated. Please use '\
+             '[DEPRECATION] `auto_login` is deprecated. Please use ' \
              '`login_as_user` instead.'
         login_as_user(user)
       end
@@ -358,8 +358,8 @@ module Sorcery
         @user_class ||= sorcery_config.user_class.to_s.constantize
       rescue NameError
         raise Sorcery::Errors::ConfigError,
-          'You have incorrectly defined user_class or have forgotten to '\
-          'define it in your Sorcery initializer file '\
+          'You have incorrectly defined user_class or have forgotten to ' \
+          'define it in your Sorcery initializer file ' \
           '(config.user_class = \'User\').'
       end
 
@@ -367,8 +367,8 @@ module Sorcery
         @sorcery_session_class ||= sorcery_config.session_class.to_s.constantize
       rescue NameError
         raise Sorcery::Errors::ConfigError,
-          'You have incorrectly defined session_class or have forgotten to '\
-          'define it in your Sorcery initializer file '\
+          'You have incorrectly defined session_class or have forgotten to ' \
+          'define it in your Sorcery initializer file ' \
           '(config.session_class = \'UserSession\').'
       end
 

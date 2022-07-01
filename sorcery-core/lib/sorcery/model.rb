@@ -85,7 +85,7 @@ module Sorcery
               @sorcery_config.__send__(config_method, value)
             else
               raise ArgumentError,
-                "Invalid plugin setting provided! `#{key}` is not a valid "\
+                "Invalid plugin setting provided! `#{key}` is not a valid " \
                 "option for the Sorcery `#{plugin}` plugin."
             end
           end
@@ -197,8 +197,8 @@ module Sorcery
         @sorcery_session_class ||= sorcery_config.session_class.to_s.constantize
       rescue NameError
         raise Sorcery::Errors::ConfigError,
-          'You have incorrectly defined session_class or have forgotten to '\
-          'define it in your Sorcery initializer file '\
+          'You have incorrectly defined session_class or have forgotten to ' \
+          'define it in your Sorcery initializer file ' \
           '(config.session_class = \'UserSession\').'
       end
 

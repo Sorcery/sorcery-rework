@@ -54,7 +54,7 @@ module Sorcery
               sorcery_config.magic_login_mailer_disabled == false
 
             raise Sorcery::Errors::ConfigError,
-              'To use the magic_login submodule, you must define a mailer '\
+              'To use the magic_login submodule, you must define a mailer ' \
               '(config.magic_login_mailer_class = YourMailerClass).'
           end
 

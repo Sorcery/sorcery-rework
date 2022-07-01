@@ -34,7 +34,7 @@ module Sorcery
             return unless sorcery_config.jwt_secret.nil?
 
             raise Sorcery::Errors::ConfigError,
-              'A secret must be configured when using the Sorcery::JWT '\
+              'A secret must be configured when using the Sorcery::JWT ' \
               'extension.'
           end
         end

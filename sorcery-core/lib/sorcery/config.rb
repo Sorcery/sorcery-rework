@@ -325,7 +325,7 @@ module Sorcery
         @custom_hashing_provider.new(settings: password_hashing_settings)
       else
         raise Sorcery::Errors::ConfigError,
-          'The password hashing algorithm supplied, '\
+          'The password hashing algorithm supplied, ' \
           "#{@password_hashing_algorithm}, is invalid"
       end
     end

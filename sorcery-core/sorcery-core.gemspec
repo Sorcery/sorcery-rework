@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.name        = 'sorcery-core'
   s.summary     = 'Magical Authentication'
   s.description =
-    'Provides common authentication needs that can be easily used within your '\
-    'own MVC structure.'
+    'Provides common authentication needs that can be easily used within ' \
+    'your own MVC structure.'
 
   # TODO: Does including minimum rubygems version make sense?
   s.required_ruby_version     = '>= 2.6.0'

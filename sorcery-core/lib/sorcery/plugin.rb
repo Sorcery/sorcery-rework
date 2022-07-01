@@ -71,7 +71,7 @@ module Sorcery
       return unless missing_plugins.any?
 
       raise Sorcery::Errors::PluginDependencyError,
-        "The Sorcery #{plugin_name} plugin depends on the following other "\
+        "The Sorcery #{plugin_name} plugin depends on the following other " \
         "plugins: #{missing_plugins.join(', ')}"
     end
 

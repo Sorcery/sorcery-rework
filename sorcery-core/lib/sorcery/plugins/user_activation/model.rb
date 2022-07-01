@@ -78,7 +78,7 @@ module Sorcery
               sorcery_config.activation_mailer_disabled == false
 
             raise Sorcery::Errors::ConfigError,
-              'To use user_activation submodule, you must define a mailer '\
+              'To use user_activation submodule, you must define a mailer ' \
               '(config.user_activation_mailer = YourMailerClass).'
           end
 

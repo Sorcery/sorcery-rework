@@ -55,7 +55,7 @@ module Sorcery
               sorcery_config.reset_password_mailer_disabled == false
 
             raise Sorcery::Errors::ConfigError,
-              'To use reset_password submodule, you must define a mailer '\
+              'To use reset_password submodule, you must define a mailer ' \
               '(config.reset_password_mailer = YourMailerClass).'
           end
 
