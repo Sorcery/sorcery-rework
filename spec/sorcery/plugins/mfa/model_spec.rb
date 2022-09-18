@@ -11,11 +11,13 @@ RSpec.describe Sorcery::Plugins::MFA::Model do
   let(:user_instance) { user_class.new }
 
   describe 'user_class.authenticates_with_sorcery!' do
-    it 'includes InstanceMethods on calling class instances' do
+    pending 'includes InstanceMethods on calling class instances' do
       # NOTE: Calling this on the class, not instance, is intentional.
       user_class.authenticates_with_sorcery! do |config|
         config.load_plugin(:mfa)
       end
+
+      raise
     end
   end
 end
