@@ -60,15 +60,15 @@ module Sorcery
 
           # rubocop:disable Metrics/MethodLength
           def define_magic_login_fields
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.magic_login_token_attr_name,
               String
             )
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.magic_login_token_expires_at_attr_name,
               Time
             )
-            sorcery_adapter.define_field(
+            sorcery_orm_adapter.define_field(
               sorcery_config.magic_login_email_sent_at_attr_name,
               Time
             )
@@ -90,7 +90,7 @@ module Sorcery
                 Time.now.in_time_zone + config.magic_login_expiration_period
             end
 
-            sorcery_adapter.update_attributes(attributes)
+            sorcery_orm_adapter.update_attributes(attributes)
           end
           # rubocop:enable Layout/LineLength
 
@@ -123,7 +123,7 @@ module Sorcery
           # Clears the token.
           def clear_magic_login_token!
             config = sorcery_config
-            sorcery_adapter.update_attributes(
+            sorcery_orm_adapter.update_attributes(
               config.magic_login_token_attr_name            => nil,
               config.magic_login_token_expires_at_attr_name => nil
             )

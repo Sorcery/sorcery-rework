@@ -85,15 +85,15 @@ module Sorcery
           # rubocop:disable Metrics/MethodLength
           def define_user_activation_fields
             class_eval do
-              sorcery_adapter.define_field(
+              sorcery_orm_adapter.define_field(
                 sorcery_config.activation_state_attr_name,
                 String
               )
-              sorcery_adapter.define_field(
+              sorcery_orm_adapter.define_field(
                 sorcery_config.activation_token_attr_name,
                 String
               )
-              sorcery_adapter.define_field(
+              sorcery_orm_adapter.define_field(
                 sorcery_config.activation_token_expires_at_attr_name,
                 Time
               )
@@ -131,7 +131,7 @@ module Sorcery
             send(:"#{config.activation_token_attr_name}=", nil)
             send(:"#{config.activation_state_attr_name}=", 'active')
             send_activation_success_email! if send_activation_success_email?
-            sorcery_adapter.save(validate: false, raise_on_failure: true)
+            sorcery_orm_adapter.save(validate: false, raise_on_failure: true)
           end
 
           attr_accessor :skip_activation_needed_email,
