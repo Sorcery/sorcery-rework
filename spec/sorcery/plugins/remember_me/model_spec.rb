@@ -19,8 +19,32 @@ RSpec.describe Sorcery::Plugins::RememberMe::Model do
       expect(user_instance).to respond_to :remember_me!
     end
 
-    # TODO: Add test or remove placeholder
-    it 'accepts plugin settings'
+    # rubocop:disable RSpec/ExampleLength
+    # rubocop:disable RSpec/MultipleExpectations
+    # rubocop:disable Layout/LineLength
+    it 'accepts plugin settings' do
+      expect(user_instance).not_to respond_to :sorcery_config
+
+      user_class.authenticates_with_sorcery! do |config|
+        config.load_plugin(
+          :remember_me,
+          model: {
+            remember_me_token_attr_name:            :my_remember_me_token,
+            remember_me_token_expires_at_attr_name: :my_remember_me_token_expires_at
+          }
+        )
+      end
+
+      expect(
+        user_instance.sorcery_config.remember_me_token_attr_name
+      ).to be(:my_remember_me_token)
+      expect(
+        user_instance.sorcery_config.remember_me_token_expires_at_attr_name
+      ).to be(:my_remember_me_token_expires_at)
+    end
+    # rubocop:enable RSpec/ExampleLength
+    # rubocop:enable RSpec/MultipleExpectations
+    # rubocop:enable Layout/LineLength
   end
 
   # FIXME: This is pretty messy, both in terms of styling, but also breaking

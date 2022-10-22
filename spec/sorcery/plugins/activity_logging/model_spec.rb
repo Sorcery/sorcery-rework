@@ -22,8 +22,42 @@ RSpec.describe Sorcery::Plugins::ActivityLogging::Model do
       expect(user_instance).to respond_to :recently_active?
     end
 
-    # TODO: Add test or remove placeholder
-    it 'accepts plugin settings'
+    # rubocop:disable RSpec/ExampleLength
+    # rubocop:disable RSpec/MultipleExpectations
+    it 'accepts plugin settings' do
+      expect(user_instance).not_to respond_to :sorcery_config
+
+      user_class.authenticates_with_sorcery! do |config|
+        config.load_plugin(
+          :activity_logging,
+          model: {
+            last_login_at_attr_name:         :my_last_login_at,
+            last_logout_at_attr_name:        :my_last_logout_at,
+            last_activity_at_attr_name:      :my_last_activity_at,
+            last_login_from_ip_address_name: :my_last_login_from_ip_address,
+            activity_timeout:                1337
+          }
+        )
+      end
+
+      expect(
+        user_instance.sorcery_config.last_login_at_attr_name
+      ).to be(:my_last_login_at)
+      expect(
+        user_instance.sorcery_config.last_logout_at_attr_name
+      ).to be(:my_last_logout_at)
+      expect(
+        user_instance.sorcery_config.last_activity_at_attr_name
+      ).to be(:my_last_activity_at)
+      expect(
+        user_instance.sorcery_config.last_login_from_ip_address_name
+      ).to be(:my_last_login_from_ip_address)
+      expect(
+        user_instance.sorcery_config.activity_timeout
+      ).to be(1337)
+    end
+    # rubocop:enable RSpec/ExampleLength
+    # rubocop:enable RSpec/MultipleExpectations
   end
 
   # rubocop:disable RSpec/NestedGroups
