@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe AdminSession do
-  subject(:record) { build :admin_session }
+  subject(:record) { build(:admin_session) }
 
   it 'has valid factory' do
     expect(record).to be_valid

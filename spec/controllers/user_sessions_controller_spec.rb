@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe UserSessionsController do
-  let(:user) { create :user, password: 'secret' }
+  let(:user) { create(:user, password: 'secret') }
 
   describe 'new' do
     context 'when logged in' do
       before do
-        user_session = create :user_session, user: user
+        user_session = create(:user_session, user: user)
         get :new, session: { user_session_id: user_session.id }
       end
 
@@ -33,7 +33,7 @@ RSpec.describe UserSessionsController do
   describe 'create' do
     context 'when logged in' do
       before do
-        user_session = create :user_session, user: user
+        user_session = create(:user_session, user: user)
         post :create,
           params:  { login: user.username, password: 'secret' },
           session: { user_session_id: user_session.id }
@@ -47,7 +47,7 @@ RSpec.describe UserSessionsController do
 
     context 'when logged in on another device' do
       before do
-        create :user_session, user: user
+        create(:user_session, user: user)
       end
 
       it 'allows logging in on the current device' do

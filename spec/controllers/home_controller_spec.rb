@@ -13,8 +13,8 @@ RSpec.describe HomeController do
 
   describe 'restricted' do
     context 'when logged in' do
-      let(:user) { create :user }
-      let(:user_session) { create :user_session, user: user }
+      let(:user) { create(:user) }
+      let(:user_session) { create(:user_session, user: user) }
 
       it 'allows access' do
         get :restricted, session: { user_session_id: user_session.id }

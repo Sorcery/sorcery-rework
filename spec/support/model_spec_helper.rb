@@ -3,7 +3,7 @@
 module ModelSpecHelper
   # Ensure that the sorcery_orm_adapter is being properly set to ActiveRecord
   RSpec.shared_examples 'sorcery_orm_adapter' do
-    subject(:record) { build class_symbol }
+    subject(:record) { build(class_symbol) }
 
     let(:class_symbol) { described_class.name.underscore.to_sym }
 
@@ -19,7 +19,7 @@ module ModelSpecHelper
       describe 'instance method' do
         subject(:sorcery_orm_adapter) { record.sorcery_orm_adapter.class }
 
-        let(:record) { build :admin }
+        let(:record) { build(:admin) }
 
         it 'uses ActiveRecord' do
           expect(sorcery_orm_adapter).to eq Sorcery::OrmAdapters::ActiveRecord

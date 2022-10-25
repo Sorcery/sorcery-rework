@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'API Logout' do
-  let(:user) { create :user, password: 'secret' }
+  let(:user) { create(:user, password: 'secret') }
 
   context 'when logged in on current device' do
     let!(:headers) do

@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # rubocop:disable RSpec/RepeatedExampleGroupBody
 RSpec.describe 'Admin login' do
-  let(:admin) { create :admin, password: 'secret' }
+  let(:admin) { create(:admin, password: 'secret') }
 
   context 'when logged in on current device' do
     it 'prevents logging in twice'

@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # rubocop:disable RSpec/RepeatedExampleGroupBody
 RSpec.describe 'API login' do
-  let(:user) { create :user, password: 'secret' }
+  let(:user) { create(:user, password: 'secret') }
 
   context 'when logged in on current device' do
     it 'prevents logging in twice'

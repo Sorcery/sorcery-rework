@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe User do
-  subject(:record) { build :user }
+  subject(:record) { build(:user) }
 
   it 'has valid factory' do
     expect(record).to be_valid
@@ -19,7 +19,7 @@ RSpec.describe User do
 
   describe 'class method' do
     describe 'authenticate' do
-      subject(:user) { create :user, password: 'secret' }
+      subject(:user) { create(:user, password: 'secret') }
 
       it 'returns user if credentials are good' do
         expect(described_class.authenticate(user.username, 'secret')).to eq user

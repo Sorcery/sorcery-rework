@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Admin do
-  subject(:record) { build :admin }
+  subject(:record) { build(:admin) }
 
   it 'has valid factory' do
     expect(record).to be_valid
@@ -19,7 +19,7 @@ RSpec.describe Admin do
 
   describe 'class method' do
     describe 'authenticate' do
-      subject(:admin) { create :admin, password: 'secret' }
+      subject(:admin) { create(:admin, password: 'secret') }
 
       it 'returns admin if credentials are good' do
         expect(described_class.authenticate(admin.email, 'secret')).to eq admin

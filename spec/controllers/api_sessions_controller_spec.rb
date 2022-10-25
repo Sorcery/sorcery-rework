@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe ApiSessionsController do
-  let(:user) { create :user, password: 'secret' }
+  let(:user) { create(:user, password: 'secret') }
 
   describe 'create' do
     context 'when logged in' do

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'User logout' do
-  let(:user) { create :user, password: 'secret' }
+  let(:user) { create(:user, password: 'secret') }
 
   context 'when logged in on current device' do
     before do
@@ -34,7 +34,7 @@ RSpec.describe 'User logout' do
 
   context 'when logged in on another device' do
     before do
-      create :user_session, user: user
+      create(:user_session, user: user)
     end
 
     it 'prevents logging out' do

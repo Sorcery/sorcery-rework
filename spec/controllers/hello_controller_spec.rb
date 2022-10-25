@@ -14,7 +14,7 @@ RSpec.describe HelloController do
 
   describe 'restricted' do
     context 'when logged in' do
-      let(:user) { create :user }
+      let(:user) { create(:user) }
 
       it 'allows access' do
         # FIXME: Should be able to set directly to login_as_user value?
