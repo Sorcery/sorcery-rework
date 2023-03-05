@@ -35,7 +35,7 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
     describe 'digest' do
       subject(:digest) { hashing_provider.digest(original_password) }
 
-      let(:argon2) { ::Argon2::Password.new(digest) }
+      let(:argon2) { Argon2::Password.new(digest) }
 
       it { should be_a String }
       it { should be_present }
@@ -95,7 +95,7 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
 
     describe 'digest_matches?' do
       let(:digest) do
-        ::Argon2::Password.create(
+        Argon2::Password.create(
           original_password,
           m_cost: minimum_argon2_cost
         )
@@ -112,7 +112,7 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
 
       context 'when pepper is provided' do
         let(:digest) do
-          ::Argon2::Password.create(
+          Argon2::Password.create(
             original_password,
             m_cost: minimum_argon2_cost,
             secret: original_pepper
@@ -152,7 +152,7 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
 
       context 'when pepper is nil (default)' do
         subject(:digest) do
-          ::Argon2::Password.create(
+          Argon2::Password.create(
             original_password,
             m_cost: minimum_argon2_cost
           )
@@ -182,7 +182,7 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
 
       context 'when pepper is an empty string' do
         subject(:digest) do
-          ::Argon2::Password.create(
+          Argon2::Password.create(
             original_password,
             m_cost: minimum_argon2_cost
           )
@@ -213,7 +213,7 @@ RSpec.describe Sorcery::CryptoProviders::Argon2 do
 
     describe 'needs_redigested?' do
       let(:digest) do
-        ::Argon2::Password.create(
+        Argon2::Password.create(
           original_password,
           m_cost: minimum_argon2_cost
         )

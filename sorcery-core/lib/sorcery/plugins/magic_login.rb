@@ -2,6 +2,8 @@
 
 module Sorcery
   module Plugins
+    ##
+    #
     module MagicLogin
       autoload :Controller, 'sorcery/plugins/magic_login/controller'
       autoload :Model, 'sorcery/plugins/magic_login/model'

@@ -2,6 +2,8 @@
 
 module Sorcery
   module Plugins
+    ##
+    #
     module SessionTimeout
       autoload :Controller, 'sorcery/plugins/session_timeout/controller'
       autoload :Model, 'sorcery/plugins/session_timeout/model'

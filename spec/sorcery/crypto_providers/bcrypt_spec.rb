@@ -31,7 +31,7 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
     describe 'digest' do
       subject(:digest) { hashing_provider.digest(original_password) }
 
-      let(:bcrypt) { ::BCrypt::Password.new(digest) }
+      let(:bcrypt) { BCrypt::Password.new(digest) }
 
       it { should be_a String }
       it { should be_present }
@@ -91,7 +91,7 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
 
     describe 'digest_matches?' do
       let(:digest) do
-        ::BCrypt::Password.create(
+        BCrypt::Password.create(
           original_password,
           cost: minimum_bcrypt_cost
         )
@@ -109,7 +109,7 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
 
       context 'when pepper is provided' do
         let(:digest) do
-          ::BCrypt::Password.create(
+          BCrypt::Password.create(
             original_password + original_pepper,
             cost: minimum_bcrypt_cost
           )
@@ -148,7 +148,7 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
 
       context 'when pepper is nil (default)' do
         subject(:digest) do
-          ::BCrypt::Password.create(
+          BCrypt::Password.create(
             original_password,
             cost: minimum_bcrypt_cost
           )
@@ -178,7 +178,7 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
 
       context 'when pepper is an empty string' do
         subject(:digest) do
-          ::BCrypt::Password.create(
+          BCrypt::Password.create(
             original_password,
             cost: minimum_bcrypt_cost
           )
@@ -209,7 +209,7 @@ RSpec.describe Sorcery::CryptoProviders::BCrypt do
 
     describe 'needs_redigested?' do
       let(:digest) do
-        ::BCrypt::Password.create(
+        BCrypt::Password.create(
           original_password,
           cost: minimum_bcrypt_cost
         )
