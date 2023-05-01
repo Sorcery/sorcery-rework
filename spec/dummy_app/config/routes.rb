@@ -18,4 +18,11 @@ Rails.application.routes.draw do
 
   post   'api/login'  => 'api_sessions#create'
   delete 'api/logout' => 'api_sessions#destroy'
+
+  #############
+  ## Plugins ##
+  #############
+
+  post 'plugins/activity_logging/login' => 'activity_logging#create'
+  delete 'plugins/activity_logging/logout' => 'activity_logging#destroy'
 end
