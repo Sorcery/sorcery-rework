@@ -3,7 +3,7 @@
 # TODO: This isn't done yet. Just adding this so I don't forget about the meta
 #       gem.
 
-version = File.read(File.expand_path('../SORCERY_VERSION', __dir__)).strip
+version = File.read(File.expand_path('./SORCERY_VERSION', __dir__)).strip
 repo_url = 'https://github.com/sorcery/sorcery'
 
 Gem::Specification.new do |s|
