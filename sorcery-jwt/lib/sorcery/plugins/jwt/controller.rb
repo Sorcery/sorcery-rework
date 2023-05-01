@@ -17,14 +17,14 @@ module Sorcery
 
         def self.plugin_defaults
           {
-            # Secret used to encode JWTs. Should correspond to the type needed
-            # by the algorithm used.
-            jwt_algorithm:      'HS256',
             # Type of the algorithm used to encode JWTs. Corresponds to the
             # options available in jwt/ruby-jwt.
-            jwt_session_expiry: (60 * 60 * 24 * 7 * 2), # 2 weeks
+            jwt_algorithm:      'HS256',
             # How long the session should be valid for in seconds. Will be set
             # as the exp claim in the token.
+            jwt_session_expiry: (60 * 60 * 24 * 7 * 2), # 2 weeks
+            # Secret used to encode JWTs. Should correspond to the type needed
+            # by the algorithm used.
             jwt_secret:         nil
           }
         end
