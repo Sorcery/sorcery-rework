@@ -44,6 +44,13 @@ module Sorcery
         @sorcery_config.plugin_settings[plugin].each do |klass, plugin_settings|
           next unless klass == :controller
 
+          unless plugin_settings.is_a?(Hash)
+            raise ArgumentError,
+              "Invalid plugin settings for #{plugin}, expected a Hash but " \
+              "got a #{plugin_settings.class}. Check your Sorcery " \
+              'configuration.'
+          end
+
           plugin_settings.each do |key, value|
             # TODO: This method of assigning keys can probably be improved.
             config_method = "#{key}=".to_sym
