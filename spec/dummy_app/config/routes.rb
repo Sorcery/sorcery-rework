@@ -25,4 +25,6 @@ Rails.application.routes.draw do
 
   post 'plugins/activity_logging/login' => 'activity_logging#create'
   delete 'plugins/activity_logging/logout' => 'activity_logging#destroy'
+
+  post 'plugins/brute_force_protection/login' => 'brute_force_protection#create'
 end
