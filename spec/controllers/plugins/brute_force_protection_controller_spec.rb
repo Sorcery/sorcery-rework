@@ -10,6 +10,7 @@ RSpec.describe BruteForceProtectionController do
   # FIXME: Find a better way to directly test overriding the attribute field
   # names without causing normal tests like these to become more difficult to
   # read. (use specific models for that?)
+  # rubocop:disable RSpec/ExampleLength
   it 'counts login retries' do
     expect(user.pineapple_count).to be_zero
 
@@ -34,4 +35,5 @@ RSpec.describe BruteForceProtectionController do
     user.reload
     expect(user.pineapple_count).to be_zero
   end
+  # rubocop:enable RSpec/ExampleLength
 end
