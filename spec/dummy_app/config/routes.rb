@@ -27,4 +27,7 @@ Rails.application.routes.draw do
   delete 'plugins/activity_logging/logout' => 'activity_logging#destroy'
 
   post 'plugins/brute_force_protection/login' => 'brute_force_protection#create'
+
+  post 'plugins/http_basic_auth/restricted' =>
+    'http_basic_auth#restricted_with_http_basic_auth'
 end
