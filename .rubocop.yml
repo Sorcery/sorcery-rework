@@ -64,6 +64,7 @@ RSpec/FilePath:
   CustomTransform:
     BCrypt: bcrypt
     OAuth: oauth
+    OAuthController: oauth_controller
 # Allow 2 expectations for before/after checking
 RSpec/MultipleExpectations:
   Max: 2

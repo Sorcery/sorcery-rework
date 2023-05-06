@@ -30,4 +30,7 @@ Rails.application.routes.draw do
 
   post 'plugins/http_basic_auth/restricted' =>
     'http_basic_auth#restricted_with_http_basic_auth'
+
+  get 'plugins/oauth/test_create_from_provider' =>
+    'oauth#test_create_from_provider'
 end
