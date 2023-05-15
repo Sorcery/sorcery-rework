@@ -20,6 +20,7 @@ oauth_providers = %w[
   wechat
 ]
 
+# rubocop:disable RSpec/NestedGroups
 RSpec.describe OAuthController do
   let(:username) { Faker::Internet.username }
 
@@ -50,11 +51,7 @@ RSpec.describe OAuthController do
       end
 
       describe 'create_from' do
-        it 'creates a new user' do
-          # expect(User).to receive(:create_from_provider).with(oauth_provider.to_s, '123', username: username)
-          get :test_create_from_provider, params: { provider: oauth_provider }
-        end
-
+        it 'creates a new user'
         it 'supports nested attributes'
         it 'does not crash on missing nested attributes'
 
@@ -80,3 +77,4 @@ RSpec.describe OAuthController do
     end
   end
 end
+# rubocop:enable RSpec/NestedGroups

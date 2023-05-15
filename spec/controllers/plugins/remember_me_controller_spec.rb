@@ -17,7 +17,9 @@ RSpec.describe RememberMeController do
       user.reload
 
       expect(cookies.signed['remember_me_token']).to be_present
-      expect(cookies.signed['remember_me_token']).to eq user.reload.remember_me_token
+      expect(cookies.signed['remember_me_token']).to eq(
+        user.reload.remember_me_token
+      )
     end
 
     it 'clears cookie on forget_me!' do
@@ -82,7 +84,9 @@ RSpec.describe RememberMeController do
 
     it 'sets the remember_me cookie' do
       expect(cookies.signed['remember_me_token']).to be_present
-      expect(cookies.signed['remember_me_token']).to eq user.reload.remember_me_token
+      expect(cookies.signed['remember_me_token']).to eq(
+        user.reload.remember_me_token
+      )
     end
   end
 

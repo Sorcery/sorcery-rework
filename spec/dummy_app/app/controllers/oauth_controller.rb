@@ -7,7 +7,6 @@ class OAuthController < ApplicationController
 
   def test_create_from_provider
     provider = params[:provider]
-    byebug
     login_from(provider)
     if (@user = create_from(provider))
       redirect_to 'success_url', notice: 'Success!'
