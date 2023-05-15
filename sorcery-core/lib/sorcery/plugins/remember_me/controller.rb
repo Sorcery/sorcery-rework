@@ -75,7 +75,7 @@ module Sorcery
           #
           def auto_remember!(_user, _username, _password, options)
             options = { should_remember: false }.merge(options)
-            return unless options[:should_remember] == true
+            return unless ['1', true].include?(options[:should_remember])
 
             remember_me!
           end
@@ -96,7 +96,7 @@ module Sorcery
           #++
           #
           def login_from_cookie
-            # TODO: Can this be return nil instead?
+            # TODO: Can this return nil instead?
             return false unless defined?(cookies)
             return false unless cookies.signed[:remember_me_token].present?
 
@@ -110,7 +110,7 @@ module Sorcery
             return false unless user&.remember_me_token?
 
             set_remember_me_cookie!(user)
-            sorcery_session = user_class.create_sorcery_session!
+            sorcery_session = user.create_sorcery_session!
             session[sorcery_config.session_key] = sorcery_session.id.to_s
             after_remember_me!(user)
             @current_user = user
@@ -134,6 +134,12 @@ module Sorcery
             }
           end
           # rubocop:enable Naming/AccessorMethodName
+
+          def after_remember_me!(user)
+            sorcery_config.after_remember_me.each do |callback|
+              send(callback, user)
+            end
+          end
         end
       end
     end

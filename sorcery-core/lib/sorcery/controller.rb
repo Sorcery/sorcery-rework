@@ -243,12 +243,12 @@ module Sorcery
       ##
       # Resets the session and runs hooks before and after.
       #
-      def logout
+      def logout(skip_callbacks: false)
         return unless logged_in?
 
         user = current_user
         sorcery_session = current_sorcery_session
-        before_logout!
+        before_logout! unless skip_callbacks
         @current_user = nil
         @current_sorcery_session.destroy
         @current_sorcery_session = nil
@@ -257,7 +257,7 @@ module Sorcery
         #        just waiting to happen. Critical to review this thoroughly!
         raise Sorcery::Errors::SessionNotDestroyed if sorcery_session.persisted?
 
-        after_logout!(user)
+        after_logout!(user) unless skip_callbacks
       end
 
       ##
@@ -295,6 +295,8 @@ module Sorcery
             'Double check that you included the necessary plugins.'
         end
 
+        # TODO: Verify that record matches the user class set in the config
+
         send(session_store_method, user)
       end
 
@@ -321,6 +323,7 @@ module Sorcery
         sorcery_config.before_unverified_request.each do |callback|
           send(callback)
         end
+        # TODO: Should this also be setting current_session to nil? logout?
         @current_user = nil
         super # call the default behaviour which resets the session
       end
@@ -415,13 +418,6 @@ module Sorcery
       #
       def after_logout!(user)
         sorcery_config.after_logout.each do |callback|
-          send(callback, user)
-        end
-      end
-
-      # TODO: Unused, remove or move into remember me plugin controller file.
-      def after_remember_me!(user)
-        sorcery_config.after_remember_me.each do |callback|
           send(callback, user)
         end
       end

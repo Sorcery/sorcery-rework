@@ -33,4 +33,20 @@ Rails.application.routes.draw do
 
   get 'plugins/oauth/test_create_from_provider' =>
     'oauth#test_create_from_provider'
+
+  post 'plugins/remember_me/login_with_remember_me' =>
+    'remember_me#login_with_remember_me'
+  post 'plugins/remember_me/login_without_remember_me' =>
+    'remember_me#login_without_remember_me'
+  get 'plugins/remember_me/page_with_forget_me' =>
+    'remember_me#page_with_forget_me'
+  get 'plugins/remember_me/page_with_force_forget_me' =>
+    'remember_me#page_with_force_forget_me'
+  delete 'plugins/remember_me/logout' => 'remember_me#destroy'
+  get 'plugins/remember_me/show_if_logged_in' => 'remember_me#show_if_logged_in'
+  delete 'plugins/remember_me/purge_session' => 'remember_me#purge_session'
+  post 'plugins/remember_me/login_with_remember_me_parameter' =>
+    'remember_me#login_with_remember_me_parameter'
+  post 'plugins/remember_me/login_with_login_as_user' =>
+    'remember_me#login_with_login_as_user'
 end
