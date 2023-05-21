@@ -39,11 +39,48 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.string   :remember_me_token,            default: nil
       t.datetime :remember_me_token_expires_at, default: nil
 
+      t.string :activation_token, default: nil
+      t.string :activation_state, default: nil
+
+      t.timestamps
+    end
+
+    create_table :plugin_users do |t|
+      t.string :username, null: false
+      t.string :email, null: false
+      t.string :password_digest
+
+      # Activity Logging
+      t.datetime :last_login_at,              default: nil
+      t.datetime :last_logout_at,             default: nil
+      t.datetime :last_activity_at,           default: nil
+      t.string   :last_login_from_ip_address, default: nil
+
+      # Brute Force Protection
+      t.integer  :failed_logins_count, default: 0
+      t.datetime :lock_expires_at,     default: nil
+      t.string   :unlock_token,        default: nil
+
+      # Remember Me
+      t.string   :remember_me_token,            default: nil
+      t.datetime :remember_me_token_expires_at, default: nil
+
+      # User Activation
+      t.string   :activation_token, default: nil
+      t.string   :activation_state, default: nil
+      t.datetime :activation_token_expires_at, default: nil
+
       t.timestamps
     end
 
     create_table :user_sessions do |t|
       t.belongs_to :user, null: false, foreign_key: true
+
+      t.timestamps
+    end
+
+    create_table :plugin_user_sessions do |t|
+      t.belongs_to :plugin_user, null: false, foreign_key: true
 
       t.timestamps
     end

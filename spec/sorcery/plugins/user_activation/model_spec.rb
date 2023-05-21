@@ -11,6 +11,7 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
     # rubocop:disable RSpec/ExampleLength
     it 'includes InstanceMethods on calling class instances' do
       expect(user_instance).not_to respond_to :setup_activation
+      expect(user_instance).not_to respond_to :activate!
 
       # NOTE: Calling this on the class, not instance, is intentional.
       user_class.authenticates_with_sorcery! do |config|
@@ -23,6 +24,7 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
       end
 
       expect(user_instance).to respond_to :setup_activation
+      expect(user_instance).to respond_to :activate!
     end
 
     # rubocop:disable RSpec/MultipleExpectations
@@ -78,5 +80,54 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
     # rubocop:enable RSpec/ExampleLength
     # rubocop:enable RSpec/MultipleExpectations
     # rubocop:enable Layout/LineLength
+  end
+
+  context 'when activation mailer is enabled but nil' do
+    it 'raises a ConfigError' do
+      expect {
+        user_class.authenticates_with_sorcery! do |config|
+          config.load_plugin(
+            :user_activation,
+            model: {
+              user_activation_mailer:     nil,
+              activation_mailer_disabled: false
+            }
+          )
+        end
+      }.to raise_error(Sorcery::Errors::ConfigError)
+    end
+  end
+
+  context 'when activation mailer is disabled and nil' do
+    it 'does not raise an exception' do
+      expect {
+        user_class.authenticates_with_sorcery! do |config|
+          config.load_plugin(
+            :user_activation,
+            model: {
+              user_activation_mailer:     nil,
+              activation_mailer_disabled: true
+            }
+          )
+        end
+      }.not_to raise_error
+    end
+  end
+
+  describe 'instance method' do
+    let(:user_class) do
+      user_class = Class.new do
+        extend Sorcery::Model
+      end
+
+      user_class.authenticates_with_sorcery! do |config|
+        config.load_plugin(:user_activation)
+      end
+
+      user_class
+    end
+
+    describe 'activate!'
+    describe 'authenticate'
   end
 end
