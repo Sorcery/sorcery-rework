@@ -12,6 +12,8 @@ RSpec.describe Sorcery::Controller do
     expect(controller_class).to respond_to :authenticates_with_sorcery!
   end
 
+  # rubocop:disable RSpec/ExampleLength
+  # rubocop:disable RSpec/MultipleExpectations
   describe 'controller_class.authenticates_with_sorcery!' do
     it 'accepts core settings' do
       expect(controller_instance).not_to respond_to :sorcery_config
@@ -47,4 +49,6 @@ RSpec.describe Sorcery::Controller do
       expect(controller_instance).to respond_to :login_as_user
     end
   end
+  # rubocop:enable RSpec/ExampleLength
+  # rubocop:enable RSpec/MultipleExpectations
 end

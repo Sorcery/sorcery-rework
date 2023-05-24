@@ -48,6 +48,8 @@ RSpec.describe CoreController do
     end
   end
 
+  # FIXME: Bad practices go brrrr
+  # rubocop:disable RSpec/InstanceVariable
   describe 'logged_in?' do
     subject { @controller.logged_in? }
 
@@ -82,13 +84,15 @@ RSpec.describe CoreController do
 
   describe 'login_as_user' do
     it 'logs in a user instance' do
-      expect(@controller.logged_in?).to be_falsey
+      expect(@controller).not_to be_logged_in
 
       @controller.login_as_user(user)
 
-      expect(@controller.logged_in?).to be_truthy
+      expect(@controller).to be_logged_in
     end
 
+    # rubocop:disable RSpec/ExampleLength
+    # rubocop:disable RSpec/MultipleExpectations
     it 'works even if current_user is already nil' do
       post :create, params: { login: username, password: password }
 
@@ -102,6 +106,8 @@ RSpec.describe CoreController do
 
       expect(@controller.current_user).to eq user
     end
+    # rubocop:enable RSpec/ExampleLength
+    # rubocop:enable RSpec/MultipleExpectations
   end
 
   describe 'require_login' do
@@ -189,4 +195,5 @@ RSpec.describe CoreController do
       end
     end
   end
+  # rubocop:enable RSpec/InstanceVariable
 end
