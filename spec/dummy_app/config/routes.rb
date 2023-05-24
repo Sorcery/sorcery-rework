@@ -59,4 +59,13 @@ Rails.application.routes.draw do
     'session_timeout#login_with_remember_me'
   get 'plugins/session_timeout/invalidate_sessions' =>
     'session_timeout#invalidate_sessions'
+
+  post 'plugins/core/login' => 'core#create'
+  delete 'plugins/core/logout' => 'core#destroy'
+  post 'plugins/core/login_with_login_as_user' =>
+    'core#login_with_login_as_user'
+  get 'plugins/core/restricted' => 'core#restricted'
+  post 'plugins/core/restricted' => 'core#restricted'
+  put 'plugins/core/restricted' => 'core#restricted'
+  delete 'plugins/core/restricted' => 'core#restricted'
 end

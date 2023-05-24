@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe UserSessionsController do
-  let(:user) { create(:user, password: 'secret') }
+  let(:username) { Faker::Internet.username }
+  let(:password) { Faker::Internet.password }
+  let!(:user) { create(:user, username: username, password: password) }
 
   describe 'new' do
     context 'when logged in' do
@@ -35,7 +37,7 @@ RSpec.describe UserSessionsController do
       before do
         user_session = create(:user_session, user: user)
         post :create,
-          params:  { login: user.username, password: 'secret' },
+          params:  { login: username, password: password },
           session: { user_session_id: user_session.id }
       end
 
@@ -51,7 +53,7 @@ RSpec.describe UserSessionsController do
       end
 
       it 'allows logging in on the current device' do
-        post :create, params: { login: user.username, password: 'secret' }
+        post :create, params: { login: username, password: password }
 
         expect(controller).to(
           set_flash[:success].to('Logged in successfully!')
@@ -62,7 +64,7 @@ RSpec.describe UserSessionsController do
 
     context 'when logged out with bad credentials' do
       before do
-        post :create, params: { login: user.username, password: 'wrong!' }
+        post :create, params: { login: username, password: 'wrong!' }
       end
 
       it 'denies access' do
@@ -75,7 +77,7 @@ RSpec.describe UserSessionsController do
 
     context 'when logged out with good credentials' do
       before do
-        post :create, params: { login: user.username, password: 'secret' }
+        post :create, params: { login: username, password: password }
       end
 
       it 'allows access' do
@@ -89,10 +91,10 @@ RSpec.describe UserSessionsController do
     context 'when locked out with good credentials' do
       before do
         3.times do
-          post :create, params: { login: user.username, password: 'wrong!' }
+          post :create, params: { login: username, password: 'wrong!' }
         end
 
-        post :create, params: { login: user.username, password: 'secret' }
+        post :create, params: { login: username, password: password }
       end
 
       it 'denies access' do
@@ -107,7 +109,7 @@ RSpec.describe UserSessionsController do
     context 'when previously locked out' do
       before do
         3.times do
-          post :create, params: { login: user.username, password: 'wrong!' }
+          post :create, params: { login: username, password: 'wrong!' }
         end
 
         Timecop.freeze(Time.current + 2.hours)
@@ -121,10 +123,10 @@ RSpec.describe UserSessionsController do
       # IMPORTANT: Prevents regression of CVE-2020-11052, do not remove.
       it 'can relock if bad credentials are given' do
         3.times do
-          post :create, params: { login: user.username, password: 'wrong!' }
+          post :create, params: { login: username, password: 'wrong!' }
         end
 
-        post :create, params: { login: user.username, password: 'secret' }
+        post :create, params: { login: username, password: password }
 
         expect(controller).not_to(
           set_flash[:success].to('Logged in successfully!')
@@ -134,7 +136,7 @@ RSpec.describe UserSessionsController do
       # rubocop:enable RSpec/ExampleLength
 
       it 'still denies access if bad credentials are given' do
-        post :create, params: { login: user.username, password: 'wrong!' }
+        post :create, params: { login: username, password: 'wrong!' }
 
         expect(controller).not_to(
           set_flash[:success].to('Logged in successfully!')
@@ -143,7 +145,7 @@ RSpec.describe UserSessionsController do
       end
 
       it 'allows access if correct credentials are given' do
-        post :create, params: { login: user.username, password: 'secret' }
+        post :create, params: { login: username, password: password }
 
         expect(controller).to(
           set_flash[:success].to('Logged in successfully!')
