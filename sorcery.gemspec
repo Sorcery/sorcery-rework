@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   # TODO: Sign the gem: https://guides.rubygems.org/security/#general
 
   # TODO: Does including minimum rubygems version make sense?
-  s.required_ruby_version     = '>= 3.0.0'
+  s.required_ruby_version = '>= 3.0.0'
   # s.required_rubygems_version = '>= 1.8.11'
 
   s.license = 'MIT'

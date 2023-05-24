@@ -49,7 +49,7 @@ require 'timecop'
 
 # Normally you would call Rails.root for this, but Rails.root refers to
 # dummy_app rather than our actual root.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 #####################
 ## Configure RSpec ##

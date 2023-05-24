@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = 'Adds plugins to Sorcery for supporting OAuth login.'
 
   # TODO: Does including minimum rubygems version make sense?
-  s.required_ruby_version     = '>= 3.0.0'
+  s.required_ruby_version = '>= 3.0.0'
   # s.required_rubygems_version = '>= 1.8.11'
 
   s.license = 'MIT'

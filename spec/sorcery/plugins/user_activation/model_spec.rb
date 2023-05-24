@@ -9,6 +9,7 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
 
   describe 'user_class.authenticates_with_sorcery!' do
     # rubocop:disable RSpec/ExampleLength
+    # rubocop:disable RSpec/MultipleExpectations
     it 'includes InstanceMethods on calling class instances' do
       expect(user_instance).not_to respond_to :setup_activation
       expect(user_instance).not_to respond_to :activate!
@@ -27,7 +28,6 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
       expect(user_instance).to respond_to :activate!
     end
 
-    # rubocop:disable RSpec/MultipleExpectations
     # rubocop:disable Layout/LineLength
     it 'accepts plugin settings' do
       expect(user_instance).not_to respond_to :sorcery_config
@@ -82,9 +82,10 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
     # rubocop:enable Layout/LineLength
   end
 
+  # rubocop:disable RSpec/ExampleLength
   context 'when activation mailer is enabled but nil' do
     it 'raises a ConfigError' do
-      expect {
+      expect do
         user_class.authenticates_with_sorcery! do |config|
           config.load_plugin(
             :user_activation,
@@ -94,13 +95,13 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
             }
           )
         end
-      }.to raise_error(Sorcery::Errors::ConfigError)
+      end.to raise_error(Sorcery::Errors::ConfigError)
     end
   end
 
   context 'when activation mailer is disabled and nil' do
     it 'does not raise an exception' do
-      expect {
+      expect do
         user_class.authenticates_with_sorcery! do |config|
           config.load_plugin(
             :user_activation,
@@ -110,10 +111,12 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
             }
           )
         end
-      }.not_to raise_error
+      end.not_to raise_error
     end
   end
+  # rubocop:enable RSpec/ExampleLength
 
+  # rubocop:disable RSpec/EmptyExampleGroup
   describe 'instance method' do
     let(:user_class) do
       user_class = Class.new do
@@ -130,4 +133,5 @@ RSpec.describe Sorcery::Plugins::UserActivation::Model do
     describe 'activate!'
     describe 'authenticate'
   end
+  # rubocop:enable RSpec/EmptyExampleGroup
 end

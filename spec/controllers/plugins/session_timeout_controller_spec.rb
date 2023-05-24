@@ -79,6 +79,7 @@ RSpec.describe SessionTimeoutController do
     end
   end
 
+  # rubocop:disable Layout/LineLength
   context 'when session_timeout_invalidate_active_sessions_enabled is true' do
     around do |example|
       prev_val = described_class.sorcery_config.session_timeout_invalidate_active_sessions_enabled
@@ -125,6 +126,8 @@ RSpec.describe SessionTimeoutController do
       expect(session[:user_session_id]).to be_nil
     end
 
+    # rubocop:disable RSpec/ExampleLength
+    # rubocop:disable RSpec/MultipleExpectations
     it 'allows login after invalidate_active_sessions! is called' do
       get :show_if_logged_in
 
@@ -148,6 +151,8 @@ RSpec.describe SessionTimeoutController do
 
       expect(session[:user_session_id]).to be_present
     end
+    # rubocop:enable RSpec/ExampleLength
+    # rubocop:enable RSpec/MultipleExpectations
   end
 
   context 'when session_timeout_from_last_action is true' do
@@ -162,6 +167,7 @@ RSpec.describe SessionTimeoutController do
       post :create, params: { login: username, password: password }
     end
 
+    # rubocop:disable RSpec/ExampleLength
     it 'does not logout if there was activity' do
       Timecop.travel(45.minutes.from_now)
 
@@ -175,6 +181,7 @@ RSpec.describe SessionTimeoutController do
 
       expect(session[:user_session_id]).to be_present
     end
+    # rubocop:enable RSpec/ExampleLength
 
     it 'with \'session_timeout_from_last_action\' logs out if there was no activity' do
       get :show_if_logged_in
@@ -188,4 +195,5 @@ RSpec.describe SessionTimeoutController do
       expect(session[:user_session_id]).to be_nil
     end
   end
+  # rubocop:enable Layout/LineLength
 end

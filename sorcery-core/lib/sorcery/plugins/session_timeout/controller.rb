@@ -27,9 +27,8 @@ module Sorcery
 
         module InstanceMethods # :nodoc:
           def invalidate_active_sessions!
-            unless sorcery_config.session_timeout_invalidate_active_sessions_enabled
-              return
-            end
+            return unless sorcery_config.
+                          session_timeout_invalidate_active_sessions_enabled
             return unless current_user.present?
 
             # FIXME: Why isn't this in the model? Who did this? Ugh.
@@ -43,7 +42,8 @@ module Sorcery
           # Registers last login to be used as the timeout starting point.
           # Runs as a hook after a successful login.
           #
-          def register_login_time_after_login(_user, _username, _password, _options)
+          def register_login_time_after_login(_user, _username, _password,
+            _options)
             register_login_time
           end
 

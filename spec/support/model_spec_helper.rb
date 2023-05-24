@@ -28,6 +28,8 @@ module ModelSpecHelper
     end
   end
 
+  # rubocop:disable Layout/LineLength
+  # rubocop:disable RSpec/NestedGroups
   RSpec.shared_examples 'user_activation' do
     subject(:record) { create(class_symbol, email: Faker::Internet.email) }
 
@@ -100,4 +102,6 @@ module ModelSpecHelper
       end
     end
   end
+  # rubocop:enable Layout/LineLength
+  # rubocop:enable RSpec/NestedGroups
 end
