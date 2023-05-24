@@ -116,6 +116,7 @@ module Sorcery
     autoload :HttpBasicAuth, 'sorcery/plugins/http_basic_auth'
     autoload :RememberMe, 'sorcery/plugins/remember_me'
     autoload :ResetPassword, 'sorcery/plugins/reset_password'
+    autoload :SessionTimeout, 'sorcery/plugins/session_timeout'
     autoload :UserActivation, 'sorcery/plugins/user_activation'
   end
 

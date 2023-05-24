@@ -49,4 +49,13 @@ Rails.application.routes.draw do
     'remember_me#login_with_remember_me_parameter'
   post 'plugins/remember_me/login_with_login_as_user' =>
     'remember_me#login_with_login_as_user'
+
+  post 'plugins/session_timeout/login' => 'session_timeout#create'
+  get 'plugins/session_timeout/show_if_logged_in' =>
+    'session_timeout#show_if_logged_in'
+  delete 'plugins/session_timeout/purge_session' => 'session_timeout#purge_session'
+  post 'plugins/session_timeout/login_with_remember_me' =>
+    'session_timeout#login_with_remember_me'
+  get 'plugins/session_timeout/invalidate_sessions' =>
+    'session_timeout#invalidate_sessions'
 end

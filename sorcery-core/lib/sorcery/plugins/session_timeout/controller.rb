@@ -12,8 +12,8 @@ module Sorcery
 
         def self.plugin_callbacks
           {
-            after_login:       [:register_login_time],
-            after_remember_me: [:register_login_time]
+            after_login:       [:register_login_time_after_login],
+            after_remember_me: [:register_login_time_after_remember_me]
           }
         end
 
@@ -27,20 +27,34 @@ module Sorcery
 
         module InstanceMethods # :nodoc:
           def invalidate_active_sessions!
-            unless Config.session_timeout_invalidate_active_sessions_enabled
+            unless sorcery_config.session_timeout_invalidate_active_sessions_enabled
               return
             end
             return unless current_user.present?
 
+            # FIXME: Why isn't this in the model? Who did this? Ugh.
             current_user.send(:invalidate_sessions_before=, Time.current)
             current_user.save
           end
 
           protected
 
+          ##
           # Registers last login to be used as the timeout starting point.
           # Runs as a hook after a successful login.
-          def register_login_time(_user, _credentials = nil)
+          #
+          def register_login_time_after_login(_user, _username, _password, _options)
+            register_login_time
+          end
+
+          def register_login_time_after_remember_me(_user)
+            register_login_time
+          end
+
+          ##
+          # Registers last login to be used as the timeout starting point.
+          #
+          def register_login_time
             session[:login_time]       = Time.current
             session[:last_action_time] = Time.current
           end
@@ -50,10 +64,9 @@ module Sorcery
           # To be used as a before_action, before require_login
           # rubocop:disable Layout/LineLength
           def validate_session
-            session_to_use = Config.session_timeout_from_last_action ? session[:last_action_time] : session[:login_time]
+            session_to_use = sorcery_config.session_timeout_from_last_action ? session[:last_action_time] : session[:login_time]
             if (session_to_use && sorcery_session_expired?(session_to_use.to_time)) || sorcery_session_invalidated?
-              reset_sorcery_session
-              remove_instance_variable :@current_user if defined? @current_user
+              logout(skip_callbacks: true)
             else
               session[:last_action_time] = Time.current
             end
@@ -61,13 +74,13 @@ module Sorcery
           # rubocop:enable Layout/LineLength
 
           def sorcery_session_expired?(time)
-            Time.current - time > Config.session_timeout
+            Time.current - time > sorcery_config.session_timeout
           end
 
           # Use login time if present, otherwise use last action time.
           # rubocop:disable Layout/LineLength
           def sorcery_session_invalidated?
-            unless Config.session_timeout_invalidate_active_sessions_enabled
+            unless sorcery_config.session_timeout_invalidate_active_sessions_enabled
               return false
             end
             unless current_user.present? && current_user.try(:invalidate_sessions_before).present?

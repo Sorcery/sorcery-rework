@@ -39,6 +39,9 @@ class SorceryMigrations < ActiveRecord::Migration[6.0]
       t.string   :remember_me_token,            default: nil
       t.datetime :remember_me_token_expires_at, default: nil
 
+      # Session Timeout
+      t.datetime :invalidate_sessions_before, default: nil
+
       t.string :activation_token, default: nil
       t.string :activation_state, default: nil
 
