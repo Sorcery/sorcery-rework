@@ -24,6 +24,6 @@ group :test do
   gem 'shoulda-matchers'
   gem 'simplecov', require: false
   gem 'sorcery-argon2'
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1.0'
   gem 'timecop'
 end
