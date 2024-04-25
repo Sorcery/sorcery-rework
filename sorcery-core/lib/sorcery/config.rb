@@ -3,8 +3,10 @@
 ##
 #
 module Sorcery
+  ##
   # Helper method to shorten `Rails.application.config.sorcery.configure` to
   # just `Sorcery.configure`
+  #
   def self.configure(&block)
     Config.configure(&block)
   end
