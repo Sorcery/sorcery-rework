@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
     'Chase Gilliam',
     'Josh Buker'
   ]
-  s.email    = 'crypto@joshbuker.com'
+  s.email    = 'sorcery+rubygems@joshbuker.com'
   s.homepage = 'https://sorcerygem.org'
 
   s.files = []

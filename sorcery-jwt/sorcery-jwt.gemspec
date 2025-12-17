@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
 
   s.author   = 'Josh Buker'
-  s.email    = 'crypto@joshbuker.com'
+  s.email    = 'sorcery+rubygems@joshbuker.com'
   s.homepage = 'https://sorcerygem.org'
 
   s.files = ['lib/sorcery-jwt.rb']

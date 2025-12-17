@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2020 [Josh Buker](mailto:crypto@joshbuker.com)
+Copyright (c) 2020 [Josh Buker](mailto:sorcery+license@joshbuker.com)
 
 Copyright (c) 2010-2019 [Noam Ben-Ari](mailto:nbenari@gmail.com)
 
